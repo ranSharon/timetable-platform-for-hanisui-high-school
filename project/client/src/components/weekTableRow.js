@@ -6,7 +6,9 @@ const weekTableRow = (props) => (
         <td >{props.startTime}</td>
         <td >{props.hours}</td>
         <td>
-            edit
+            <a href="#">ערוך</a>
+            <div style={{display: "inline"}}>  </div>
+            <a href="#">מחק</a>
         </td>
     </tr>
 );

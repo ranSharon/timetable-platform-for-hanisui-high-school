@@ -15,7 +15,7 @@ class Data extends Component {
             <Router>
                 <nav className="navbar navbar-expand-lg navbar-light bg-light">
                     <div className="collpase navbar-collapse">
-                        <ul className="d-flex flex-row-reverse navbar-nav ml-auto">
+                        <ul className="navbar-nav ml-auto">
                             <li className="navbar-item">
                                 <Link to="/data/structure" className="nav-link">שלד המערכת</Link>
                             </li>

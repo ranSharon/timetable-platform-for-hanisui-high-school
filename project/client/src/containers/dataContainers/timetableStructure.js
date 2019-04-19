@@ -38,12 +38,12 @@ class TimetableStructure extends Component {
                 <div className="input-group mt-3 mb-3">
                     <select className="custom-select" id="inputGroupSelect02" onChange={(e) => this.onChangeDay(e)}>
                         <option >...יום</option>
-                        <option value="sunday">ראשון</option>
-                        <option value="monday">שני</option>
-                        <option value="tuesday">שלישי</option>
-                        <option value="tuesday">רביעי</option>
-                        <option value="tuesday">חמישי</option>
-                        <option value="tuesday">שישי</option>
+                        <option value="ראשון">ראשון</option>
+                        <option value="שני">שני</option>
+                        <option value="שלישי">שלישי</option>
+                        <option value="רביעי">רביעי</option>
+                        <option value="חמישי">חמישי</option>
+                        <option value="שישי">שישי</option>
                     </select>
                     <div className="input-group-append">
                         <label className="input-group-text" htmlFor="inputGroupSelect02">בחר יום בשבוע</label>
