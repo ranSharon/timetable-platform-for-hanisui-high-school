@@ -7,10 +7,12 @@ const app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const todoRoutes = express.Router();
+const dataRoutes = express.Router();
 const PORT = 4000;
 
-let Grade = require('./models/grades');
+const Grade = require('./models/grades');
+const Subject = require('./models/subjects');
+const ClassRoom = require('./models/classRooms');
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -22,7 +24,7 @@ connection.once('open', function() {
     console.log("MongoDB database connection established successfully");
 })
 
-todoRoutes.route('/').get(function(req, res) {
+/* dataRoutes.route('/').get(function(req, res) {
     Todo.find(function(err, todos) {
         if (err) {
             console.log(err);
@@ -32,14 +34,25 @@ todoRoutes.route('/').get(function(req, res) {
     });
 });
 
-todoRoutes.route('/:id').get(function(req, res) {
+dataRoutes.route('/:id').get(function(req, res) {
     let id = req.params.id;
     Todo.findById(id, function(err, todo) {
         res.json(todo);
     });
+}); */
+
+
+dataRoutes.route('/getGrades').get(function(req, res) {
+    Grade.find(function(err, todos) {
+        if (err) {
+            console.log(err);
+        } else {
+            res.json(todos);
+        }
+    });
 });
 
-todoRoutes.route('/add').post(function(req, res) {
+dataRoutes.route('/addGrade').post(function(req, res) {
     let grade = new Grade(req.body);
     grade.save()
         .then(todo => {
@@ -50,7 +63,49 @@ todoRoutes.route('/add').post(function(req, res) {
         });
 });
 
-todoRoutes.route('/update/:id').post(function(req, res) {
+dataRoutes.route('/getSubjects').get(function(req, res) {
+    Subject.find(function(err, todos) {
+        if (err) {
+            console.log(err);
+        } else {
+            res.json(todos);
+        }
+    });
+});
+
+dataRoutes.route('/addSubject').post(function(req, res) {
+    let subject = new Subject(req.body);
+    subject.save()
+        .then(todo => {
+            res.status(200).json({'todo': 'todo added successfully'});
+        })
+        .catch(err => {
+            res.status(400).send('adding new todo failed');
+        });
+});
+
+dataRoutes.route('/getClassRooms').get(function(req, res) {
+    ClassRoom.find(function(err, todos) {
+        if (err) {
+            console.log(err);
+        } else {
+            res.json(todos);
+        }
+    });
+});
+
+dataRoutes.route('/addClassRoom').post(function(req, res) {
+    let classRoom = new ClassRoom(req.body);
+    classRoom.save()
+        .then(todo => {
+            res.status(200).json({'todo': 'todo added successfully'});
+        })
+        .catch(err => {
+            res.status(400).send('adding new todo failed');
+        });
+});
+
+/* dataRoutes.route('/update/:id').post(function(req, res) {
     Todo.findById(req.params.id, function(err, todo) {
         if (!todo)
             res.status(404).send("data is not found");
@@ -67,9 +122,9 @@ todoRoutes.route('/update/:id').post(function(req, res) {
                 res.status(400).send("Update not possible");
             });
     });
-});
+}); */
 
-app.use('/todos', todoRoutes);
+app.use('/data', dataRoutes);
 
 app.listen(PORT, function() {
     console.log("Server is running on Port: " + PORT);
