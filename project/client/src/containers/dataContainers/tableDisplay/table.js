@@ -3,6 +3,9 @@ import GradeTableRow from '../../../components/gradeTableRow';
 import WeekTableRow from '../../../components/weekTableRow';
 import SubjectTableRow from '../../../components/subjectTableRow';
 import RoomTableRow from '../../../components/roomTableRow';
+import SubjectToChoseTableRow from '../../../components/subjetToChoseTableRow';
+import TeacherTableRow from '../../../components/teacherTableRow';
+
 
 
 class DataTable extends Component {
@@ -119,6 +122,75 @@ class DataTable extends Component {
                     </table>
                 </div>
             );
+        } else if (this.props.table === 'subjetsTochose') {
+            return (
+                <div>
+                    {/* <h3 className="mt-3 float-right"></h3> */}
+                    <table className="table table-striped" style={{ marginTop: 20 }} >
+                        <thead>
+                            <tr>
+                                <th >מקצוע</th>
+                            </tr>
+                        </thead>
+                        <tbody style={{ 'width': '100%', 'height': '300px', overflowX: 'hidden', overflowY: 'scroll', 'display': 'block', 'textAlign': 'center' }}>
+                            {this.props.subjects.map((subject, index) => {
+                                return (
+                                    <SubjectToChoseTableRow
+                                        key={index}
+                                        subjectName={subject}
+                                        chosenSubjects={this.props.chosenSubjects}
+                                        allSubject={this.props.subjects}
+                                        onChose={this.props.onChose}
+                                        rowNum={index}
+                                        numOfRow={this.props.subjects.length}
+                                    >
+                                    </SubjectToChoseTableRow>)
+                            }
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            )
+        } else if (this.props.table === 'teachers') {
+            return (
+                <div>
+                    {/* <h3 className="mt-3 float-right"></h3> */}
+                    <table className="table table-striped" style={{ marginTop: 20 }} >
+                        <thead>
+                            <tr>
+                                <th >שם המורה</th>
+                                <th >מלמד ב...</th>
+                                <th >מלמד בכיתות</th>
+                                <th >מקצועות שמלמד</th>
+                                <th >יום חופש רצוי</th>
+                                <th >מספר שעות הוראה שבועיות</th>
+                                <th >action</th>
+                            </tr>
+                        </thead>
+                        {<tbody >
+                            {this.props.teachers.map((teacher, index) => {
+                                return (
+                                    <TeacherTableRow
+                                        key={index}
+                                        teacherName={teacher.name}
+                                        school={[teacher.juniorHighSchool, teacher.highSchool]}
+                                        grades={teacher.grades}
+                                        subjects={teacher.subjectsForTeacher}
+                                        dayOff={teacher.dayOff}
+                                        maxTeachHours={teacher.maxTeachHours}
+                                        //onChose={this.props.onChose}
+                                        id={teacher._id}
+                                        onEdit={this.props.onEdit}
+                                        onDelete={this.props.onDelete}
+                                        disableButtons={this.props.disableButtons}
+                                    >
+                                    </TeacherTableRow>)
+                            }
+                            )}
+                        </tbody>}
+                    </table>
+                </div>
+            )
         }
     }
 };

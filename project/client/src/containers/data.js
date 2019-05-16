@@ -23,13 +23,13 @@ class Data extends Component {
                                 <Link to="/data/grades" className="nav-link">שכבות וכיתות</Link>
                             </li>
                             <li className="navbar-item">
+                                <Link to="/data/classes" className="nav-link">חדרי לימוד</Link>
+                            </li>
+                            <li className="navbar-item">
                                 <Link to="/data/studySubjects" className="nav-link">מקצועות</Link>
                             </li>
                             <li className="navbar-item">
                                 <Link to="/data/teachers" className="nav-link">מורים</Link>
-                            </li>
-                            <li className="navbar-item">
-                                <Link to="/data/classes" className="nav-link">חדרי לימוד</Link>
                             </li>
                             <li className="navbar-item">
                                 <Link to="/data/constraints" className="nav-link">הגדרת אילוצים</Link>
