@@ -38,7 +38,7 @@ class Teachers extends Component {
             alertMessage: '',
             buttonType: 'אישור',
             disableButtons: false
-        }
+        };
         this.getTeacher = this.getTeacher.bind(this);
         this.deleteTeacher = this.deleteTeacher.bind(this);
     }

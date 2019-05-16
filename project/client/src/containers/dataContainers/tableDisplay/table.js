@@ -46,13 +46,22 @@ class DataTable extends Component {
                             <tr >
                                 <th>יום</th>
                                 <th>שעת התחלת היום</th>
-                                <th>מספר שעות לימוד באותו יום</th>
+                                <th>שעת סיום היום</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             {this.props.days.map((day, index) =>
-                                <WeekTableRow key={index} day={day.day} startTime={day.startTime} hours={day.hours}></WeekTableRow>
+                                <WeekTableRow
+                                    key={index}
+                                    day={day.day}
+                                    startTime={day.startTime}
+                                    endTime={day.endTime}
+                                    onEdit={this.props.onEdit}
+                                    onDelete={this.props.onDelete}
+                                    disableButtons={this.props.disableButtons}
+                                    id={day._id}>
+                                </WeekTableRow>
                             )}
                         </tbody>
                     </table>

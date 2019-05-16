@@ -3,12 +3,12 @@ import React from 'react';
 const weekTableRow = (props) => (
     <tr>
         <td >{props.day}</td>
-        <td >{props.startTime}</td>
-        <td >{props.hours}</td>
+        <td >{props.startTime + ':00'}</td>
+        <td >{props.endTime + ':00'}</td>
         <td>
-            <a href="#">ערוך</a>
-            <div style={{display: "inline"}}>  </div>
-            <a href="#">מחק</a>
+            <button onClick={() => props.onEdit(props.id)} disabled={props.disableButtons}>ערוך</button>
+            <div style={{ display: "inline" }}>  </div>
+            <button onClick={() => props.onDelete(props.id)} disabled={props.disableButtons}>מחק</button>
         </td>
     </tr>
 );

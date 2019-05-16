@@ -14,6 +14,7 @@ const Grade = require('./models/grades');
 const Subject = require('./models/subjects');
 const ClassRoom = require('./models/classRooms');
 const Teacher = require('./models/teachers');
+const Day = require('./models/days');
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -25,23 +26,63 @@ connection.once('open', function () {
     console.log("MongoDB database connection established successfully");
 })
 
-/* dataRoutes.route('/').get(function(req, res) {
-    Todo.find(function(err, todos) {
+dataRoutes.route('/getDays').get(function (req, res) {
+    Day.find(function (err, days) {
         if (err) {
             console.log(err);
         } else {
-            res.json(todos);
+            res.json(days);
         }
     });
 });
 
-dataRoutes.route('/:id').get(function(req, res) {
-    let id = req.params.id;
-    Todo.findById(id, function(err, todo) {
-        res.json(todo);
-    });
-}); */
+dataRoutes.route('/addDay').post(function (req, res) {
+    let day = new Day(req.body);
+    day.save()
+        .then(teacher => {
+            //console.log(teacher);
+            res.status(200).json(day);
+        })
+        .catch(err => {
+            res.status(400).send('adding new todo failed');
+        });
+});
 
+dataRoutes.route('/getDay/:id').get(function (req, res) {
+    let id = req.params.id;
+    //console.log(id);
+    Day.findById(id, function (err, day) {
+        res.json(day);
+    });
+});
+
+dataRoutes.route('/updateDay/:id').post(function (req, res) {
+    Day.findById(req.params.id, function (err, day) {
+        if (!day)
+            res.status(404).send("data is not found");
+        else {
+            day.day = req.body.day;
+            day.startTime = req.body.startTime;
+            day.endTime = req.body.endTime;
+        }
+        day.save().then(day => {
+            res.json(day);
+        })
+            .catch(err => {
+                res.status(400).send("Update not possible");
+            });
+    });
+});
+
+dataRoutes.route('/deleteDay/:id').post(function (req, res) {
+    let id = req.params.id;
+    Day.findByIdAndRemove(id, (err, day) => {
+        if (err) {
+            return res.json({'message': 'Some Error' });
+        }
+        return res.json(day);
+    })
+});
 
 dataRoutes.route('/getGrades').get(function (req, res) {
     Grade.find(function (err, todos) {
@@ -157,6 +198,7 @@ dataRoutes.route('/updateTeacher/:id').post(function (req, res) {
             });
     });
 });
+
 dataRoutes.route('/deleteTeacher/:id').post(function (req, res) {
     let id = req.params.id;
     Teacher.findByIdAndRemove(id, (err, teacher) => {
