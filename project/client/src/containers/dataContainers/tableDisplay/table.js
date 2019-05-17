@@ -30,7 +30,11 @@ class DataTable extends Component {
                                 <GradeTableRow
                                     key={index}
                                     grade={grade.grade}
-                                    numOfClasses={grade.numOfClasses}>
+                                    numOfClasses={grade.numOfClasses}
+                                    onEdit={this.props.onEdit}
+                                    onDelete={this.props.onDelete}
+                                    disableButtons={this.props.disableButtons}
+                                    id={grade._id}>
                                 </GradeTableRow>
                             )}
                         </tbody>

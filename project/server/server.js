@@ -85,11 +85,11 @@ dataRoutes.route('/deleteDay/:id').post(function (req, res) {
 });
 
 dataRoutes.route('/getGrades').get(function (req, res) {
-    Grade.find(function (err, todos) {
+    Grade.find(function (err, grades) {
         if (err) {
             console.log(err);
         } else {
-            res.json(todos);
+            res.json(grades);
         }
     });
 });
@@ -97,12 +97,47 @@ dataRoutes.route('/getGrades').get(function (req, res) {
 dataRoutes.route('/addGrade').post(function (req, res) {
     let grade = new Grade(req.body);
     grade.save()
-        .then(todo => {
-            res.status(200).json({ 'todo': 'todo added successfully' });
+        .then(grade => {
+            res.status(200).json(grade);
         })
         .catch(err => {
             res.status(400).send('adding new todo failed');
         });
+});
+
+dataRoutes.route('/getGrade/:id').get(function (req, res) {
+    let id = req.params.id;
+    //console.log(id);
+    Grade.findById(id, function (err, grade) {
+        res.json(grade);
+    });
+});
+
+dataRoutes.route('/updateGrade/:id').post(function (req, res) {
+    Grade.findById(req.params.id, function (err, grade) {
+        if (!grade)
+            res.status(404).send("data is not found");
+        else {
+            grade.grade = req.body.grade;
+            grade.numOfClasses = req.body.numOfClasses;
+        }
+        grade.save().then(grade => {
+            res.json(grade);
+        })
+            .catch(err => {
+                res.status(400).send("Update not possible");
+            });
+    });
+});
+
+dataRoutes.route('/deleteGrade/:id').post(function (req, res) {
+    let id = req.params.id;
+    Grade.findByIdAndRemove(id, (err, grade) => {
+        if (err) {
+            return res.json({'message': 'Some Error' });
+        }
+        return res.json(grade);
+    })
 });
 
 dataRoutes.route('/getSubjects').get(function (req, res) {

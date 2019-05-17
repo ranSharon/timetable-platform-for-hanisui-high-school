@@ -111,7 +111,6 @@ class TimetableStructure extends Component {
             this.alertMessage();
             return false;
         }
-
     }
 
     alertMessage() {
@@ -233,7 +232,7 @@ class TimetableStructure extends Component {
                         <option value="20">20:00</option>
                     </select>
                 </div>
-                <button type="button" className="btn btn-secondary" onClick={() => this.setDays()}>אישור</button>
+                <button type="button" className="btn btn-secondary" onClick={() => this.setDays()}>{this.state.buttonType}</button>
                 {this.alertMessage()}
                 <DataTable
                     days={this.state.days}
