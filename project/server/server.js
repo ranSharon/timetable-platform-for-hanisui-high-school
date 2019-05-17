@@ -15,6 +15,7 @@ const Subject = require('./models/subjects');
 const ClassRoom = require('./models/classRooms');
 const Teacher = require('./models/teachers');
 const Day = require('./models/days');
+const RoomFeature = require('./models/roomFeature'); 
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -140,6 +141,93 @@ dataRoutes.route('/deleteGrade/:id').post(function (req, res) {
     })
 });
 
+dataRoutes.route('/getClassRooms').get(function (req, res) {
+    ClassRoom.find(function (err, classRoom) {
+        if (err) {
+            console.log(err);
+        } else {
+            res.json(classRoom);
+        }
+    });
+});
+
+dataRoutes.route('/addClassRoom').post(function (req, res) {
+    let classRoom = new ClassRoom(req.body);
+    classRoom.save()
+        .then(classRoom => {
+            res.status(200).json(classRoom);
+        })
+        .catch(err => {
+            res.status(400).send('adding new todo failed');
+        });
+});
+
+dataRoutes.route('/getClassRoom/:id').get(function (req, res) {
+    let id = req.params.id;
+    //console.log(id);
+    ClassRoom.findById(id, function (err, classRoom) {
+        res.json(classRoom);
+    });
+});
+
+dataRoutes.route('/updateClassRoom/:id').post(function (req, res) {
+    ClassRoom.findById(req.params.id, function (err, classRoom) {
+        if (!classRoom)
+            res.status(404).send("data is not found");
+        else {
+            classRoom.classRoomName = req.body.classRoomName;
+            classRoom.classRoomFeatures = [...req.body.classRoomFeatures];
+        }
+        classRoom.save().then(classRoom => {
+            res.json(classRoom);
+        })
+            .catch(err => {
+                res.status(400).send("Update not possible");
+            });
+    });
+});
+
+dataRoutes.route('/deleteClassRoom/:id').post(function (req, res) {
+    let id = req.params.id;
+    ClassRoom.findByIdAndRemove(id, (err, classRoom) => {
+        if (err) {
+            return res.json({'message': 'Some Error' });
+        }
+        return res.json(classRoom);
+    })
+});
+
+dataRoutes.route('/getRoomFeatures').get(function (req, res) {
+    RoomFeature.find(function (err, roomFeature) {
+        if (err) {
+            console.log(err);
+        } else {
+            res.json(roomFeature);
+        }
+    });
+});
+
+dataRoutes.route('/addRoomFeature').post(function (req, res) {
+    let roomFeature = new RoomFeature(req.body);
+    roomFeature.save()
+        .then(roomFeature => {
+            res.status(200).json(roomFeature);
+        })
+        .catch(err => {
+            res.status(400).send('adding new todo failed');
+        });
+});
+
+dataRoutes.route('/deleteRoomFeature/:roomFeature').post(function (req, res) {
+    let name = req.params.roomFeature;
+    RoomFeature.findOneAndDelete({roomFeature: name}, (err, roomFeature) => {
+        if (err) {
+            return res.json({'message': 'Some Error' });
+        }
+        return res.json(roomFeature);
+    })
+});
+
 dataRoutes.route('/getSubjects').get(function (req, res) {
     Subject.find(function (err, todos) {
         if (err) {
@@ -153,27 +241,6 @@ dataRoutes.route('/getSubjects').get(function (req, res) {
 dataRoutes.route('/addSubject').post(function (req, res) {
     let subject = new Subject(req.body);
     subject.save()
-        .then(todo => {
-            res.status(200).json({ 'todo': 'todo added successfully' });
-        })
-        .catch(err => {
-            res.status(400).send('adding new todo failed');
-        });
-});
-
-dataRoutes.route('/getClassRooms').get(function (req, res) {
-    ClassRoom.find(function (err, todos) {
-        if (err) {
-            console.log(err);
-        } else {
-            res.json(todos);
-        }
-    });
-});
-
-dataRoutes.route('/addClassRoom').post(function (req, res) {
-    let classRoom = new ClassRoom(req.body);
-    classRoom.save()
         .then(todo => {
             res.status(200).json({ 'todo': 'todo added successfully' });
         })

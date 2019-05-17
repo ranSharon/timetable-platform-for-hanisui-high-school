@@ -4,6 +4,8 @@ import axios from 'axios';
 import AlertMessage from '../../components/alertMessage';
 
 let dayToEditId = '';
+let dayToEdit = '';
+
 
 class TimetableStructure extends Component {
     constructor(props) {
@@ -51,7 +53,7 @@ class TimetableStructure extends Component {
         if (!this.checkIfInputValid()) {
             return;
         }
-        if (this.dayIsTaken() && this.state.buttonType === 'אישור') {
+        if (this.dayIsTaken()) {
             return;
         }
         const newDay = {
@@ -114,7 +116,6 @@ class TimetableStructure extends Component {
     }
 
     alertMessage() {
-        let alertMessage = this.state.alertMessage;
         return <AlertMessage message={this.state.alertMessage}></AlertMessage>;
     }
 
@@ -134,11 +135,15 @@ class TimetableStructure extends Component {
 
     dayIsTaken() {
         let message = '';
-        let originalMessage = message;
         let days = [...this.state.days];
         let currDay = this.state.day;
         for (let i = 0; i <= days.length - 1; i++) {
-            if (currDay === days[i].day) {
+            if (currDay === days[i].day && this.state.buttonType === 'אישור') {
+                message = 'יום זה כבר הוגדר,';
+                this.setState({ alertMessage: message });
+                this.alertMessage();
+                return true;
+            } else if (currDay === days[i].day && currDay !== dayToEdit && this.state.buttonType === 'ערוך') {
                 message = 'יום זה כבר הוגדר,';
                 this.setState({ alertMessage: message });
                 this.alertMessage();
@@ -153,6 +158,7 @@ class TimetableStructure extends Component {
         axios.get('http://localhost:4000/data/getDay/' + dayId)
             .then(response => {
                 let alertMessage = 'עריכת יום: ' + response.data.day;
+                dayToEdit = response.data.day;
                 this.setState({
                     day: response.data.day,
                     startTime: response.data.startTime,
@@ -225,8 +231,8 @@ class TimetableStructure extends Component {
                         <option value="13">13:00</option>
                         <option value="14">14:00</option>
                         <option value="15">15:00</option>
-                        <option value="16">15:00</option>
-                        <option value="17">16:00</option>
+                        <option value="16">16:00</option>
+                        <option value="17">17:00</option>
                         <option value="18">18:00</option>
                         <option value="19">19:00</option>
                         <option value="20">20:00</option>

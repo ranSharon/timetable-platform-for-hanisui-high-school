@@ -18,9 +18,9 @@ const weekTableRow = (props) => {
             <td>{props.grade}</td>
             {row}
             <td>
-            <button onClick={() => props.onEdit(props.id)} disabled={props.disableButtons}>ערוך</button>
-            <div style={{ display: "inline" }}>  </div>
-            <button onClick={() => props.onDelete(props.id)} disabled={props.disableButtons}>מחק</button>
+                <button onClick={() => props.onEdit(props.id)} disabled={props.disableButtons}>ערוך</button>
+                <div style={{ display: "inline" }}>  </div>
+                <button onClick={() => props.onDelete(props.id)} disabled={props.disableButtons}>מחק</button>
             </td>
         </tr>
     );

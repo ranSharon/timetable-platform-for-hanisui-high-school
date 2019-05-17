@@ -5,6 +5,7 @@ import SubjectTableRow from '../../../components/subjectTableRow';
 import RoomTableRow from '../../../components/roomTableRow';
 import SubjectToChoseTableRow from '../../../components/subjetToChoseTableRow';
 import TeacherTableRow from '../../../components/teacherTableRow';
+import RoomFeatureTableRow from '../../../components/tableRowComponents/roomFeatureTableRow';
 
 
 
@@ -117,8 +118,7 @@ class DataTable extends Component {
                         <thead>
                             <tr>
                                 <th >חדר לימוד</th>
-                                <th >יעודי</th>
-                                <th >מחשב</th>
+                                <th >מאפיינים</th>
                                 <th >action</th>
                             </tr>
                         </thead>
@@ -127,14 +127,43 @@ class DataTable extends Component {
                                 <RoomTableRow
                                     key={index}
                                     classRoomName={classRoom.classRoomName}
-                                    specificRoom={classRoom.specificRoom}
-                                    computerRoom={classRoom.computerRoom}>
+                                    classRoomFeatures={classRoom.classRoomFeatures}
+                                    onEdit={this.props.onEdit}
+                                    onDelete={this.props.onDelete}
+                                    disableButtons={this.props.disableButtons}
+                                    id={classRoom._id}>
                                 </RoomTableRow>
                             )}
                         </tbody>
                     </table>
                 </div>
             );
+        } else if (this.props.table === 'roomFeatures') {
+            return (
+                <div style={{ "position": "relative", "height": "200px", "overflow": "auto", "display": "block" }}>
+                    <table className="table table-striped">
+                        <thead >
+                            <tr>
+                                <th >מאפיין</th>
+                                <th >Action</th>
+                            </tr>
+                        </thead>
+                        <tbody >
+                            {this.props.roomFeatures.map((roomFeature, index) => {
+                                return (
+                                    <RoomFeatureTableRow
+                                        key={index}
+                                        FeatureName={roomFeature}
+                                        onDelete={this.props.onDelete}
+                                    >
+                                    </RoomFeatureTableRow>)
+                            }
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            );
+
         } else if (this.props.table === 'subjetsTochose') {
             return (
                 <div>

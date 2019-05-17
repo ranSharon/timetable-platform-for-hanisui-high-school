@@ -124,7 +124,6 @@ class Grades extends Component {
     }
 
     alertMessage() {
-        let alertMessage = this.state.alertMessage;
         return <AlertMessage message={this.state.alertMessage}></AlertMessage>;
     }
 

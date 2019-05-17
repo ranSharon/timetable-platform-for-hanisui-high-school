@@ -1,21 +1,23 @@
 import React from 'react';
 
 const roomTableRow = (props) => {
-    const yesOrNo = (bool) => {
-        if (bool)
-            return 'כן';
-        else
-            return 'לא';
+    const showClassRoomFeatures = () => {
+        let array = [...props.classRoomFeatures];
+        let text = ``;
+        array.forEach(element => {
+            text = `${text} ${element},`;
+        });
+        return text.substr(0, text.length - 1);
     }
+
     return (
         <tr>
             <td >{props.classRoomName}</td>
-            <td >{yesOrNo(props.specificRoom)}</td>
-            <td >{yesOrNo(props.computerRoom)}</td>
+            <td >{showClassRoomFeatures()}</td>
             <td>
-                <a href="#">ערוך</a>
+                <button onClick={() => props.onEdit(props.id)} disabled={props.disableButtons}>ערוך</button>
                 <div style={{ display: "inline" }}>  </div>
-                <a href="#">מחק</a>
+                <button onClick={() => props.onDelete(props.id)} disabled={props.disableButtons}>מחק</button>
             </td>
         </tr>
     )

@@ -5,6 +5,8 @@ import axios from 'axios';
 
 let allSubject = [];
 let teacherToEditId = '';
+let teacherToEdit = '';
+
 
 
 class Teachers extends Component {
@@ -59,7 +61,7 @@ class Teachers extends Component {
                 console.log(error);
             });
     }
-    
+
     onlySubjectsAndGrades(subjects) {
         subjects.forEach(subject => {
             let newSubject = { subjectName: '', grades: [] }
@@ -184,7 +186,7 @@ class Teachers extends Component {
         if (!this.checkIfInputValid()) {
             return;
         }
-        if (this.teacherNameIsTaken() && this.state.buttonType === 'אישור') {
+        if (this.teacherNameIsTaken()) {
             return;
         }
         const newTeacher = {
@@ -223,7 +225,6 @@ class Teachers extends Component {
                     this.resetInputs();
                 });
         }
-
     }
 
     teacherNameIsTaken() {
@@ -232,7 +233,12 @@ class Teachers extends Component {
         let teachers = [...this.state.teachers];
         let currTeacherName = this.state.name;
         for (let i = 0; i <= teachers.length - 1; i++) {
-            if (currTeacherName === teachers[i].name) {
+            if (currTeacherName === teachers[i].name && this.state.buttonType === 'אישור') {
+                message = 'הוזן כבר מורה עם השם הזה,';
+                this.setState({ alertMessage: message });
+                this.alertMessage();
+                return true;
+            } else if (currTeacherName === teachers[i].name && currTeacherName !== teacherToEdit && this.state.buttonType === 'ערוך') {
                 message = 'הוזן כבר מורה עם השם הזה,';
                 this.setState({ alertMessage: message });
                 this.alertMessage();
@@ -280,7 +286,6 @@ class Teachers extends Component {
             this.alertMessage();
             return false;
         }
-
     }
 
     alertMessage() {
@@ -344,6 +349,7 @@ class Teachers extends Component {
 
                 let subjects = [...this.setSubjectForEdting(grades)];
                 let alertMessage = 'עריכת פרטי המורה: ' + response.data.name;
+                teacherToEdit = response.data.name;
                 this.setState({
                     grades: [...response.data.grades],
                     subjectsForTeacher: [...response.data.subjectsForTeacher],

@@ -5,11 +5,10 @@ const alertMessage = (props) => {
         return null;
     }
 
-    //console.log(props.message === '');
     let content = [];
     let message = props.message.split(',');
     message.forEach((element, index) => {
-        if (index != 0 && element != '') {
+        if (index !== 0 && element !== '') {
             content = [...content, <li key={index} style={{ textAlign: "right" }}>{element}</li>];
         }
     });

@@ -3,9 +3,7 @@ const { Schema } = mongoose;//this is es6 syntex for "const Schema = mongoose.Sc
 
 const classRoomsSchema = new Schema({
     classRoomName: String,
-    specificRoom: Boolean,
-    computerRoom: Boolean
-   
+    classRoomFeatures: Array
 });
 
 module.exports = mongoose.model('ClassRooms', classRoomsSchema);
