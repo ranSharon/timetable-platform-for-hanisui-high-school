@@ -98,8 +98,6 @@ class ClassRooms extends Component {
         }
     }
 
-
-
     checkIfInputValid() {
         let classRoomName = this.state.classRoomName;
         let message = 'ישנה בעיה עם לפחות אחד מן השדות:,';
@@ -181,7 +179,7 @@ class ClassRooms extends Component {
                         roomFeaturesChecked: [...roomFeaturesChecked]
                     });
                     this.resetInputs();
-                    this.setState({alertMessage: ''});
+                    this.setState({ alertMessage: '' });
                 });
         }
     }
@@ -363,7 +361,7 @@ class ClassRooms extends Component {
                     </div>
                 </div>
                 <div >
-                    <h5 style={{"textAlign": "right"}}>מאפייני חדר</h5>
+                    <h5 style={{ "textAlign": "right" }}>מאפייני חדר</h5>
                     {this.state.roomFeatures.map((roomFeature, index) => {
                         return (
                             <RoomFeatureCheckBox
@@ -375,7 +373,12 @@ class ClassRooms extends Component {
                         )
                     })}
                 </div>
-                <button type="button" className="btn btn-secondary" onClick={() => this.setClassRooms()}>{this.state.buttonType}</button>
+                <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => this.setClassRooms()}>
+                    {this.state.buttonType}
+                </button>
                 {this.alertMessage()}
                 <DataTable
                     classRooms={this.state.classRooms}

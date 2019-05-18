@@ -41,7 +41,6 @@ dataRoutes.route('/addDay').post(function (req, res) {
     let day = new Day(req.body);
     day.save()
         .then(teacher => {
-            //console.log(teacher);
             res.status(200).json(day);
         })
         .catch(err => {
@@ -51,7 +50,6 @@ dataRoutes.route('/addDay').post(function (req, res) {
 
 dataRoutes.route('/getDay/:id').get(function (req, res) {
     let id = req.params.id;
-    //console.log(id);
     Day.findById(id, function (err, day) {
         res.json(day);
     });
@@ -108,7 +106,6 @@ dataRoutes.route('/addGrade').post(function (req, res) {
 
 dataRoutes.route('/getGrade/:id').get(function (req, res) {
     let id = req.params.id;
-    //console.log(id);
     Grade.findById(id, function (err, grade) {
         res.json(grade);
     });
@@ -164,7 +161,6 @@ dataRoutes.route('/addClassRoom').post(function (req, res) {
 
 dataRoutes.route('/getClassRoom/:id').get(function (req, res) {
     let id = req.params.id;
-    //console.log(id);
     ClassRoom.findById(id, function (err, classRoom) {
         res.json(classRoom);
     });
@@ -241,12 +237,52 @@ dataRoutes.route('/getSubjects').get(function (req, res) {
 dataRoutes.route('/addSubject').post(function (req, res) {
     let subject = new Subject(req.body);
     subject.save()
-        .then(todo => {
-            res.status(200).json({ 'todo': 'todo added successfully' });
+        .then(subject => {
+            res.status(200).json(subject);
         })
         .catch(err => {
             res.status(400).send('adding new todo failed');
         });
+});
+
+dataRoutes.route('/getSubject/:id').get(function (req, res) {
+    let id = req.params.id;
+    Subject.findById(id, function (err, subject) {
+        res.json(subject);
+    });
+});
+
+dataRoutes.route('/updateSubject/:id').post(function (req, res) {
+    Subject.findById(req.params.id, function (err, subject) {
+        if (!subject)
+            res.status(404).send("data is not found");
+        else {
+            subject.subjectName = req.body.subjectName;
+            subject.grades = [...req.body.grades];
+            subject.bagrut = req.body.bagrut;
+            subject.gmol = req.body.gmol;
+            subject.mix = req.body.mix;
+            subject.numOfMix = req.body.numOfMix;
+            subject.grouping = req.body.grouping;
+            subject.subjectFeatures = [...req.body.subjectFeatures];
+        }
+        subject.save().then(subject => {
+            res.json(subject);
+        })
+            .catch(err => {
+                res.status(400).send("Update not possible");
+            });
+    });
+});
+
+dataRoutes.route('/deleteSubject/:id').post(function (req, res) {
+    let id = req.params.id;
+    Subject.findByIdAndRemove(id, (err, subject) => {
+        if (err) {
+            return res.json({'message': 'Some Error' });
+        }
+        return res.json(subject);
+    })
 });
 
 dataRoutes.route('/getTeachers').get(function (req, res) {
@@ -263,7 +299,6 @@ dataRoutes.route('/addTeacher').post(function (req, res) {
     let teacher = new Teacher(req.body);
     teacher.save()
         .then(teacher => {
-            //console.log(teacher);
             res.status(200).json({ 'teacher': teacher });
         })
         .catch(err => {
@@ -273,7 +308,6 @@ dataRoutes.route('/addTeacher').post(function (req, res) {
 
 dataRoutes.route('/getTeacher/:id').get(function (req, res) {
     let id = req.params.id;
-    //console.log(id);
     Teacher.findById(id, function (err, teacher) {
         res.json(teacher);
     });

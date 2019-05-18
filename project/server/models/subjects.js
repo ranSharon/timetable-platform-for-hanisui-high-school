@@ -9,8 +9,7 @@ const subjectSchema = new Schema({
     mix: Boolean,
     numOfMix: String,
     grouping: Boolean,
-    specificRoom: Boolean,
-    computerRoom: Boolean
+    subjectFeatures: Array
 });
 
 module.exports = mongoose.model('Subjects', subjectSchema);

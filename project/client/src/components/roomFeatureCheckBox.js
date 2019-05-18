@@ -9,7 +9,7 @@ class roomFeatureCheckBox extends Component {
 
     render() {
         return (
-            <div className="pt-3" style={{ textAlign: "right" }}>
+            <div className="pt-2" style={{ textAlign: "right" }}>
                 <input
                     type="checkbox"
                     value={this.props.roomFeature}

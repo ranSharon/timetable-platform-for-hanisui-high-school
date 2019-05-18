@@ -5,9 +5,17 @@ const subjectTableRow = (props) => {
         let grades = ``;
         props.grades.forEach(element => {
             console.log(element);
-            grades = `${grades}${element},` ;
+            grades = `${grades}${element},`;
         });
-        return grades.substr(0,grades.length-1);
+        return grades.substr(0, grades.length - 1);
+    }
+    const showFeatures = () => {
+        let features = ``;
+        props.subjectFeatures.forEach(element => {
+            console.log(element);
+            features = `${features}${element},`;
+        });
+        return features.substr(0, features.length - 1);
     }
 
     const yesOrNo = (bool) => {
@@ -25,12 +33,11 @@ const subjectTableRow = (props) => {
             <td >{yesOrNo(props.mix)}</td>
             <td >{yesOrNo(props.grouping)}</td>
             <td >{props.numOfMix}</td>
-            <td >{yesOrNo(props.specificRoom)}</td>
-            <td >{yesOrNo(props.computerRoom)}</td>
+            <td >{showFeatures()}</td>
             <td>
-                <a href="#">ערוך</a>
+                <button onClick={() => props.onEdit(props.id)} disabled={props.disableButtons}>ערוך</button>
                 <div style={{ display: "inline" }}>  </div>
-                <a href="#">מחק</a>
+                <button onClick={() => props.onDelete(props.id)} disabled={props.disableButtons}>מחק</button>
             </td>
         </tr>
     )

@@ -86,8 +86,7 @@ class DataTable extends Component {
                                 <th>מקצוע שמערבב שכבה</th>
                                 <th>מקצוע שמחלוק להקבצות</th>
                                 <th>מספר הקבצות</th>
-                                <th>כיתה יעודית</th>
-                                <th>כיתת מחשב</th>
+                                <th>המקצוע דורש</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -102,8 +101,10 @@ class DataTable extends Component {
                                     mix={subject.mix}
                                     grouping={subject.grouping}
                                     numOfMix={subject.numOfMix}
-                                    specificRoom={subject.specificRoom}
-                                    computerRoom={subject.computerRoom}>
+                                    subjectFeatures={subject.subjectFeatures}
+                                    onEdit={this.props.onEdit}
+                                    onDelete={this.props.onDelete}
+                                    id={subject._id}>
                                 </SubjectTableRow>
                             )}
                         </tbody>

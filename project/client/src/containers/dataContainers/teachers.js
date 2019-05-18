@@ -7,8 +7,6 @@ let allSubject = [];
 let teacherToEditId = '';
 let teacherToEdit = '';
 
-
-
 class Teachers extends Component {
     constructor(props) {
         super(props);
