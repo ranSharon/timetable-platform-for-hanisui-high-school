@@ -6,6 +6,7 @@ const teacherSchema = new Schema({
     juniorHighSchool: Boolean,
     highSchool: Boolean,
     maxTeachHours: String,
+    currentTeachHours: Number,
     dayOff: String,
     grades: Array,
     subjectsForTeacher: Array

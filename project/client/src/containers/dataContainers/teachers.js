@@ -192,6 +192,7 @@ class Teachers extends Component {
             juniorHighSchool: this.state.juniorHighSchool,
             highSchool: this.state.highSchool,
             maxTeachHours: this.state.maxTeachHours,
+            currentTeachHours: 0,
             dayOff: this.state.dayOff,
             grades: [...this.state.grades],
             subjectsForTeacher: [...this.state.subjectsForTeacher]
@@ -227,7 +228,6 @@ class Teachers extends Component {
 
     teacherNameIsTaken() {
         let message = '';
-        let originalMessage = message;
         let teachers = [...this.state.teachers];
         let currTeacherName = this.state.name;
         for (let i = 0; i <= teachers.length - 1; i++) {
