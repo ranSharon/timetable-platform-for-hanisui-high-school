@@ -36,6 +36,7 @@ class Teachers extends Component {
             selected: false,
             showAlert: false,
             alertMessage: '',
+            messageStatus: false,
             buttonType: 'אישור',
             disableButtons: false
         };
@@ -232,13 +233,13 @@ class Teachers extends Component {
         let currTeacherName = this.state.name;
         for (let i = 0; i <= teachers.length - 1; i++) {
             if (currTeacherName === teachers[i].name && this.state.buttonType === 'אישור') {
-                message = 'הוזן כבר מורה עם השם הזה,';
-                this.setState({ alertMessage: message });
+                message = 'הוזן כבר מורה עם השם הזה';
+                this.setState({ alertMessage: message, messageStatus: false });
                 this.alertMessage();
                 return true;
             } else if (currTeacherName === teachers[i].name && currTeacherName !== teacherToEdit && this.state.buttonType === 'ערוך') {
-                message = 'הוזן כבר מורה עם השם הזה,';
-                this.setState({ alertMessage: message });
+                message = 'הוזן כבר מורה עם השם הזה';
+                this.setState({ alertMessage: message, messageStatus: false });
                 this.alertMessage();
                 return true;
             }
@@ -254,41 +255,44 @@ class Teachers extends Component {
         let dayOff = this.state.dayOff;
         let grades = [...this.state.grades];
         let subjectsForTeacher = [...this.state.subjectsForTeacher];
-        let message = 'ישנה בעיה עם לפחות אחד מן השדות:,';
+        let message = 'ישנה בעיה עם לפחות אחד מן השדות:$';
         let originalMessage = message;
         if (name === '') {
-            message += 'לא הוזן שם למורה,';
+            message += 'לא הוזן שם למורה$';
         }
         if (!juniorHighSchool && !highSchool) {
-            message += 'יש לבחור  האם המורה מלמד בחטיבה ו/או בתיכון,';
+            message += 'יש לבחור  האם המורה מלמד בחטיבה ו/או בתיכון.';
         }
         if (isNaN(maxTeachHours)) {
-            message += 'יש להזין מספר בשדה שעות ההוראה,';
+            message += 'יש להזין מספר בשדה שעות ההוראה$';
         } else if (maxTeachHours <= 0) {
-            message += 'יש להזין מספר גדול מ-0 בשדה שעות ההוראה,';
+            message += 'יש להזין מספר גדול מ-0 בשדה שעות ההוראה$';
         }
         if (dayOff === '') {
-            message += 'לא נבחר יום חופש רצוי עבור המורה,';
+            message += 'לא נבחר יום חופש רצוי עבור המורה$';
         }
         if (grades.length === 0) {
-            message += 'לא נבחרו שכבות שהמורה מלמד,';
+            message += 'לא נבחרו שכבות שהמורה מלמד$';
         }
         if (subjectsForTeacher.length === 0) {
-            message += 'לא נבחרו מקצועות שהמטרה מלמד,';
+            message += 'לא נבחרו מקצועות שהמורה מלמד$';
         }
 
         if (message === originalMessage) {
             return true;
         } else {
-            this.setState({ alertMessage: message });
+            this.setState({ alertMessage: message, messageStatus: false });
             this.alertMessage();
             return false;
         }
     }
 
     alertMessage() {
-        let alertMessage = this.state.alertMessage;
-        return <AlertMessage message={this.state.alertMessage}></AlertMessage>;
+        //let alertMessage = this.state.alertMessage;
+        return <AlertMessage
+            message={this.state.alertMessage}
+            messageStatus={this.state.messageStatus}>
+        </AlertMessage>;
     }
 
     resetInputs() {
@@ -324,7 +328,8 @@ class Teachers extends Component {
             highSchool: highSchool,
             maxTeachHours: maxTeachHours,
             dayOff: dayOff,
-            alertMessage: alertMessage
+            alertMessage: alertMessage,
+            messageStatus: true
         });
     }
 
@@ -359,6 +364,7 @@ class Teachers extends Component {
                     maxTeachHours: response.data.maxTeachHours,
                     dayOff: response.data.dayOff,
                     alertMessage: alertMessage,
+                    messageStatus: true,
                     buttonType: 'ערוך',
                     disableButtons: true
                 })
@@ -507,7 +513,6 @@ class Teachers extends Component {
                 </div>
                 <button type="button" className="btn btn-secondary" onClick={() => this.setTeachers()}>{this.state.buttonType}</button>
                 {this.alertMessage()}
-                {/* <DataTable teachers={this.state.teachers} table="teachers" onChoose={this.handleChoose} onEdit={this.getTeacher}></DataTable> */}
                 <DataTable
                     teachers={this.state.teachers}
                     table="teachers"

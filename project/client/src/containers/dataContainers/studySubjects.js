@@ -31,7 +31,8 @@ class StudySubjects extends Component {
                 'יב': false
             },
             alertMessage: '',
-            alertMessageForFeatures: '',
+            messageStatus: false,
+            // alertMessageForFeatures: '',
             featuresChecked: [],
             buttonType: 'אישור',
             disableButtons: false
@@ -111,9 +112,13 @@ class StudySubjects extends Component {
                         <option value='' >גמול...</option>
                         <option value="0:15">0:15</option>
                         <option value="0:30">0:30</option>
+                        <option value="0:45">0:45</option>
                         <option value="1:00">1:00</option>
+                        <option value="1:15">1:15</option>
                         <option value="1:30">1:30</option>
+                        <option value="1:45">1:45</option>
                         <option value="2:00">2:00</option>
+                        <option value="2:45">2:45</option>
                         <option value="2:30">2:30</option>
                     </select>
                 </div>
@@ -229,32 +234,35 @@ class StudySubjects extends Component {
         let gmol = this.state.gmol;
         let grouping = this.state.grouping;
         let numOfMix = this.state.numOfMix;
-        let message = 'ישנה בעיה עם לפחות אחד מן השדות:,';
+        let message = 'ישנה בעיה עם לפחות אחד מן השדות:$';
         let originalMessage = message;
         if (subjectName === '') {
-            message += 'לא הוזן מקצוע,';
+            message += 'לא הוזן מקצוע.';
         }
         if (bagrut === true && gmol === '') {
-            message += 'המקצוע נבחר כנלמד לבגרות אך לא צוין גמול,';
+            message += 'המקצוע נבחר כנלמד לבגרות אך לא צוין גמול$';
         }
         if (grouping === true && numOfMix === '') {
-            message += 'המצוע סומן כנלמד להקבצות אך לא ציונו מספר הקבצות,';
+            message += 'המקצוע סומן כנלמד להקבצות אך לא ציונו מספר הקבצות$';
         }
         if (grades.length === 0) {
-            message += 'לא נבחרו כיתות שכבות את המקצוע,';
+            message += 'לא נבחרו כיתות שכבות את המקצוע$';
         }
 
         if (message === originalMessage) {
             return true;
         } else {
-            this.setState({ alertMessage: message });
+            this.setState({ alertMessage: message, messageStatus: false });
             this.alertMessage();
             return false;
         }
     }
 
     alertMessage() {
-        return <AlertMessage message={this.state.alertMessage}></AlertMessage>;
+        return <AlertMessage
+            message={this.state.alertMessage}
+            messageStatus={this.state.messageStatus}>
+        </AlertMessage>;
     }
 
     subjectNameIsTaken() {
@@ -263,13 +271,13 @@ class StudySubjects extends Component {
         let currSubjectName = this.state.subjectName;
         for (let i = 0; i <= subjects.length - 1; i++) {
             if (currSubjectName === subjects[i].subjectName && this.state.buttonType === 'אישור') {
-                message = 'מקצוע זה כבר הוגדר,';
-                this.setState({ alertMessage: message });
+                message = 'מקצוע זה כבר הוגדר';
+                this.setState({ alertMessage: message, messageStatus: false });
                 this.alertMessage();
                 return true;
             } else if (currSubjectName === subjects[i].subjectName && currSubjectName !== subjectToEdit && this.state.buttonType === 'ערוך') {
-                message = 'מקצוע זה כבר הוגדר,';
-                this.setState({ alertMessage: message });
+                message = 'מקצוע זה כבר הוגדר';
+                this.setState({ alertMessage: message, messageStatus: false });
                 this.alertMessage();
                 return true;
             }
@@ -307,6 +315,7 @@ class StudySubjects extends Component {
             grouping: grouping,
             subjectFeatures: [...subjectFeatures],
             alertMessage: alertMessage,
+            messageStatus: true,
             featuresChecked: [...featuresChecked]
         });
     }
@@ -389,6 +398,7 @@ class StudySubjects extends Component {
                     mix: response.data.mix,
                     numOfMix: response.data.numOfMix,
                     alertMessage: alertMessage,
+                    messageStatus: true,
                     buttonType: 'ערוך',
                     disableButtons: true
                 })

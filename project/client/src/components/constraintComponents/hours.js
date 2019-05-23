@@ -6,8 +6,8 @@ const hours = (props) => {
     return (
         <div className="col-2 border border-dark p-0">
             <div className="border border-dark ">שעות לימוד</div>
-            <select className="custom-select" id="inputGroupSelect02" onChange={(e) => props.onHoursSelected(e)} >
-                <option value="">שעות...</option>
+            <select className="custom-select" id="inputGroupSelect02" value={props.hours} onChange={(e) => props.onHoursSelected(e)} >
+                <option value="0">שעות...</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
                 <option value="3">3</option>

@@ -14,7 +14,7 @@ class RoomFeatures extends Component {
     render() {
         return (
             <div className="card">
-                <h5 className="mt-3" style={{"textAlign": "center"}}>לפני הגדרת חדרי לימוד ומקצועות יש להגדיר מאפייני חדרי לימוד כלליים</h5>
+                <h5 className="mt-3" style={{ "textAlign": "center" }}>לפני הגדרת חדרי לימוד ומקצועות יש להגדיר מאפייני חדרי לימוד כלליים</h5>
                 <div className="card-body">
                     <div className="row">
                         <div className="col-6">
@@ -39,12 +39,15 @@ class RoomFeatures extends Component {
                                 table="roomFeatures"
                                 roomFeatures={this.props.roomFeatures}
                                 onDelete={this.props.onDelete}
-                                >
+                            >
                             </DataTable>
                         </div>
                     </div>
                 </div>
-                <AlertMessage message={this.props.alertMessage}></AlertMessage>
+                <AlertMessage
+                    message={this.props.alertMessage}
+                    messageStatus={this.props.alertMessageForFeaturesStatus}>
+                </AlertMessage>
             </div>
         );
     }

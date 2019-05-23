@@ -19,7 +19,9 @@ class ClassRooms extends Component {
             roomFeature: '',
             classRooms: [],
             alertMessage: '',
+            messageStatus: false,
             alertMessageForFeatures: '',
+            alertMessageForFeaturesStatus: false,
             roomFeaturesChecked: [],
             buttonType: 'אישור',
             disableButtons: false
@@ -100,15 +102,15 @@ class ClassRooms extends Component {
 
     checkIfInputValid() {
         let classRoomName = this.state.classRoomName;
-        let message = 'ישנה בעיה עם לפחות אחד מן השדות:,';
+        let message = 'ישנה בעיה עם לפחות אחד מן השדות:$';
         let originalMessage = message;
         if (classRoomName === '') {
-            message += 'לא הוזנה כיתת לימוד,';
+            message += 'לא הוזנה כיתת לימוד$';
         }
         if (message === originalMessage) {
             return true;
         } else {
-            this.setState({ alertMessage: message });
+            this.setState({ alertMessage: message, messageStatus: false });
             this.alertMessage();
             return false;
         }
@@ -120,13 +122,13 @@ class ClassRooms extends Component {
         let currClassRoomName = this.state.classRoomName;
         for (let i = 0; i <= classRooms.length - 1; i++) {
             if (currClassRoomName === classRooms[i].classRoomName && this.state.buttonType === 'אישור') {
-                message = 'הוזנה כבר כיתה כזאת,';
-                this.setState({ alertMessage: message });
+                message = 'הוזנה כבר כיתה כזאת';
+                this.setState({ alertMessage: message, messageStatus: false });
                 this.alertMessage();
                 return true;
             } else if (currClassRoomName === classRooms[i].classRoomName && currClassRoomName !== classRoomToEdit && this.state.buttonType === 'ערוך') {
-                message = 'הוזנה כבר כיתה כזאת,';
-                this.setState({ alertMessage: message });
+                message = 'הוזנה כבר כיתה כזאת';
+                this.setState({ alertMessage: message, messageStatus: false });
                 this.alertMessage();
                 return true;
             }
@@ -147,7 +149,8 @@ class ClassRooms extends Component {
         this.setState({
             classRoomName: classRoomName,
             classRoomFeatures: classRoomFeatures,
-            alertMessage: alertMessage
+            alertMessage: alertMessage,
+            messageStatus: true
         });
     }
 
@@ -158,10 +161,16 @@ class ClassRooms extends Component {
     HandleAddRoomFeature() {
         let roomFeatures = [...this.state.roomFeatures];
         if (this.checkIfFeatureTaken()) {
-            this.setState({ alertMessageForFeatures: 'מאפיין זה כבר הוגדר,' })
+            this.setState({
+                alertMessageForFeatures: 'מאפיין זה כבר הוגדר,',
+                alertMessageForFeaturesStatus: false
+            })
         }
         else if (this.state.roomFeature === '') {
-            this.setState({ alertMessageForFeatures: 'לא הוזן מאפיין בשדה הגרת המאפיין,' })
+            this.setState({ 
+                alertMessageForFeatures: 'לא הוזן מאפיין בשדה הגרת המאפיין',
+                alertMessageForFeaturesStatus: false 
+            })
         }
         else {
             let roomFeatureChecked = { roomFeature: this.state.roomFeature, checked: false };
@@ -175,6 +184,7 @@ class ClassRooms extends Component {
                     this.setState({
                         roomFeatures: [...roomFeatures, this.state.roomFeature],
                         alertMessageForFeatures: 'המאפיין הוגדר',
+                        alertMessageForFeaturesStatus: true,
                         roomFeature: '',
                         roomFeaturesChecked: [...roomFeaturesChecked]
                     });
@@ -196,7 +206,10 @@ class ClassRooms extends Component {
     }
 
     alertMessage() {
-        return <AlertMessage message={this.state.alertMessage}></AlertMessage>;
+        return <AlertMessage
+            message={this.state.alertMessage}
+            messageStatus={this.state.messageStatus}>
+        </AlertMessage>;
     }
 
     handleDeleteRoomFeature(roomFeature) {
@@ -292,6 +305,7 @@ class ClassRooms extends Component {
                     classRoomName: response.data.classRoomName,
                     classRoomFeatures: [...classRoomFeatures],
                     alertMessage: alertMessage,
+                    messageStatus: true,
                     buttonType: 'ערוך',
                     disableButtons: true
                 })
@@ -341,6 +355,7 @@ class ClassRooms extends Component {
                     roomFeatureChange={this.HandleRoomFeatureChange}
                     addRoomFeature={this.HandleAddRoomFeature}
                     alertMessage={this.state.alertMessageForFeatures}
+                    alertMessageForFeaturesStatus={this.state.alertMessageForFeaturesStatus}
                     onDelete={this.handleDeleteRoomFeature}
                 >
                 </RoomFeatures>

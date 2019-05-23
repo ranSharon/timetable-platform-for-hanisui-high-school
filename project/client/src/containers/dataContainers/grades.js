@@ -16,6 +16,7 @@ class Grades extends Component {
 
             buttonType: 'אישור',
             alertMessage: '',
+            messageStatus: false,
             disableButtons: false
         };
         this.getGrade = this.getGrade.bind(this);
@@ -85,19 +86,19 @@ class Grades extends Component {
     checkIfInputValid() {
         let grade = this.state.grade;
         let numOfClasses = this.state.numOfClasses;
-        let message = 'ישנה בעיה עם לפחות אחד מן השדות:,';
+        let message = 'ישנה בעיה עם לפחות אחד מן השדות:$';
         let originalMessage = message;
         if (grade === '') {
-            message += 'לא נבחרה שכבה,';
+            message += 'לא נבחרה שכבה.';
         }
         if (numOfClasses === '') {
-            message += 'לא נחברו מספר כיתות בשכבה,';
+            message += 'לא נחברו מספר כיתות בשכבה$';
         }
 
         if (message === originalMessage) {
             return true;
         } else {
-            this.setState({ alertMessage: message });
+            this.setState({ alertMessage: message, messageStatus: false });
             this.alertMessage();
             return false;
         }
@@ -109,13 +110,13 @@ class Grades extends Component {
         let currDrade = this.state.grade;
         for (let i = 0; i <= grades.length - 1; i++) {
             if (currDrade === grades[i].grade && this.state.buttonType === 'אישור') {
-                message = 'שכבה זו כבר הוגדרה,';
-                this.setState({ alertMessage: message });
+                message = 'שכבה זו כבר הוגדרה';
+                this.setState({ alertMessage: message, messageStatus: false });
                 this.alertMessage();
                 return true;
-            } else if (currDrade === grades[i].grade && currDrade !== greadeToEdit && this.state.buttonType === 'ערוך'){
-                message = 'שכבה זו כבר הוגדרה,';
-                this.setState({ alertMessage: message });
+            } else if (currDrade === grades[i].grade && currDrade !== greadeToEdit && this.state.buttonType === 'ערוך') {
+                message = 'שכבה זו כבר הוגדרה';
+                this.setState({ alertMessage: message, messageStatus: false });
                 this.alertMessage();
                 return true;
             }
@@ -124,7 +125,10 @@ class Grades extends Component {
     }
 
     alertMessage() {
-        return <AlertMessage message={this.state.alertMessage}></AlertMessage>;
+        return <AlertMessage
+            message={this.state.alertMessage}
+            messageStatus={this.state.messageStatus}>
+        </AlertMessage>;
     }
 
     resetInputs() {
@@ -135,7 +139,8 @@ class Grades extends Component {
         this.setState({
             grade: grade,
             numOfClasses: numOfClasses,
-            alertMessage: alertMessage
+            alertMessage: alertMessage,
+            messageStatus: true
         });
     }
 
@@ -149,6 +154,7 @@ class Grades extends Component {
                     grade: response.data.grade,
                     numOfClasses: response.data.numOfClasses,
                     alertMessage: alertMessage,
+                    messageStatus: true,
                     buttonType: 'ערוך',
                     disableButtons: true
                 })

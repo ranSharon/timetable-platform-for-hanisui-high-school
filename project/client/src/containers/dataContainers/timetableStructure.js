@@ -18,6 +18,7 @@ class TimetableStructure extends Component {
             days: [],
             buttonType: 'אישור',
             alertMessage: '',
+            messageStatus: false,
             disableButtons: false
         };
         this.getDay = this.getDay.bind(this);
@@ -94,29 +95,32 @@ class TimetableStructure extends Component {
         let day = this.state.day;
         let startTime = this.state.startTime;
         let endTime = this.state.endTime;
-        let message = 'ישנה בעיה עם לפחות אחד מן השדות:,';
+        let message = 'ישנה בעיה עם לפחות אחד מן השדות:$';
         let originalMessage = message;
         if (day === '') {
-            message += 'לא נבחר יום בשבוע,';
+            message += 'לא נבחר יום בשבוע$';
         }
         if (startTime === '') {
-            message += 'לא נבחרה שעת התחלת יום,';
+            message += 'לא נבחרה שעת התחלת יום$';
         }
         if (endTime === '') {
-            message += 'לא נבחרה שעת סיום יום,';
+            message += 'לא נבחרה שעת סיום יום$';
         }
 
         if (message === originalMessage) {
             return true;
         } else {
-            this.setState({ alertMessage: message });
+            this.setState({ alertMessage: message, messageStatus: false });
             this.alertMessage();
             return false;
         }
     }
 
     alertMessage() {
-        return <AlertMessage message={this.state.alertMessage}></AlertMessage>;
+        return <AlertMessage
+            message={this.state.alertMessage}
+            messageStatus={this.state.messageStatus}
+        ></AlertMessage>;
     }
 
     resetInputs() {
@@ -129,7 +133,8 @@ class TimetableStructure extends Component {
             day: day,
             startTime: startTime,
             endTime: endTime,
-            alertMessage: alertMessage
+            alertMessage: alertMessage,
+            messageStatus: true
         });
     }
 
@@ -139,13 +144,13 @@ class TimetableStructure extends Component {
         let currDay = this.state.day;
         for (let i = 0; i <= days.length - 1; i++) {
             if (currDay === days[i].day && this.state.buttonType === 'אישור') {
-                message = 'יום זה כבר הוגדר,';
-                this.setState({ alertMessage: message });
+                message = 'יום זה כבר הוגדר';
+                this.setState({ alertMessage: message, messageStatus: false });
                 this.alertMessage();
                 return true;
             } else if (currDay === days[i].day && currDay !== dayToEdit && this.state.buttonType === 'ערוך') {
-                message = 'יום זה כבר הוגדר,';
-                this.setState({ alertMessage: message });
+                message = 'יום זה כבר הוגדר';
+                this.setState({ alertMessage: message,  messageStatus: false });
                 this.alertMessage();
                 return true;
             }
@@ -164,6 +169,7 @@ class TimetableStructure extends Component {
                     startTime: response.data.startTime,
                     endTime: response.data.endTime,
                     alertMessage: alertMessage,
+                    messageStatus: true,
                     buttonType: 'ערוך',
                     disableButtons: true
                 })

@@ -6,20 +6,34 @@ const alertMessage = (props) => {
     }
 
     let content = [];
-    let message = props.message.split(',');
+    let message = props.message.split('$');
     message.forEach((element, index) => {
         if (index !== 0 && element !== '') {
             content = [...content, <li key={index} style={{ textAlign: "right" }}>{element}</li>];
         }
     });
-    if(message.length === 1){
-        setInterval(()=> null, 3000);
+    // if(props.messageStatus){
+    //     //setInterval(()=> null, 3000);
+    //     return (
+    //         <div
+    //             className="alert alert-success m-1"
+    //             role="alert"
+    //             style={{ textAlign: "right" }}>
+    //             {props.message}
+    //         </div>
+    //     )
+    // }
+    if (props.messageStatus) {
+        //setInterval(()=> null, 3000);
         return (
             <div
                 className="alert alert-success m-1"
                 role="alert"
                 style={{ textAlign: "right" }}>
-                {props.message}
+                <ul>
+                    {message[0]}
+                    {content}
+                </ul>
             </div>
         )
     }

@@ -5,7 +5,7 @@ const grades = (props) => {
     return (
         <div className="col-2 border border-dark p-0">
             <div className="border border-dark ">שכבה</div>
-            <select className="custom-select" id="inputGroupSelect02" onChange={(e) => props.onGradeSelected(e)} >
+            <select className="custom-select" id="inputGroupSelect02" value={props.grade} onChange={(e) => props.onGradeSelected(e)} >
                 <option value="">שכבה...</option>
                 {props.grades.map((grade, index) =>
                     <option
