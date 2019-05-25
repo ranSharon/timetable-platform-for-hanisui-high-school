@@ -13,7 +13,7 @@ const classes = (props) => {
     }
 
     if (props.classNumber.length > 1) {
-        console.log(props.classNumber);
+        //console.log(props.classNumber);
         return (
             <div className="col-2 border border-dark p-0">
                 <div className="border border-dark ">כיתה</div>

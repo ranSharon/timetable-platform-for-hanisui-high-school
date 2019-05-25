@@ -143,7 +143,7 @@ const lessonSplit = (props) => {
                 <div className="col-2">
                     <input className="ml-2" type="radio" name="split" value="כן" onChange={(e) => props.onlessonSplitClick(e)} />כן
                     <div></div>
-                    <input className="ml-2" type="radio" name="split" checked value="לא" onChange={(e) => props.onlessonSplitClick(e)} />לא
+                    <input className="ml-2" type="radio" name="split" checked={!props.lessonSplit} value="לא" onChange={(e) => props.onlessonSplitClick(e)} />לא
                 </div>
                 <div className="col-4">
                     {showNumOfSplitsLesonOptions()}

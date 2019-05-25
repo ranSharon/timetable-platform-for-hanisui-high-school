@@ -6,10 +6,25 @@ import RoomTableRow from '../../../components/roomTableRow';
 import SubjectToChoseTableRow from '../../../components/subjetToChoseTableRow';
 import TeacherTableRow from '../../../components/teacherTableRow';
 import RoomFeatureTableRow from '../../../components/tableRowComponents/roomFeatureTableRow';
-
-
+import ConstraintTableRow from '../../../components/tableRowComponents/constraintTableRow';
 
 class DataTable extends Component {
+
+    constraintsRows() {
+        let constraints = [];
+        for (let i = this.props.constraints.length - 1; i >= 0; i--) {
+            constraints = [...constraints,
+            <ConstraintTableRow
+                key={i}
+                constraint={this.props.constraints[i]}
+                onDelete={this.props.onDelete}>
+            </ConstraintTableRow>
+            ]
+        }
+        //console.log(constraints);
+        return constraints;
+    }
+
     render() {
         if (this.props.table === 'grades') {
             return (
@@ -234,6 +249,30 @@ class DataTable extends Component {
                     </table>
                 </div>
             )
+        } else if (this.props.table === 'constraints') {
+            return (
+                <div>
+                    <h3 className="mt-3 float-right">שיעורים שהוגדרו</h3>
+                    <table className="table table-striped" style={{ marginTop: 20 }} >
+                        <thead > 
+                            <tr >
+                                <th className="border-bottom-0">מספר</th>
+                                <th className="border-bottom-0">שעות</th>
+                                <th className="border-bottom-0">מורה</th>
+                                <th className="border-bottom-0">מקצוע</th>
+                                <th className="border-bottom-0">שכבה</th>
+                                <th className="border-bottom-0">כיתות</th>
+                                <th className="border-bottom-0">חלק משיעור מפוצל</th>
+                                <th className="border-bottom-0">הקבצה</th>
+                                <th className="border-bottom-0">action</th>
+                            </tr>
+                        </thead>
+                        {<tbody >
+                            {this.constraintsRows()}
+                        </tbody>}
+                    </table>
+                </div>
+            );
         }
     }
 };
