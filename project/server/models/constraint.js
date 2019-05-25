@@ -8,18 +8,20 @@ const constraintSchema = new Schema({
     hours: String,
     classNumber: Array,
     lessonSplit: Boolean, // השיעור מפוצל למספר שעות
-    numOfSplits: Number,
+    numOfSplits: Number, // מספר פיצולי שיעור לשעות
     firstLesson: Number,
     secondlesson: Number,
     thirdlesson: Number,
     subjectGrouping: Boolean, //מחלוק להקבצות
-    subjectMix: Boolean,
+    subjectMix: Boolean, // מקצוע מערבב לאו דווקא מחלוק להקבצות
     subjectFeatures: Array,
-    subjectNumOfMix: Number,
+    subjectNumOfMix: Number, // מספר ההקבצות אליהם מחלוק המקצוע
+    groupingTeachers: Array,
     constraintSplitsBros: Array,
     constraintCopyBros: Array,
     copyConstraint: Boolean,
-    num: Number
+    num: Number,
+    mainConstraint: Boolean
 });
 
 module.exports = mongoose.model('Constraints', constraintSchema);

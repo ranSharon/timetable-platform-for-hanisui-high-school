@@ -15,8 +15,8 @@ const Subject = require('./models/subjects');
 const ClassRoom = require('./models/classRooms');
 const Teacher = require('./models/teachers');
 const Day = require('./models/days');
-const RoomFeature = require('./models/roomFeature'); 
-const Constraint = require('./models/constraint'); 
+const RoomFeature = require('./models/roomFeature');
+const Constraint = require('./models/constraint');
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -78,7 +78,7 @@ dataRoutes.route('/deleteDay/:id').post(function (req, res) {
     let id = req.params.id;
     Day.findByIdAndRemove(id, (err, day) => {
         if (err) {
-            return res.json({'message': 'Some Error' });
+            return res.json({ 'message': 'Some Error' });
         }
         return res.json(day);
     })
@@ -133,7 +133,7 @@ dataRoutes.route('/deleteGrade/:id').post(function (req, res) {
     let id = req.params.id;
     Grade.findByIdAndRemove(id, (err, grade) => {
         if (err) {
-            return res.json({'message': 'Some Error' });
+            return res.json({ 'message': 'Some Error' });
         }
         return res.json(grade);
     })
@@ -188,7 +188,7 @@ dataRoutes.route('/deleteClassRoom/:id').post(function (req, res) {
     let id = req.params.id;
     ClassRoom.findByIdAndRemove(id, (err, classRoom) => {
         if (err) {
-            return res.json({'message': 'Some Error' });
+            return res.json({ 'message': 'Some Error' });
         }
         return res.json(classRoom);
     })
@@ -217,9 +217,9 @@ dataRoutes.route('/addRoomFeature').post(function (req, res) {
 
 dataRoutes.route('/deleteRoomFeature/:roomFeature').post(function (req, res) {
     let name = req.params.roomFeature;
-    RoomFeature.findOneAndDelete({roomFeature: name}, (err, roomFeature) => {
+    RoomFeature.findOneAndDelete({ roomFeature: name }, (err, roomFeature) => {
         if (err) {
-            return res.json({'message': 'Some Error' });
+            return res.json({ 'message': 'Some Error' });
         }
         return res.json(roomFeature);
     })
@@ -280,7 +280,7 @@ dataRoutes.route('/deleteSubject/:id').post(function (req, res) {
     let id = req.params.id;
     Subject.findByIdAndRemove(id, (err, subject) => {
         if (err) {
-            return res.json({'message': 'Some Error' });
+            return res.json({ 'message': 'Some Error' });
         }
         return res.json(subject);
     })
@@ -337,20 +337,39 @@ dataRoutes.route('/updateTeacher/:id').post(function (req, res) {
     });
 });
 
-dataRoutes.route('/updateTeacherByName/:teacherName').post(function (req, res) {
+/* dataRoutes.route('/updateTeacherByName/:teacherName/:hours').post(function (req, res) {
+    let hours = req.params.hours;
     let name = req.params.teacherName;
     Teacher.findOne({name: name}, function (err, teacher) {
         if (!teacher)
             res.status(404).send("data is not found");
         else {
-            teacher.name = name;
-            teacher.juniorHighSchool = req.body.juniorHighSchool;
-            teacher.highSchool = req.body.highSchool;
-            teacher.maxTeachHours = req.body.maxTeachHours;
-            teacher.currentTeachHours = req.body.currentTeachHours;
-            teacher.dayOff = req.body.dayOff;
-            teacher.grades = [...req.body.grades];
-            teacher.subjectsForTeacher = [...req.body.subjectsForTeacher];
+            //teacher.name = name;
+            //teacher.juniorHighSchool = req.body.juniorHighSchool;
+            //teacher.highSchool = req.body.highSchool;
+            //teacher.maxTeachHours = req.body.maxTeachHours;
+            teacher.currentTeachHours += hours;
+            //teacher.dayOff = req.body.dayOff;
+            //teacher.grades = [...req.body.grades];
+            //teacher.subjectsForTeacher = [...req.body.subjectsForTeacher];
+        }
+        teacher.save().then(teacher => {
+            res.json(teacher);
+        })
+            .catch(err => {
+                res.status(400).send("Update not possible");
+            });
+    });
+}); */
+
+dataRoutes.route('/updateTeacherByName').post(function (req, res) {
+    let hours = req.body.hours;
+    let name = req.body.name;
+    Teacher.findOne({ name: name }, function (err, teacher) {
+        if (!teacher)
+            res.status(404).send("data is not found");
+        else {
+            teacher.currentTeachHours += hours;
         }
         teacher.save().then(teacher => {
             res.json(teacher);
@@ -365,7 +384,7 @@ dataRoutes.route('/deleteTeacher/:id').post(function (req, res) {
     let id = req.params.id;
     Teacher.findByIdAndRemove(id, (err, teacher) => {
         if (err) {
-            return res.json({'message': 'Some Error' });
+            return res.json({ 'message': 'Some Error' });
         }
         return res.json(teacher);
     })
@@ -425,10 +444,19 @@ dataRoutes.route('/deleteConstraint/:id').post(function (req, res) {
     let id = req.params.id;
     Constraint.findByIdAndRemove(id, (err, constraint) => {
         if (err) {
-            return res.json({'message': 'Some Error' });
+            return res.json({ 'message': 'Some Error' });
         }
         return res.json(constraint);
     })
+});
+
+dataRoutes.route('/dropConstraints').post(function (req, res) {
+    connection.dropCollection('constraints', (err, result) => {
+        if (err) {
+            return res.json(err);
+        }
+        return res.json(result);
+    });
 });
 
 app.use('/data', dataRoutes);

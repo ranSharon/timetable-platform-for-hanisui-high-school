@@ -45,6 +45,7 @@ const lessonSplit = (props) => {
         const firstHoursOptions = (startHours, endHours) => {
             let hoursOptions = [];
             for (let i = startHours; i <= endHours; i++) {
+                //let hoursOption = <option key={i} value={i.toString()}>{i}</option>
                 let hoursOption = <option key={i} value={i.toString()}>{i}</option>
                 hoursOptions = [...hoursOptions, hoursOption];
             }
@@ -84,7 +85,7 @@ const lessonSplit = (props) => {
                                 <label className="input-group-text" htmlFor="inputGroupSelect02">שעות שיעור ראשון</label>
                             </div>
                             <select className="custom-select" id="inputGroupSelect02" value={props.firstLesson} onChange={(e) => props.onFirstLessonSelected(e)}>
-                                <option value="">שעות ...</option>
+                                <option value="0">שעות ...</option>
                                 {firstHoursOptions(1, totalHours - 1)}
                             </select>
                         </div>
@@ -93,7 +94,7 @@ const lessonSplit = (props) => {
                                 <label className="input-group-text" htmlFor="inputGroupSelect02">שעות שיעור ראשון</label>
                             </div>
                             <select className="custom-select" id="inputGroupSelect02" value={props.secondlesson} onChange={(e) => props.onSecondLessonSelected(e)}>
-                                <option value="">שעות ...</option>
+                                <option value="0">שעות ...</option>
                                 {secondHoursOptions(totalHours - props.firstLesson, totalHours - props.firstLesson)}
                             </select>
                         </div>
@@ -107,7 +108,7 @@ const lessonSplit = (props) => {
                                 <label className="input-group-text" htmlFor="inputGroupSelect02">שעות שיעור ראשון</label>
                             </div>
                             <select className="custom-select" id="inputGroupSelect02" value={props.firstLesson} onChange={(e) => props.onFirstLessonSelected(e)}>
-                                <option value="">שעות ...</option>
+                                <option value="0">שעות ...</option>
                                 {firstHoursOptions(1, totalHours - 2)}
                             </select>
                         </div>
@@ -116,7 +117,7 @@ const lessonSplit = (props) => {
                                 <label className="input-group-text" htmlFor="inputGroupSelect02">שעות שיעור שני</label>
                             </div>
                             <select className="custom-select" id="inputGroupSelect02" value={props.secondlesson} onChange={(e) => props.onSecondLessonSelected(e)}>
-                                <option value="">שעות ...</option>
+                                <option value="0">שעות ...</option>
                                 {secondHoursOptions(1, totalHours - props.firstLesson - 1)}
                             </select>
                         </div>
@@ -125,7 +126,7 @@ const lessonSplit = (props) => {
                                 <label className="input-group-text" htmlFor="inputGroupSelect02">שעות שיעור שלישי</label>
                             </div>
                             <select className="custom-select" id="inputGroupSelect02" value={props.thirdlesson} onChange={(e) => props.onThirdLessonSelected(e)}>
-                                <option value="">שעות ...</option>
+                                <option value="0">שעות ...</option>
                                 {thirdHoursOptions(totalHours - (props.firstLesson + props.secondlesson), totalHours - (props.firstLesson + props.secondlesson))}
                             </select>
                         </div>
@@ -141,7 +142,7 @@ const lessonSplit = (props) => {
             <h6 className="mt-3">האם השיעור מפוצל למספר שיעורים במהלך השבוע</h6>
             <div className="row">
                 <div className="col-2">
-                    <input className="ml-2" type="radio" name="split" value="כן" onChange={(e) => props.onlessonSplitClick(e)} />כן
+                    <input className="ml-2" type="radio" name="split" checked={props.lessonSplit} value="כן" onChange={(e) => props.onlessonSplitClick(e)} />כן
                     <div></div>
                     <input className="ml-2" type="radio" name="split" checked={!props.lessonSplit} value="לא" onChange={(e) => props.onlessonSplitClick(e)} />לא
                 </div>

@@ -17,7 +17,8 @@ class DataTable extends Component {
             <ConstraintTableRow
                 key={i}
                 constraint={this.props.constraints[i]}
-                onDelete={this.props.onDelete}>
+                onDelete={this.props.onDelete}
+                onEdit={this.props.onEdit}>
             </ConstraintTableRow>
             ]
         }

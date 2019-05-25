@@ -5,7 +5,6 @@ import AlertMessage from '../../components/alertMessage';
 import LessonSplit from '../../components/constraintComponents/lessonSplit';
 import DataTable from '../dataContainers/tableDisplay/table';
 
-
 class Constraints extends Component {
     constructor(props) {
         super(props);
@@ -30,6 +29,11 @@ class Constraints extends Component {
             constraintCopyBros: [],
             copyConstraint: false,
             constraints: [],
+            tempConstraints: [],
+            numOfConstraintsToEdit: 0,
+            startIndexToEdit: 0,
+            mainConstraint: true,
+            beforeEditConstraint: {},
             num: 0,
 
             counter: 0,
@@ -66,22 +70,25 @@ class Constraints extends Component {
         this.setClasses = this.setClasses.bind(this);
         this.setClass = this.setClass.bind(this);
         this.setHours = this.setHours.bind(this);
-        // this.setClass = this.setClass.bind(this);
         this.setLessonSplit = this.setLessonSplit.bind(this);
         this.setNumOfSplits = this.setNumOfSplits.bind(this);
         this.setFirstLesson = this.setFirstLesson.bind(this);
         this.setSecondlesson = this.setSecondlesson.bind(this);
         this.setThirdlesson = this.setThirdlesson.bind(this);
         this.deleteConstraint = this.deleteConstraint.bind(this);
+        this.getConstraint = this.getConstraint.bind(this);
     }
 
     componentDidMount() {
         axios.get('http://localhost:4000/data/getConstraints')
             .then(response => {
-                let num = response.data[response.data.length - 1].num + 1;
+                let num = 0;
+                if (response.data.length !== 0) {
+                    num = response.data[response.data.length - 1].num + 1;
+                }
                 this.setState({ constraints: [...response.data.sort(this.compare)], num: num });
-                console.log('constraints:')
-                console.log(this.state.constraints);
+                // console.log('constraints:')
+                // console.log(this.state.constraints);
 
             })
             .catch(function (error) {
@@ -90,8 +97,8 @@ class Constraints extends Component {
         axios.get('http://localhost:4000/data/getTeachers')
             .then(response => {
                 this.setState({ allTeachers: [...response.data] });
-                console.log('allTeachers:')
-                console.log(this.state.allTeachers);
+                // console.log('allTeachers:')
+                // console.log(this.state.allTeachers);
                 this.setTeachers();
             })
             .catch(function (error) {
@@ -100,8 +107,8 @@ class Constraints extends Component {
         axios.get('http://localhost:4000/data/getGrades')
             .then(response => {
                 this.setState({ allGrades: [...response.data] });
-                console.log('allGrades:')
-                console.log(this.state.allGrades);
+                // console.log('allGrades:')
+                // console.log(this.state.allGrades);
             })
             .catch(function (error) {
                 console.log(error);
@@ -109,8 +116,8 @@ class Constraints extends Component {
         axios.get('http://localhost:4000/data/getSubjects')
             .then(response => {
                 this.setState({ allSubjects: [...response.data] });
-                console.log('allSubjects:')
-                console.log(this.state.allSubjects);
+                // console.log('allSubjects:')
+                // console.log(this.state.allSubjects);
             })
             .catch(function (error) {
                 console.log(error);
@@ -128,11 +135,23 @@ class Constraints extends Component {
             let teacherDetails = { ...this.state.teacherDetails };
             this.setTeacherAlertMessage(teacherDetails);
         }
-        if (prevState.constraints.length !== this.state.constraints.length) {
-            console.log(this.state.constraints);
+        if (prevState.constraints.length !== this.state.constraints.length && this.state.buttonType === 'אישור') {
+            let num = 0;
+            if (this.state.constraints.length > 0) {
+                num = this.state.constraints[this.state.constraints.length - 1].num + 1;
+            }
+            this.resetInputs();
             this.setState({
                 constraints: [...this.state.constraints.sort(this.compare)],
-                groupingTeachers: []
+                groupingTeachers: [],
+                num: num
+            })
+        }
+        if (prevState.constraints.length !== this.state.constraints.length && this.state.buttonType === 'ערוך') {
+            let num = prevState.num + 1;
+            this.setState({
+                constraints: [...this.state.constraints.sort(this.compare)],
+                num: num
             })
         }
     }
@@ -152,7 +171,12 @@ class Constraints extends Component {
         } else {
             hours = e.target.value;
         }
-        this.setState({ hours: hours });
+
+        let newCurrentTeachHours = parseInt(hours) + this.state.subjectGmol;
+        this.setState({
+            hours: hours,
+            newCurrentTeachHours: newCurrentTeachHours
+        });
     }
 
     isTeacherDetailsEmpty() {
@@ -165,7 +189,12 @@ class Constraints extends Component {
     }
 
     setSubjects(e, groupIndex) {
-        let teacher = e.target.value;
+        let teacher = '';
+        if (e === null) {
+            teacher = this.state.teacher;
+        } else {
+            teacher = e.target.value;
+        }
         if (groupIndex !== 0) {
             let groupingTeachers = [...this.state.groupingTeachers];
             groupingTeachers[groupIndex] = teacher;
@@ -192,7 +221,9 @@ class Constraints extends Component {
             classNumber: [''],
             grades: [],
             classes: [],
+            subjectGmol: 0,
             subjectGrouping: false,
+            newCurrentTeachHours: this.state.newCurrentTeachHours - this.state.subjectGmol,
             subjectAlertMessage: '',
             groupingTeachers: [...groupingTeachers]
         });
@@ -201,26 +232,18 @@ class Constraints extends Component {
 
     setTeacherAlertMessage(teacherDetails) {
         let teacherAlertMessage = '';
-        // if(this.state.teacher === ''){
-        //     return;
-        // }
         let maxTeachHours = parseInt(teacherDetails.maxTeachHours);
         let currentTeachHours = teacherDetails.currentTeachHours;
-        let hours = parseInt(this.state.hours);
-        let newCurrentTeachHours = this.state.newCurrentTeachHours;
-        newCurrentTeachHours = currentTeachHours + hours;
-        if (this.state.subjectBagrut) {
-            newCurrentTeachHours += this.state.subjectGmol;
-        }
+        let newCurrentTeachHours = currentTeachHours + this.state.newCurrentTeachHours;
         teacherAlertMessage = 'המורה ' + teacherDetails.name + '$מספר שעות הוראה שבועיות מקסמילי: ' + maxTeachHours + '$שעות הוראה שבועיות נוכחי: ' + currentTeachHours + '$שעות הוראה שבועיות עם הוספת אילוץ זה: ' + newCurrentTeachHours;
         this.setState({
             teacherDetails: { ...teacherDetails },
-            newCurrentTeachHours: newCurrentTeachHours,
             teacherAlertMessage: teacherAlertMessage
         });
     }
 
     getGmol(gmol) {
+
         let gmolArray = gmol.split(':');
         let hours = parseInt(gmolArray[0]);
         let minutes = gmolArray[1];
@@ -238,7 +261,13 @@ class Constraints extends Component {
     }
 
     setGrades(e) {
-        let subject = e.target.value;
+        let subject = '';
+        if (e === null) {
+            subject = this.state.subject;
+        } else {
+            subject = e.target.value;
+        }
+        let newCurrentTeachHours = this.state.newCurrentTeachHours - this.state.subjectGmol;
         if (subject === '') {
             this.setState({
                 subject: subject,
@@ -249,6 +278,7 @@ class Constraints extends Component {
                 subjectNumOfMix: 0,
                 subjectFeatures: [],
                 subjectBagrut: false,
+                newCurrentTeachHours: newCurrentTeachHours,
                 subjectGmol: 0,
                 copyConstraint: false,
                 groupingTeachers: [],
@@ -270,7 +300,11 @@ class Constraints extends Component {
         }
         let copyConstraint = false;
         let subjectBagrut = subjectsDetails.bagrut;
-        let subjectGmol = this.getGmol(subjectsDetails.gmol);
+        let subjectGmol = 0;
+        if (subjectBagrut) {
+            subjectGmol = this.getGmol(subjectsDetails.gmol);
+            newCurrentTeachHours = newCurrentTeachHours + subjectGmol;
+        }
         let grades = allteacherGrades.filter(grade => allSubjectGrades.includes(grade));
         let groupingTeachers = [this.state.teacher];
         if (subjectGrouping) {
@@ -279,6 +313,9 @@ class Constraints extends Component {
             for (let i = 1; i <= numOfMix; i++) {
                 groupingTeachers = [...groupingTeachers, ''];
             }
+        }
+        if (subjectBagrut) {
+
         }
         this.setState({
             subject: subject,
@@ -290,13 +327,13 @@ class Constraints extends Component {
             subjectFeatures: [...subjectFeatures],
             subjectBagrut: subjectBagrut,
             subjectGmol: subjectGmol,
+            newCurrentTeachHours: newCurrentTeachHours,
             copyConstraint: copyConstraint,
             groupingTeachers: [...groupingTeachers],
             grade: '',
             classNumber: [''],
             classes: [],
         });
-        //this.setTeacherAlertMessage(this.state.teacherDetails);
         this.setSubjectAlertMessage(subjectsDetails, grades);
     }
 
@@ -379,7 +416,13 @@ class Constraints extends Component {
     }
 
     setClasses(e) {
-        let grade = e.target.value;
+        let grade = '';
+        if (e === null) {
+            grade = this.state.grade;
+        }
+        else {
+            grade = e.target.value;
+        }
         let classes = [];
         let numOfClasses = 0;
         for (let i = 0; i <= this.state.allGrades.length - 1; i++) {
@@ -537,9 +580,23 @@ class Constraints extends Component {
     }
 
     setConstraints() {
-        console.log('submit');
         if (!this.checkIfInputValid()) {
             return;
+        }
+        if (this.state.groupingTeachers.length > 1) {
+            for (let i = 0; i <= this.state.groupingTeachers.length - 1; i++) {
+                for (let j = 0; j <= this.state.allTeachers.length - 1; j++) {
+                    if (this.state.groupingTeachers[i] === this.state.allTeachers[j].name) {
+                        if (this.state.allTeachers[j].currentTeachHours + this.state.newCurrentTeachHours > this.state.allTeachers[j].maxTeachHours) {
+                            let message = 'לא ניתן להגדיר שיעור זה  כי המורה ' + this.state.allTeachers[j].name + ' יחרוג משעות ההוראה שבועיות';
+                            this.setState({ alertMessage: message, messageStatus: false });
+                            this.alertMessage();
+                            return;
+                        }
+
+                    }
+                }
+            }
         }
         if (this.state.teacherDetails.maxTeachHours < this.state.newCurrentTeachHours) {
             let message = 'לא ניתן להגדיר שיעור זה כי המורה יחרוג משעות הוראה שבועיות';
@@ -566,10 +623,12 @@ class Constraints extends Component {
             subjectMix: this.state.subjectGrouping,
             subjectNumOfMix: this.state.subjectNumOfMix,
             subjectFeatures: [...this.state.subjectFeatures],
+            groupingTeachers: [...this.state.groupingTeachers],
             constraintSplitsBros: [],
             constraintCopyBros: [],
             copyConstraint: this.state.copyConstraint,
-            num: this.state.num
+            num: this.state.num,
+            mainConstraint: this.state.mainConstraint
         };
 
         if (this.state.buttonType === 'אישור') {
@@ -591,21 +650,16 @@ class Constraints extends Component {
                         this.setState({
                             constraints: [...this.state.constraints, constraint]
                         });
-                        //this.resetInputs();
                     });
             }
 
             let newTeacher = { ...this.state.teacherDetails };
             let newCurrentTeachHours = this.state.newCurrentTeachHours;
             newTeacher.currentTeachHours = newCurrentTeachHours;
-            console.log(this.state.groupingTeachers);
             if (this.state.groupingTeachers.length > 0) {
                 for (let i = 0; i <= this.state.groupingTeachers.length - 1; i++) {
-                    //newTeacher.name = this.state.groupingTeachers[i];
-                    //console.log(newTeacher.name);
-                    axios.post('http://localhost:4000/data/updateTeacherByName/' + this.state.groupingTeachers[i], newTeacher)
+                    axios.post('http://localhost:4000/data/updateTeacherByName/', { name: this.state.groupingTeachers[i], hours: newCurrentTeachHours })
                         .then(res => {
-                            console.log(res.data);
                             let teachers = [...this.state.allTeachers];
                             for (let i = 0; i <= teachers.length - 1; i++) {
                                 if (teachers[i]._id === res.data._id) {
@@ -615,7 +669,6 @@ class Constraints extends Component {
                             this.setState({
                                 allTeachers: [...teachers]
                             });
-                            this.resetInputs();
                         });
                 }
             }
@@ -623,47 +676,24 @@ class Constraints extends Component {
                 const teacherToEditId = this.state.teacherDetails._id;
                 axios.post('http://localhost:4000/data/updateTeacher/' + teacherToEditId, newTeacher)
                     .then(res => {
-                        //console.log(res.data);
                         let teachers = [...this.state.allTeachers];
                         for (let i = 0; i <= teachers.length - 1; i++) {
                             if (teachers[i]._id === res.data._id) {
                                 teachers[i] = { ...res.data };
                             }
                         }
-                        //console.log(teachers);
                         this.setState({
                             allTeachers: [...teachers]
                         });
-                        this.resetInputs();
                     });
             }
-
-
-            // if(newConstraint.subjectGrouping && newConstraint.lesoonSplit){
-            //     let copyConstrainsID = [];
-            //     num = newConstraint.num;
-
-            // } else if (newTeacher.subjectGrouping){
-
-            // }
-
-        } /* else if (this.state.buttonType === 'ערוך') {
-            axios.post('http://localhost:4000/data/updateTeacher/' + teacherToEditId, newTeacher)
-                .then(res => {
-                    let teachers = [...this.state.teachers];
-                    for (let i = 0; i <= teachers.length - 1; i++) {
-                        if (teachers[i]._id === res.data._id) {
-                            teachers[i] = { ...res.data };
-                        }
-                    }
-                    this.setState({
-                        teachers: [...teachers],
-                        buttonType: 'אישור',
-                        disableButtons: false
-                    });
-                    this.resetInputs();
-                });
-        } */
+        } else if (this.state.buttonType === 'ערוך') {
+            this.setState({
+                buttonType: 'אישור'
+            }, function () {
+                this.setConstraints();
+            })
+        }
     }
 
     checkIfInputValid() {
@@ -757,12 +787,7 @@ class Constraints extends Component {
                 this.setState({ alertMessage: message, messageStatus: false });
                 this.alertMessage();
                 return true;
-            } /* else if (currTeacherName === teachers[i].name && currTeacherName !== teacherToEdit && this.state.buttonType === 'ערוך') {
-                message = 'הוזן כבר מורה עם השם הזה';
-                this.setState({ alertMessage: message, messageStatus: false });
-                this.alertMessage();
-                return true;
-            } */
+            } 
         }
         return false;
 
@@ -779,7 +804,6 @@ class Constraints extends Component {
         let firstLesson = 0; // number init 0
         let secondlesson = 0; // number init 0
         let thirdlesson = 0; // number init 0
-        //let groupingTeachers = [];
         let alertMessage = 'הערך נשמר - אפשר להזין שיעור/שיעורים חדש';
         this.setState({
             teacher: teacher,
@@ -793,10 +817,14 @@ class Constraints extends Component {
             secondlesson: secondlesson,
             thirdlesson: thirdlesson,
             subjectGrouping: false,
-            //groupingTeachers: [...groupingTeachers],
+            mainConstraint: true,
             subjectGmol: 0,
+            newCurrentTeachHours: 0,
             subjectsDetails: {},
             teacherDetails: {},
+            subjects: [],
+            grades: [],
+            classes: [],
             alertMessage: alertMessage,
             teacherAlertMessage: '',
             subjectAlertMessage: '',
@@ -824,9 +852,11 @@ class Constraints extends Component {
                 subjectMix: mainBroConstraint.subjectMix,
                 subjectNumOfMix: mainBroConstraint.subjectNumOfMix,
                 subjectFeatures: [...mainBroConstraint.subjectFeatures],
+                groupingTeachers: [...mainBroConstraint.groupingTeachers],
                 constraintSplitsBros: [],
                 copyConstraint: mainBroConstraint.copyConstraint,
-                num: mainBroConstraint.num
+                num: mainBroConstraint.num,
+                mainConstraint: false
             };
 
             if (i === 1) {
@@ -857,10 +887,12 @@ class Constraints extends Component {
                 subjectMix: realConstraint.subjectMix,
                 subjectNumOfMix: realConstraint.realConstraint,
                 subjectFeatures: [...realConstraint.subjectFeatures],
+                groupingTeachers: [...realConstraint.groupingTeachers],
                 constraintSplitsBros: [],
                 constraintCopyBros: [],
                 copyConstraint: true,
-                num: realConstraint.num
+                num: realConstraint.num,
+                mainConstraint: false
             };
 
             copyConstraints = [...copyConstraints, newConstraint];
@@ -903,7 +935,7 @@ class Constraints extends Component {
                 let numForReal = num3 + copyConstraints.length + 1;
                 realConstraint.copyConstraint = false;
                 this.addSplitConstraintsToDB(realConstraint, splitConstraintsForReal, numForReal);
-            } else if (copyConstraints.length === 3) {
+            } else if (copyConstraints.length === 4) {
                 let splitConstraints1 = [...this.createSplitsBrosConstraints(copyConstraints[0])];
                 let splitConstraints2 = [...this.createSplitsBrosConstraints(copyConstraints[1])];
                 let splitConstraints3 = [...this.createSplitsBrosConstraints(copyConstraints[2])];
@@ -930,13 +962,11 @@ class Constraints extends Component {
             axios.post('http://localhost:4000/data/addConstraint', copyConstraints[0])
                 .then(res => {
                     constraint = { ...res.data };
-                    console.log(res.data._id);
                     realConstraint.constraintCopyBros = [...realConstraint.constraintCopyBros, res.data._id];
                     this.setState({
                         constraints: [...this.state.constraints, constraint]
                     });
                     if (copyConstraints.length === 1) {
-                        console.log('copyConstraints.length === 1');
                         let constraint = {};
                         let num = this.state.num;
                         realConstraint.num = num;
@@ -953,7 +983,6 @@ class Constraints extends Component {
                             });
                     }
                     if (copyConstraints.length > 1) {
-                        console.log('copyConstraints.length > 1');
                         let constraint = {};
                         let num = this.state.num;
                         copyConstraints[1].num = num;
@@ -962,15 +991,11 @@ class Constraints extends Component {
                         axios.post('http://localhost:4000/data/addConstraint', copyConstraints[1])
                             .then(res => {
                                 constraint = { ...res.data };
-                                console.log(res.data._id);
                                 realConstraint.constraintCopyBros = [...realConstraint.constraintCopyBros, res.data._id];
-                                console.log(realConstraint.constraintCopyBros);
                                 this.setState({
                                     constraints: [...this.state.constraints, constraint]
                                 });
                                 if (copyConstraints.length === 2) {
-                                    console.log('copyConstraints.length === 2');
-
                                     let constraint = {};
                                     let num = this.state.num;
                                     realConstraint.num = num;
@@ -986,7 +1011,6 @@ class Constraints extends Component {
                                         });
                                 }
                                 if (copyConstraints.length > 2) {
-                                    console.log('copyConstraints.length > 2');
                                     let constraint = {};
                                     let num = this.state.num;
                                     copyConstraints[2].num = num;
@@ -995,15 +1019,11 @@ class Constraints extends Component {
                                     axios.post('http://localhost:4000/data/addConstraint', copyConstraints[2])
                                         .then(res => {
                                             constraint = { ...res.data };
-                                            console.log(res.data._id);
                                             realConstraint.constraintCopyBros = [...realConstraint.constraintCopyBros, res.data._id];
-                                            console.log(realConstraint.constraintCopyBros);
-
                                             this.setState({
                                                 constraints: [...this.state.constraints, constraint]
                                             });
                                             if (copyConstraints.length === 3) {
-                                                console.log('copyConstraints.length === 3');
 
                                                 let constraint = {};
                                                 let num = this.state.num;
@@ -1014,15 +1034,12 @@ class Constraints extends Component {
                                                 axios.post('http://localhost:4000/data/addConstraint', realConstraint)
                                                     .then(res => {
                                                         constraint = { ...res.data };
-                                                        //console.log(constraint);
                                                         this.setState({
                                                             constraints: [...this.state.constraints, constraint]
                                                         });
                                                     });
                                             }
                                             if (copyConstraints.length > 3) {
-                                                console.log('copyConstraints.length > 3');
-
                                                 let constraint = {};
                                                 let num = this.state.num;
                                                 copyConstraints[2].num = num;
@@ -1031,13 +1048,11 @@ class Constraints extends Component {
                                                 axios.post('http://localhost:4000/data/addConstraint', copyConstraints[2])
                                                     .then(res => {
                                                         constraint = { ...res.data };
-                                                        console.log(res.data._id);
                                                         realConstraint.constraintCopyBros = [...realConstraint.constraintCopyBros, res.data._id];
                                                         this.setState({
                                                             constraints: [...this.state.constraints, constraint]
                                                         });
                                                         if (copyConstraints.length === 4) {
-                                                            console.log('copyConstraints.length === 4');
                                                             let constraint = {};
                                                             let num = this.state.num;
                                                             realConstraint.num = num;
@@ -1047,7 +1062,6 @@ class Constraints extends Component {
                                                             axios.post('http://localhost:4000/data/addConstraint', realConstraint)
                                                                 .then(res => {
                                                                     constraint = { ...res.data };
-                                                                    //console.log(constraint);
                                                                     this.setState({
                                                                         constraints: [...this.state.constraints, constraint]
                                                                     });
@@ -1058,81 +1072,7 @@ class Constraints extends Component {
                                         });
                                 }
                             });
-                        /*   if (copyConstraints.length > 2) {
-                              console.log('copyConstraints.length > 2');
-                              let constraint = {};
-                              let num = this.state.num;
-                              copyConstraints[2].num = num;
-                              num += 1;
-                              this.setState({ num: num });
-                              axios.post('http://localhost:4000/data/addConstraint', copyConstraints[2])
-                                  .then(res => {
-                                      constraint = { ...res.data };
-                                      console.log(res.data._id);
-                                      realConstraint.constraintCopyBros = [...realConstraint.constraintCopyBros, res.data._id];
-                                      console.log(realConstraint.constraintCopyBros);
-  
-                                      this.setState({
-                                          constraints: [...this.state.constraints, constraint]
-                                      });
-                                      if (copyConstraints.length === 3) {
-                                          console.log('copyConstraints.length === 3');
-  
-                                          let constraint = {};
-                                          let num = this.state.num;
-                                          realConstraint.num = num;
-                                          realConstraint.copyConstraint = false;
-                                          num += 1;
-                                          this.setState({ num: num });
-                                          axios.post('http://localhost:4000/data/addConstraint', realConstraint)
-                                              .then(res => {
-                                                  constraint = { ...res.data };
-                                                  //console.log(constraint);
-                                                  this.setState({
-                                                      constraints: [...this.state.constraints, constraint]
-                                                  });
-                                              });
-                                      }
-                                      if (copyConstraints.length > 3) {
-                                          console.log('copyConstraints.length > 3');
-  
-                                          let constraint = {};
-                                          let num = this.state.num;
-                                          copyConstraints[2].num = num;
-                                          num += 1;
-                                          this.setState({ num: num });
-                                          axios.post('http://localhost:4000/data/addConstraint', copyConstraints[2])
-                                              .then(res => {
-                                                  constraint = { ...res.data };
-                                                  console.log(res.data._id);
-                                                  realConstraint.constraintCopyBros = [...realConstraint.constraintCopyBros, res.data._id];
-                                                  this.setState({
-                                                      constraints: [...this.state.constraints, constraint]
-                                                  });
-                                                  if (copyConstraints.length === 4) {
-                                                      console.log('copyConstraints.length === 4');
-                                                      let constraint = {};
-                                                      let num = this.state.num;
-                                                      realConstraint.num = num;
-                                                      realConstraint.copyConstraint = false;
-                                                      num += 1;
-                                                      this.setState({ num: num });
-                                                      axios.post('http://localhost:4000/data/addConstraint', realConstraint)
-                                                          .then(res => {
-                                                              constraint = { ...res.data };
-                                                              //console.log(constraint);
-                                                              this.setState({
-                                                                  constraints: [...this.state.constraints, constraint]
-                                                              });
-                                                          });
-                                                  }
-                                              });
-                                      }
-                                  });
-                          } */
-
                     }
-                    //this.resetInputs();
                 });
         }
     }
@@ -1140,15 +1080,12 @@ class Constraints extends Component {
     addSplitConstraintsToDB(firstConstraint, splitConstraints, num) {
         firstConstraint.hours = firstConstraint.firstLesson.toString();
         let constraint = {};
-        //let num = this.state.num;
         splitConstraints[0].num = num;
         num += 1;
-        // this.setState({ num: num });
         axios.post('http://localhost:4000/data/addConstraint', splitConstraints[0])
             .then(res => {
                 constraint = { ...res.data };
                 firstConstraint.constraintSplitsBros = [...firstConstraint.constraintSplitsBros, res.data._id];
-                //console.log(firstConstraint.constraintSplitsBros);
                 if (this.state.num > num) {
                     this.setState({
                         constraints: [...this.state.constraints, constraint]
@@ -1160,7 +1097,6 @@ class Constraints extends Component {
                     });
                 }
                 if (splitConstraints.length === 1) {
-                    console.log('splitConstraints.length === 1');
                     let constraint = {};
                     firstConstraint.num = num;
                     num += 1;
@@ -1177,19 +1113,15 @@ class Constraints extends Component {
                                     num: num
                                 });
                             }
-                            //this.resetInputs();
                         });
                 }
                 if (splitConstraints.length > 1) {
-                    console.log('splitConstraints.length > 1');
                     let constraint = {};
                     splitConstraints[1].num = num;
-                    num += 1;
                     axios.post('http://localhost:4000/data/addConstraint', splitConstraints[1])
                         .then(res => {
                             constraint = { ...res.data };
                             firstConstraint.constraintSplitsBros = [...firstConstraint.constraintSplitsBros, res.data._id];
-                            //console.log(firstConstraint.constraintSplitsBros);
                             if (this.state.num > num) {
                                 this.setState({
                                     constraints: [...this.state.constraints, constraint]
@@ -1201,10 +1133,9 @@ class Constraints extends Component {
                                 });
                             }
                             if (splitConstraints.length === 2) {
-                                console.log('splitConstraints.length === 2');
                                 let constraint = {};
-                                firstConstraint.num = num;
                                 num += 1;
+                                firstConstraint.num = num;
                                 axios.post('http://localhost:4000/data/addConstraint', firstConstraint)
                                     .then(res => {
                                         constraint = { ...res.data };
@@ -1218,7 +1149,6 @@ class Constraints extends Component {
                                                 num: num
                                             });
                                         }
-                                        //this.resetInputs();
                                     });
                             }
                         });
@@ -1287,7 +1217,6 @@ class Constraints extends Component {
     }
 
     compare(a, b) {
-        // Use toUpperCase() to ignore character casing
         const numeA = a.num;
         const numB = b.num;
 
@@ -1301,7 +1230,6 @@ class Constraints extends Component {
     }
 
     deleteConstraint(constraintId) {
-        console.log(constraintId);
         let fatherConstraint = {};
         let constraints = [...this.state.constraints];
         let constraintsIdToDelete = [];
@@ -1312,8 +1240,7 @@ class Constraints extends Component {
                 break;
             }
         }
-        console.log(index);
-        console.log(fatherConstraint);
+
         let numOfConstraintToDelete = 1;
         if (fatherConstraint.subjectGrouping && fatherConstraint.lessonSplit) {
             numOfConstraintToDelete = fatherConstraint.subjectNumOfMix * fatherConstraint.numOfSplits;
@@ -1325,13 +1252,10 @@ class Constraints extends Component {
 
         for (let i = 1; i <= numOfConstraintToDelete; i++) {
             constraintsIdToDelete = [...constraintsIdToDelete, this.state.constraints[index]._id];
-            console.log(index);
             index--;
         }
-        console.log(constraintsIdToDelete);
 
         for (let i = 0; i <= constraintsIdToDelete.length - 1; i++) {
-            console.log(constraintsIdToDelete[i]);
             axios.post('http://localhost:4000/data/deleteConstraint/' + constraintsIdToDelete[i])
                 .then(response => {
                     let constraints = [...this.state.constraints];
@@ -1348,6 +1272,94 @@ class Constraints extends Component {
                 })
         }
     }
+
+    getConstraint(constraintId) {
+        let fatherConstraint = {};
+        let constraints = [...this.state.constraints];
+        for (let index = 0; index <= constraints.length - 1; index++) {
+            if (constraints[index]._id === constraintId) {
+                fatherConstraint = { ...constraints[index] };
+                break;
+            }
+        }
+        this.setState({
+            buttonType: 'ערוך'
+        });
+
+        let hours = fatherConstraint.hours;
+        if (fatherConstraint.lessonSplit) {
+            hours = fatherConstraint.firstLesson + fatherConstraint.secondlesson + fatherConstraint.thirdlesson;
+        }
+        this.setState({
+            beforeEditConstraint: { ...fatherConstraint },
+            teacher: fatherConstraint.teacher,
+            hours: hours,
+            num: fatherConstraint.num
+        }, function () {
+            this.setSubjects(null, 0);
+            this.setState({
+                subject: fatherConstraint.subject
+            }, function () {
+                this.setGrades(null);
+                this.setState({ grade: fatherConstraint.grade },
+                    function () {
+                        this.setClasses(null);
+                        this.setState({
+                            classNumber: [...fatherConstraint.classNumber],
+                            lessonSplit: fatherConstraint.lessonSplit
+                        }, function () {
+                            this.setState({
+                                numOfSplits: fatherConstraint.numOfSplits,
+                                groupingTeachers: [...fatherConstraint.groupingTeachers]
+                            }, function () {
+                                this.setState({
+                                    firstLesson: fatherConstraint.firstLesson
+                                }, function () {
+                                    this.setState({
+                                        secondlesson: fatherConstraint.secondlesson
+                                    }, function () {
+                                        this.setState({
+                                            thirdlesson: fatherConstraint.thirdlesson,
+                                            subjectGrouping: fatherConstraint.subjectGrouping,
+
+                                            subjectFeatures: [...fatherConstraint.subjectFeatures],
+                                            constraintSplitsBros: [...fatherConstraint.constraintSplitsBros],
+                                            constraintCopyBros: [...fatherConstraint.constraintCopyBros]
+                                        }, function () {
+                                            let newCurrentTeachHours = (this.state.newCurrentTeachHours + hours) * (-1);
+                                            for (let i = 0; i <= fatherConstraint.groupingTeachers.length - 1; i++) {
+                                                axios.post('http://localhost:4000/data/updateTeacherByName/', { name: fatherConstraint.groupingTeachers[i], hours: newCurrentTeachHours })
+                                                    .then(res => {
+                                                        let teachers = [...this.state.allTeachers];
+                                                        for (let i = 0; i <= teachers.length - 1; i++) {
+                                                            if (teachers[i]._id === res.data._id) {
+                                                                teachers[i] = { ...res.data };
+                                                            }
+                                                        }
+                                                        this.setState({
+                                                            allTeachers: [...teachers]
+                                                        });
+                                                    });
+                                            }
+                                            this.deleteConstraint(constraintId);
+                                        });
+
+                                    })
+                                });
+                            });
+                        })
+                    });
+            });
+        }.bind(this));
+        /* axios.post('http://localhost:4000/data/dropConstraints/')
+            .then(response => {
+               console.log(response.data);
+            })
+            .catch(function (error) {
+                console.log(error);
+            }) */
+    }
+
 
 
     render() {
@@ -1397,10 +1409,8 @@ class Constraints extends Component {
                 <DataTable
                     constraints={this.state.constraints}
                     table="constraints"
-                    onDelete={this.deleteConstraint}>
-                    {/* onEdit={this.getTeacher}
-                    onDelete={this.deleteTeacher}
-                    disableButtons={this.state.disableButtons}> */}
+                    onDelete={this.deleteConstraint}
+                    onEdit={this.getConstraint}>
                 </DataTable>
             </div>
         );

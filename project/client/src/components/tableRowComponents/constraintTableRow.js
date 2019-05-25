@@ -15,15 +15,17 @@ const constraintsTableRow = (props) => {
 
 
     const actionButtons = () => {
-        if ((props.constraint.lessonSplit &&
-            props.constraint.constraintSplitsBros.length === 0) ||
-            props.constraint.copyConstraint
-        ) {
+        // if ((props.constraint.lessonSplit &&
+        //     props.constraint.constraintSplitsBros.length === 0) ||
+        //     props.constraint.copyConstraint
+        // ) {
+        //     return <td></td>;
+        if (!props.constraint.mainConstraint) {
             return <td></td>;
         } else {
             return (
                 <td className="border-top border-dark">
-                    <button >ערוך</button>
+                    <button onClick={() => props.onEdit(props.constraint._id)}>ערוך</button>
                     <div style={{ display: "inline" }}></div>
                     <button onClick={() => props.onDelete(props.constraint._id)}>מחק</button>
                 </td>
