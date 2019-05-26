@@ -39,21 +39,45 @@ class ClassRooms extends Component {
         axios.get('http://localhost:4000/data/getClassRooms')
             .then(response => {
                 this.setState({ classRooms: [...response.data] });
+                console.log(response.data);
             })
             .catch(function (error) {
                 console.log(error);
             })
         axios.get('http://localhost:4000/data/getRoomFeatures')
             .then(response => {
+                //console.log(response.data);
                 let roomFeatures = [];
                 for (let i = 0; i <= response.data.length - 1; i++) {
                     roomFeatures.push(response.data[i].roomFeature);
                 }
-                this.setState({ roomFeatures: [...roomFeatures] });
+                this.setState({ roomFeatures: [...roomFeatures] }, function () {
+                    this.initRoomFeaturesChecked();
+                });
+                console.log(roomFeatures);
             })
             .catch(function (error) {
                 console.log(error);
             })
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        console.log(this.state.roomFeaturesChecked);
+    }
+
+    initRoomFeaturesChecked() {
+        let roomFeaturesChecked = [];
+        let roomFeatures = [...this.state.roomFeatures];
+        for (let i = 0; i <= roomFeatures.length - 1; i++) {
+            let featuresChecked = { roomFeature: roomFeatures[i], checked: false };
+            roomFeaturesChecked = [...roomFeaturesChecked, featuresChecked];
+        }
+        console.log(roomFeaturesChecked);
+        console.log(this.state.roomFeaturesChecked);
+        this.setState({ roomFeaturesChecked: [...roomFeaturesChecked] },
+            function () {
+                console.log(this.state.roomFeaturesChecked);
+            });
     }
 
     onClassRoomNameChange(e) {
@@ -167,9 +191,9 @@ class ClassRooms extends Component {
             })
         }
         else if (this.state.roomFeature === '') {
-            this.setState({ 
+            this.setState({
                 alertMessageForFeatures: 'לא הוזן מאפיין בשדה הגרת המאפיין',
-                alertMessageForFeaturesStatus: false 
+                alertMessageForFeaturesStatus: false
             })
         }
         else {
@@ -252,6 +276,43 @@ class ClassRooms extends Component {
         }
     }
 
+    // HandleRoomFeatureCheck(state, roomFeature) {
+    //     console.log(roomFeature);
+        // this.setState({
+        //     classRoomFeatures: [...classRoomFeatures, roomFeature],
+        // })
+        // if (state === true) {
+        //     let classRoomFeatures = [...this.state.classRoomFeatures];
+        //     let i = this.checkIfRoomFeatureUnCheckd(roomFeature);
+        //     if (i !== -1) {
+        //         classRoomFeatures = [...classRoomFeatures.slice(0, i).concat(classRoomFeatures.slice(i + 1, classRoomFeatures.length))];
+        //         this.setRoomFeaturesChecked(roomFeature, state);
+        //         this.setState({
+        //             classRoomFeatures: [...classRoomFeatures]
+        //         })
+        //     } else {
+        //         this.setRoomFeaturesChecked(roomFeature, state);
+        //         this.setState({
+        //             classRoomFeatures: [...classRoomFeatures, roomFeature],
+        //         })
+        //     }
+            // let classRoomFeatures = [...this.state.classRoomFeatures];
+            // let i = this.checkIfRoomFeatureUnCheckd(roomFeature);
+            // if (i !== -1) {
+            //     classRoomFeatures = [...classRoomFeatures.slice(0, i).concat(classRoomFeatures.slice(i + 1, classRoomFeatures.length))];
+            //     this.setRoomFeaturesChecked(roomFeature, false);
+            //     this.setState({
+            //         classRoomFeatures: [...classRoomFeatures]
+            //     })
+            // } else {
+            //     this.setRoomFeaturesChecked(roomFeature, true);
+            //     this.setState({
+            //         classRoomFeatures: [...classRoomFeatures, roomFeature],
+            //     })
+            // }
+    //     }
+    // }
+
     checkIfRoomFeatureUnCheckd(roomFeature) {
         let classRoomFeatures = [...this.state.classRoomFeatures];
         for (let i = 0; i <= classRoomFeatures.length - 1; i++) {
@@ -282,6 +343,8 @@ class ClassRooms extends Component {
     }
 
     setCheckStatus(classRoomFeatures) {
+        console.log(classRoomFeatures);
+        console.log(this.state.roomFeatures);
         let roomFeaturesChecked = [...this.state.roomFeaturesChecked];
         for (let i = 0; i <= classRoomFeatures.length - 1; i++) {
             for (let j = 0; j <= roomFeaturesChecked.length - 1; j++) {
@@ -290,7 +353,11 @@ class ClassRooms extends Component {
                 }
             }
         }
-        this.setState({ roomFeaturesChecked: [...roomFeaturesChecked] });
+        this.setState({ roomFeaturesChecked: [...roomFeaturesChecked] }, function () {
+            console.log(this.state.roomFeaturesChecked);
+        }
+
+        );
     }
 
     getClassRoom(classRoomId) {
@@ -383,7 +450,7 @@ class ClassRooms extends Component {
                                 key={index}
                                 roomFeature={roomFeature}
                                 roomFeatureCheck={this.HandleRoomFeatureCheck}
-                                checked={this.getCheckStatus(roomFeature)}>
+                                check={this.getCheckStatus(roomFeature)}>
                             </RoomFeatureCheckBox>
                         )
                     })}

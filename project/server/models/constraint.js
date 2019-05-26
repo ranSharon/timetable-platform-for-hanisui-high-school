@@ -21,7 +21,8 @@ const constraintSchema = new Schema({
     constraintCopyBros: Array,
     copyConstraint: Boolean,
     num: Number,
-    mainConstraint: Boolean
+    mainConstraint: Boolean,
+    classRoom: String
 });
 
 module.exports = mongoose.model('Constraints', constraintSchema);

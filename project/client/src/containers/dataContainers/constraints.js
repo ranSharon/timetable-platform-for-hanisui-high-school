@@ -5,6 +5,8 @@ import AlertMessage from '../../components/alertMessage';
 import LessonSplit from '../../components/constraintComponents/lessonSplit';
 import DataTable from '../dataContainers/tableDisplay/table';
 
+let numEdit = 0;
+
 class Constraints extends Component {
     constructor(props) {
         super(props);
@@ -20,26 +22,27 @@ class Constraints extends Component {
             firstLesson: 0,
             secondlesson: 0,
             thirdlesson: 0,
+            classRoom: '',
 
             // this parms also in constraint model
             subjectGrouping: false,
             subjectMix: false,
             subjectFeatures: [],
-            constraintSplitsBros: [],
-            constraintCopyBros: [],
+            constraintSplitsBros: [],// delete
+            constraintCopyBros: [],//delete
             copyConstraint: false,
             constraints: [],
-            tempConstraints: [],
-            numOfConstraintsToEdit: 0,
-            startIndexToEdit: 0,
+            tempConstraints: [],//delete
+            numOfConstraintsToEdit: 0,//delete
+            startIndexToEdit: 0,//delete
             mainConstraint: true,
-            beforeEditConstraint: {},
+            beforeEditConstraint: {},//delete
             num: 0,
 
-            counter: 0,
+            counter: 0,//delete
 
             teacherDetails: {},
-            newCurrentTeachHours: 0,
+            newCurrentTeachHours: 0,//change name
             subjectsDetails: {},
             subjectBagrut: false,
             subjectGmol: 0,
@@ -125,6 +128,7 @@ class Constraints extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
+        console.log(this.state.num);
         if (prevState.hours !== this.state.hours) {
             if (!this.isTeacherDetailsEmpty()) {
                 let teacherDetails = { ...this.state.teacherDetails };
@@ -138,7 +142,8 @@ class Constraints extends Component {
         if (prevState.constraints.length !== this.state.constraints.length && this.state.buttonType === 'אישור') {
             let num = 0;
             if (this.state.constraints.length > 0) {
-                num = this.state.constraints[this.state.constraints.length - 1].num + 1;
+                let constraints = [...this.state.constraints.sort(this.compare)];
+                num = constraints[constraints.length - 1].num + 1;
             }
             this.resetInputs();
             this.setState({
@@ -148,7 +153,13 @@ class Constraints extends Component {
             })
         }
         if (prevState.constraints.length !== this.state.constraints.length && this.state.buttonType === 'ערוך') {
-            let num = prevState.num + 1;
+            console.log(this.state.constraints);
+            console.log(this.state.constraints.length);
+            // console.log(this.state.constraints[this.state.constraints.length-1].num);
+            let num = 0;
+            if (this.state.constraints.length > 0) {
+                num = this.state.constraints[this.state.constraints.length - 1].num + 1;
+            }
             this.setState({
                 constraints: [...this.state.constraints.sort(this.compare)],
                 num: num
@@ -628,7 +639,8 @@ class Constraints extends Component {
             constraintCopyBros: [],
             copyConstraint: this.state.copyConstraint,
             num: this.state.num,
-            mainConstraint: this.state.mainConstraint
+            mainConstraint: this.state.mainConstraint,
+            classRoom: this.state.classRoom
         };
 
         if (this.state.buttonType === 'אישור') {
@@ -787,7 +799,7 @@ class Constraints extends Component {
                 this.setState({ alertMessage: message, messageStatus: false });
                 this.alertMessage();
                 return true;
-            } 
+            }
         }
         return false;
 
@@ -856,7 +868,8 @@ class Constraints extends Component {
                 constraintSplitsBros: [],
                 copyConstraint: mainBroConstraint.copyConstraint,
                 num: mainBroConstraint.num,
-                mainConstraint: false
+                mainConstraint: false,
+                classRoom: mainBroConstraint.classRoom
             };
 
             if (i === 1) {
@@ -892,7 +905,8 @@ class Constraints extends Component {
                 constraintCopyBros: [],
                 copyConstraint: true,
                 num: realConstraint.num,
-                mainConstraint: false
+                mainConstraint: false,
+                classRoom: realConstraint.classRoom
             };
 
             copyConstraints = [...copyConstraints, newConstraint];
