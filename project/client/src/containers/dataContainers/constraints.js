@@ -65,7 +65,8 @@ class Constraints extends Component {
             buttonType: 'אישור',
             disableButtons: false,
             teacherButtonType: 'הצג פרטיי מורה',
-            subjectButtonType: 'הצג פרטיי מקצוע'
+            subjectButtonType: 'הצג פרטיי מקצוע',
+            mainButtonDisable: false
 
         }
         this.setSubjects = this.setSubjects.bind(this);
@@ -164,6 +165,9 @@ class Constraints extends Component {
                 constraints: [...this.state.constraints.sort(this.compare)],
                 num: num
             })
+        }
+        if(prevState.constraints.length === this.state.constraints.length && this.state.mainButtonDisable){
+            this.setState({mainButtonDisable: false});
         }
     }
 
@@ -600,7 +604,7 @@ class Constraints extends Component {
                     if (this.state.groupingTeachers[i] === this.state.allTeachers[j].name) {
                         if (this.state.allTeachers[j].currentTeachHours + this.state.newCurrentTeachHours > this.state.allTeachers[j].maxTeachHours) {
                             let message = 'לא ניתן להגדיר שיעור זה  כי המורה ' + this.state.allTeachers[j].name + ' יחרוג משעות ההוראה שבועיות';
-                            this.setState({ alertMessage: message, messageStatus: false });
+                            this.setState({ alertMessage: message, messageStatus: false});
                             this.alertMessage();
                             return;
                         }
@@ -611,13 +615,16 @@ class Constraints extends Component {
         }
         if (this.state.teacherDetails.maxTeachHours < this.state.newCurrentTeachHours) {
             let message = 'לא ניתן להגדיר שיעור זה כי המורה יחרוג משעות הוראה שבועיות';
-            this.setState({ alertMessage: message, messageStatus: false });
+            this.setState({ alertMessage: message, messageStatus: false});
             this.alertMessage();
             return;
         }
         if (this.constraintExist()) {
+            this.setState({mainButtonDisable: false});
             return;
         }
+
+        this.setState({mainButtonDisable: true});
 
         const newConstraint = {
             teacher: this.state.teacher,
@@ -1297,7 +1304,8 @@ class Constraints extends Component {
             }
         }
         this.setState({
-            buttonType: 'ערוך'
+            buttonType: 'ערוך',
+            mainButtonDisable: true
         });
 
         let hours = fatherConstraint.hours;
@@ -1418,7 +1426,13 @@ class Constraints extends Component {
                         {this.showSubjectDetails()}
                     </div>
                 </div>
-                <button type="button" className="btn btn-secondary" onClick={() => this.setConstraints()}>{this.state.buttonType}</button>
+                <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => this.setConstraints()}
+                    disabled={this.state.mainButtonDisable}>
+                    {this.state.buttonType}
+                </button>
                 {this.alertMessage()}
                 <DataTable
                     constraints={this.state.constraints}
