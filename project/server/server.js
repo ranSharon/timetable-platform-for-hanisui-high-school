@@ -17,6 +17,7 @@ const Teacher = require('./models/teachers');
 const Day = require('./models/days');
 const RoomFeature = require('./models/roomFeature');
 const Constraint = require('./models/constraint');
+const TimeTable = require('./models/timeTable');
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -456,6 +457,36 @@ dataRoutes.route('/dropConstraints').post(function (req, res) {
             return res.json(err);
         }
         return res.json(result);
+    });
+});
+
+dataRoutes.route('/addTimeTable').post(function (req, res) {
+    let timeTable = new TimeTable(req.body);
+    timeTable.save()
+        .then(timeTable => {
+            res.status(200).json(timeTable);
+        })
+        .catch(err => {
+            res.status(400).send('adding new todo failed');
+        });
+});
+
+dataRoutes.route('/dropTimeTable').post(function (req, res) {
+    connection.dropCollection('timetables', (err, result) => {
+        if (err) {
+            return res.json(err);
+        }
+        return res.json(result);
+    });
+});
+
+dataRoutes.route('/getTimeTable').get(function (req, res) {
+    TimeTable.find(function (err, timeTable) {
+        if (err) {
+            console.log(err);
+        } else {
+            res.json(timeTable);
+        }
     });
 });
 

@@ -21,7 +21,7 @@ class ConstraintBox extends Component {
     }
 
     ConstraintBoxClicked() {
-        this.props.click(this.props.data)
+        this.props.click(this.props.data);
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -39,24 +39,27 @@ class ConstraintBox extends Component {
         let numOfLesson = parseInt(this.props.data.hours);
         height = height * numOfLesson;
         height = height + 'px';
+        const opacity = this.props.isDragging ? 0: 1;
         let boxStyle = {
             "cursor": "pointer",
             "width": "162px",
-            "height": height
+            "height": height,
+            "opacity": opacity
         };
-        
 
         return (
             <div
                 className={"d-inline-block card text-center m-1 " + this.state.border}
                 style={boxStyle}
                 onClick={() => this.ConstraintBoxClicked()}>
-                <span>{this.props.data.subject + ' ,'}</span>
-                <span>{this.props.data.teacher + ' ,'}</span>
-                <span>{this.props.data.hours}</span>
+                <span>{this.props.data.subject + ', '}</span>
+                <span>{this.props.data.teacher + ', '}</span>
+                <span>{this.props.data.hours+', '}</span>
+                <span>{this.props.data.classNumber+', '}</span>
             </div>
         );
     }
 }
 
 export default ConstraintBox;
+// export default DragSource('constraint', constraintSource, collect)(ConstraintBox);

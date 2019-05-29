@@ -1,11 +1,16 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
 import Data from './containers/data';
 import BuildTimetable from './containers/buildTimetable';
 import DataOnTimetable from './containers/dataOnTimetable';
 import General from './containers/general';
+
+// import { DragDropContext } from 'react-dnd';
+import { DragDropContextProvider } from 'react-dnd';
+import HTML5Backend from 'react-dnd-html5-backend';
+import withScrolling from 'react-dnd-scrollzone';
+
 
 class App extends Component {
   render() {
@@ -41,4 +46,8 @@ class App extends Component {
   }
 }
 
+
+
+
 export default App;
+// export default DragDropContext(HTML5Backend)(App);

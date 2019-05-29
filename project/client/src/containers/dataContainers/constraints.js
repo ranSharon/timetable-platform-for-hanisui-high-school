@@ -102,7 +102,7 @@ class Constraints extends Component {
             .then(response => {
                 this.setState({ allTeachers: [...response.data] });
                 // console.log('allTeachers:')
-                // console.log(this.state.allTeachers);
+                console.log(this.state.allTeachers);
                 this.setTeachers();
             })
             .catch(function (error) {
@@ -1372,7 +1372,8 @@ class Constraints extends Component {
                         })
                     });
             });
-        }.bind(this));
+        });
+        // }.bind(this));
         /* axios.post('http://localhost:4000/data/dropConstraints/')
             .then(response => {
                console.log(response.data);
