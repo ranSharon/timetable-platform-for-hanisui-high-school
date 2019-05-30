@@ -3,22 +3,33 @@ import { DragSource } from 'react-dnd';
 
 
 const constraintSource = {
-    endDrag(props, monitor, component){
+    endDrag(props, monitor, component) {
         // if(monitor.didDrop()){
-            // component.setState({ border: '' });
-            // console.log(component);
+        // component.setState({ border: '' });
+        // console.log(component);
         // }
-        props.drag(monitor.isDragging());
+        if (props.inTable) {
+            // props.drag(true, props.data, props.classRoom);
+            props.endDrag()
+        }
+        // props.endDrag();
+        // props.drag(monitor.isDragging());
         // console.log(component);
         // console.log(monitor.didDrop())
-        // return console.log(props);
+        // return props.endDrag();
     },
     beginDrag(props, monitor, component) {
-        // console.log(component);
+        // console.log(props.data);
+        // console.log(props.classRoom);
+        console.log(props.inTable);
         // component.setState({ border: '' });
-        props.drag(monitor.isDragging());
+        if (props.inTable) {
+            // props.drag(true, props.data, props.classRoom);
+            props.drag(true, props.data, props.classRoom);
+        }
+        // props.drag(monitor.isDragging());
         return props.data;
-    } 
+    }
 }
 
 function collect(connect, monitor) {
@@ -68,7 +79,7 @@ class DragConstraintBox extends Component {
         let numOfLesson = parseInt(this.props.data.hours);
         height = height * numOfLesson;
         height = height + 'px';
-        const opacity = this.props.isDragging ? 0: 1;
+        const opacity = this.props.isDragging ? 0 : 1;
         // console.log(this.props.isDragging);
         let boxStyle = {
             "cursor": "pointer",
@@ -83,10 +94,10 @@ class DragConstraintBox extends Component {
             <div
                 className={"d-inline-block card text-center  " + this.state.border}
                 style={boxStyle}
-                // style={{opacity}}
-                // onClick={() => this.ConstraintBoxClicked()}
-                
-                >
+            // style={{opacity}}
+            // onClick={() => this.ConstraintBoxClicked()}
+
+            >
                 <span>{this.props.data.subject + ' ,'}</span>
                 <span>{this.props.data.teacher + ' ,'}</span>
                 <span>{this.props.data.hours}</span>

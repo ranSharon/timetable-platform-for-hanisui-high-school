@@ -91,8 +91,8 @@ class Constraints extends Component {
                     num = response.data[response.data.length - 1].num + 1;
                 }
                 this.setState({ constraints: [...response.data.sort(this.compare)], num: num });
-                // console.log('constraints:')
-                // console.log(this.state.constraints);
+                console.log('constraints:')
+                console.log(this.state.constraints);
 
             })
             .catch(function (error) {
@@ -129,7 +129,7 @@ class Constraints extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        console.log(this.state.num);
+        // console.log(this.state.teacherDetails);
         if (prevState.hours !== this.state.hours) {
             if (!this.isTeacherDetailsEmpty()) {
                 let teacherDetails = { ...this.state.teacherDetails };
@@ -154,8 +154,8 @@ class Constraints extends Component {
             })
         }
         if (prevState.constraints.length !== this.state.constraints.length && this.state.buttonType === 'ערוך') {
-            console.log(this.state.constraints);
-            console.log(this.state.constraints.length);
+            // console.log(this.state.constraints);
+            // console.log(this.state.constraints.length);
             // console.log(this.state.constraints[this.state.constraints.length-1].num);
             let num = 0;
             if (this.state.constraints.length > 0) {
@@ -166,8 +166,8 @@ class Constraints extends Component {
                 num: num
             })
         }
-        if(prevState.constraints.length === this.state.constraints.length && this.state.mainButtonDisable){
-            this.setState({mainButtonDisable: false});
+        if (prevState.constraints.length === this.state.constraints.length && this.state.mainButtonDisable) {
+            this.setState({ mainButtonDisable: false });
         }
     }
 
@@ -304,9 +304,11 @@ class Constraints extends Component {
             return;
         }
         let subjectsDetails = { ...this.getSubjectsDetails(subject) };
+        console.log(subjectsDetails);
         let allteacherGrades = [...this.state.teacherDetails.grades];
         let allSubjectGrades = [...subjectsDetails.grades];
         let subjectMix = subjectsDetails.mix;
+        // console.log(subjectMix);
         let subjectFeatures = [...subjectsDetails.subjectFeatures]
         let subjectGrouping = subjectsDetails.grouping;
         let subjectNumOfMix = 0;
@@ -348,6 +350,10 @@ class Constraints extends Component {
             grade: '',
             classNumber: [''],
             classes: [],
+        }, function(){
+            console.log(this.state.subjectMix);
+            console.log(this.state.subjectGrouping);
+            console.log(this.state.subjectNumOfMix);
         });
         this.setSubjectAlertMessage(subjectsDetails, grades);
     }
@@ -598,33 +604,36 @@ class Constraints extends Component {
         if (!this.checkIfInputValid()) {
             return;
         }
-        if (this.state.groupingTeachers.length > 1) {
+        if (this.state.groupingTeachers.length > 0) {
+            // console.log('con');
             for (let i = 0; i <= this.state.groupingTeachers.length - 1; i++) {
                 for (let j = 0; j <= this.state.allTeachers.length - 1; j++) {
                     if (this.state.groupingTeachers[i] === this.state.allTeachers[j].name) {
-                        if (this.state.allTeachers[j].currentTeachHours + this.state.newCurrentTeachHours > this.state.allTeachers[j].maxTeachHours) {
+                        // console.log(this.state.allTeachers[j].currentTeachHours);
+                        // console.log(this.state.newCurrentTeachHours);
+                        // console.log(typeof this.state.allTeachers[j].maxTeachHours);
+                        if (this.state.allTeachers[j].currentTeachHours + this.state.newCurrentTeachHours > parseInt(this.state.allTeachers[j].maxTeachHours)) {
                             let message = 'לא ניתן להגדיר שיעור זה  כי המורה ' + this.state.allTeachers[j].name + ' יחרוג משעות ההוראה שבועיות';
-                            this.setState({ alertMessage: message, messageStatus: false});
+                            this.setState({ alertMessage: message, messageStatus: false });
                             this.alertMessage();
                             return;
                         }
-
                     }
                 }
             }
         }
-        if (this.state.teacherDetails.maxTeachHours < this.state.newCurrentTeachHours) {
-            let message = 'לא ניתן להגדיר שיעור זה כי המורה יחרוג משעות הוראה שבועיות';
-            this.setState({ alertMessage: message, messageStatus: false});
-            this.alertMessage();
-            return;
-        }
+        // if (this.state.teacherDetails.maxTeachHours < this.state.newCurrentTeachHours) {
+        //     let message = 'לא ניתן להגדיר שיעור זה כי המורה יחרוג משעות הוראה שבועיות';
+        //     this.setState({ alertMessage: message, messageStatus: false });
+        //     this.alertMessage();
+        //     return;
+        // }
         if (this.constraintExist()) {
-            this.setState({mainButtonDisable: false});
+            this.setState({ mainButtonDisable: false });
             return;
         }
 
-        this.setState({mainButtonDisable: true});
+        this.setState({ mainButtonDisable: true });
 
         const newConstraint = {
             teacher: this.state.teacher,
@@ -638,7 +647,7 @@ class Constraints extends Component {
             secondlesson: this.state.secondlesson,
             thirdlesson: this.state.thirdlesson,
             subjectGrouping: this.state.subjectGrouping,
-            subjectMix: this.state.subjectGrouping,
+            subjectMix: this.state.subjectMix,
             subjectNumOfMix: this.state.subjectNumOfMix,
             subjectFeatures: [...this.state.subjectFeatures],
             groupingTeachers: [...this.state.groupingTeachers],
@@ -649,6 +658,7 @@ class Constraints extends Component {
             mainConstraint: this.state.mainConstraint,
             classRoom: this.state.classRoom
         };
+        console.log(newConstraint);
 
         if (this.state.buttonType === 'אישור') {
             if (newConstraint.subjectGrouping) {
@@ -675,6 +685,7 @@ class Constraints extends Component {
             let newTeacher = { ...this.state.teacherDetails };
             let newCurrentTeachHours = this.state.newCurrentTeachHours;
             newTeacher.currentTeachHours = newCurrentTeachHours;
+            // console.log(this.state.newCurrentTeachHours);
             if (this.state.groupingTeachers.length > 0) {
                 for (let i = 0; i <= this.state.groupingTeachers.length - 1; i++) {
                     axios.post('http://localhost:4000/data/updateTeacherByName/', { name: this.state.groupingTeachers[i], hours: newCurrentTeachHours })
@@ -690,8 +701,7 @@ class Constraints extends Component {
                             });
                         });
                 }
-            }
-            else {
+            } else {
                 const teacherToEditId = this.state.teacherDetails._id;
                 axios.post('http://localhost:4000/data/updateTeacher/' + teacherToEditId, newTeacher)
                     .then(res => {
@@ -1275,6 +1285,45 @@ class Constraints extends Component {
             constraintsIdToDelete = [...constraintsIdToDelete, this.state.constraints[index]._id];
             index--;
         }
+        // console.log(fatherConstraint.subject);
+        // console.log(this.state.allSubjects);
+        // console.log(fatherConstraint.subjectGrouping);
+        // console.log(fatherConstraint.groupingTeachers);
+        let gmol = 0;
+        let allSubjects = [...this.state.allSubjects];
+        for (let i = 0; i <= allSubjects.length - 1; i++) {
+            if (allSubjects[i].subjectName === fatherConstraint.subject && allSubjects[i].bagrut) {
+                gmol = this.getGmol(allSubjects[i].gmol);
+                // console.log(gmol);
+                break;
+            }
+        }
+
+        // console.log(parseInt(fatherConstraint.hours) + gmol);
+        // console.log(fatherConstraint);
+
+        let newCurrentTeachHours = (parseInt(fatherConstraint.hours) + gmol) * (-1);
+        if (fatherConstraint.lessonSplit) {
+            newCurrentTeachHours = (fatherConstraint.firstLesson + fatherConstraint.secondlesson + fatherConstraint.thirdlesson + gmol) * (-1);
+        }
+        // console.log(newCurrentTeachHours);
+        for (let i = 0; i <= fatherConstraint.groupingTeachers.length - 1; i++) {
+            axios.post('http://localhost:4000/data/updateTeacherByName/', { name: fatherConstraint.groupingTeachers[i], hours: newCurrentTeachHours })
+                .then(res => {
+                    let teachers = [...this.state.allTeachers];
+                    for (let i = 0; i <= teachers.length - 1; i++) {
+                        if (teachers[i]._id === res.data._id) {
+                            teachers[i] = { ...res.data };
+                        }
+                    }
+                    this.setState({
+                        allTeachers: [...teachers]
+                    }, function () {
+                        // console.log(this.state.newCurrentTeachHours);
+                        // console.log(this.state.allTeachers);
+                    });
+                });
+        }
 
         for (let i = 0; i <= constraintsIdToDelete.length - 1; i++) {
             axios.post('http://localhost:4000/data/deleteConstraint/' + constraintsIdToDelete[i])
@@ -1303,12 +1352,13 @@ class Constraints extends Component {
                 break;
             }
         }
+        // console.log(fatherConstraint);
         this.setState({
             buttonType: 'ערוך',
             mainButtonDisable: true
         });
 
-        let hours = fatherConstraint.hours;
+        let hours = parseInt(fatherConstraint.hours);
         if (fatherConstraint.lessonSplit) {
             hours = fatherConstraint.firstLesson + fatherConstraint.secondlesson + fatherConstraint.thirdlesson;
         }
@@ -1348,7 +1398,16 @@ class Constraints extends Component {
                                             constraintSplitsBros: [...fatherConstraint.constraintSplitsBros],
                                             constraintCopyBros: [...fatherConstraint.constraintCopyBros]
                                         }, function () {
+                                            // console.log(this.state.newCurrentTeachHours);
                                             let newCurrentTeachHours = (this.state.newCurrentTeachHours + hours) * (-1);
+                                            // console.log(newCurrentTeachHours);
+                                            let teacherDetails = { ...this.state.teacherDetails };
+                                            teacherDetails.currentTeachHours += newCurrentTeachHours;
+                                            // console.log(teacherDetails.currentTeachHours);
+                                            this.setState({ teacherDetails: { ...teacherDetails } }, function () {
+                                                // console.log(this.state.teacherDetails);
+                                                this.setTeacherAlertMessage(teacherDetails);
+                                            });
                                             for (let i = 0; i <= fatherConstraint.groupingTeachers.length - 1; i++) {
                                                 axios.post('http://localhost:4000/data/updateTeacherByName/', { name: fatherConstraint.groupingTeachers[i], hours: newCurrentTeachHours })
                                                     .then(res => {
@@ -1356,10 +1415,15 @@ class Constraints extends Component {
                                                         for (let i = 0; i <= teachers.length - 1; i++) {
                                                             if (teachers[i]._id === res.data._id) {
                                                                 teachers[i] = { ...res.data };
+                                                                // console.log(hours);
                                                             }
                                                         }
                                                         this.setState({
-                                                            allTeachers: [...teachers]
+                                                            allTeachers: [...teachers],
+                                                            newCurrentTeachHours: (this.state.newCurrentTeachHours + hours)
+                                                        }, function () {
+                                                            // console.log(this.state.newCurrentTeachHours);
+                                                            // console.log(this.state.allTeachers);
                                                         });
                                                     });
                                             }

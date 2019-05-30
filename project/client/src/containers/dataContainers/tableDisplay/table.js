@@ -120,7 +120,8 @@ class DataTable extends Component {
                                     subjectFeatures={subject.subjectFeatures}
                                     onEdit={this.props.onEdit}
                                     onDelete={this.props.onDelete}
-                                    id={subject._id}>
+                                    id={subject._id}
+                                    disableButtons={this.props.disableButtons}>
                                 </SubjectTableRow>
                             )}
                         </tbody>

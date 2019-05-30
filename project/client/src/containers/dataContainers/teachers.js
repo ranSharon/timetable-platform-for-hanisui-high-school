@@ -62,6 +62,7 @@ class Teachers extends Component {
     }
 
     onlySubjectsAndGrades(subjects) {
+        allSubject = [];
         subjects.forEach(subject => {
             let newSubject = { subjectName: '', grades: [] }
             newSubject.subjectName = subject.subjectName;
@@ -508,7 +509,8 @@ class Teachers extends Component {
                             subjects={this.state.subjects}
                             chosenSubjects={this.state.subjectsForTeacher}
                             table="subjetsTochose"
-                            onChose={this.handleChose}></DataTable>
+                            onChose={this.handleChose}>
+                        </DataTable>
                     </div>
                 </div>
                 <button type="button" className="btn btn-secondary" onClick={() => this.setTeachers()}>{this.state.buttonType}</button>

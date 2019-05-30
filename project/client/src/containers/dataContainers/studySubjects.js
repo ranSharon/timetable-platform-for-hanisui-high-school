@@ -46,6 +46,7 @@ class StudySubjects extends Component {
     componentDidMount() {
         axios.get('http://localhost:4000/data/getSubjects')
             .then(response => {
+                console.log(response.data)
                 this.setState({ subjects: [...response.data] });
             })
             .catch(function (error) {
@@ -209,6 +210,9 @@ class StudySubjects extends Component {
                     this.resetInputs();
                 });
         } else if (this.state.buttonType === 'ערוך') {
+            if(!this.state.grouping){
+                newSubject.numOfMix = '';
+            }
             axios.post('http://localhost:4000/data/updateSubject/' + subjectToEditId, newSubject)
                 .then(res => {
                     let subjects = [...this.state.subjects];

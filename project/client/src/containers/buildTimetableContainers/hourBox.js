@@ -39,9 +39,10 @@ const hourTarget = {
         //     // target already handled drop
         //     return
         // }
-
+        
         // Obtain the dragged item
-        const item = monitor.getItem()
+        const item = monitor.getItem();
+        console.log(item);
         if (!props.validToAdd) {
             console.log('cant be added');
             return;
@@ -96,6 +97,11 @@ class HourBox extends Component {
     }
     handleConstraintDrag() {
         console.log('drag');
+        // this.props.drag(true, this.props.data.constraints[0], this.props.data.constraints[0].classRoom);
+    }
+
+    removeForHourBox(){
+
     }
 
 
@@ -108,9 +114,12 @@ class HourBox extends Component {
                         data={this.props.data.constraints[0]}
                         currentConstraint={this.props.data.constraints[0]}
                         click={this.handleConstraintClick}
-                        drag={this.handleConstraintDrag}
+                        // drag={this.handleConstraintDrag}
+                        drag={this.props.drag}
+                        endDrag={this.props.endDrag}
                         classRoom={this.props.data.constraints[0].classRoom}
-                        onTable={true}>
+                        inTable={true}
+                        >
                     </DragConstraintBox>
                 </div>
                 // <div className="text-center">

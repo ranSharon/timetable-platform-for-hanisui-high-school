@@ -4,7 +4,7 @@ const subjectTableRow = (props) => {
     const showGrades = () => {
         let grades = ``;
         props.grades.forEach(element => {
-            console.log(element);
+            // console.log(element);
             grades = `${grades}${element},`;
         });
         return grades.substr(0, grades.length - 1);
@@ -12,7 +12,7 @@ const subjectTableRow = (props) => {
     const showFeatures = () => {
         let features = ``;
         props.subjectFeatures.forEach(element => {
-            console.log(element);
+            // console.log(element);
             features = `${features}${element},`;
         });
         return features.substr(0, features.length - 1);
