@@ -2,6 +2,12 @@ import React, { Component } from 'react';
 import { DragSource } from 'react-dnd';
 
 
+
+let subject  = '';
+let teacher = '';
+let hours = '';
+let classRoom = '';
+
 const constraintSource = {
     endDrag(props, monitor, component) {
         // if(monitor.didDrop()){
@@ -23,9 +29,9 @@ const constraintSource = {
         // console.log(props.classRoom);
         console.log(props.inTable);
         // component.setState({ border: '' });
-        if (props.inTable) {
+        if (props.inTable) { // darg function not called when DragConstraintBox not in table
             // props.drag(true, props.data, props.classRoom);
-            props.drag(true, props.data, props.classRoom);
+            props.drag(props.inTable, props.data, props.classRoom, props.row, props.col );
         }
         // props.drag(monitor.isDragging());
         return props.data;
@@ -88,9 +94,45 @@ class DragConstraintBox extends Component {
             "opacity": opacity
         };
         // console.log(this.props);
+        // if(this.props.inTable){
+        //     return this.props.connectDragSource(
+            
+        //         <div
+        //             className={"d-inline-block card text-center  " + this.state.border}
+        //             style={boxStyle}
+        //         // style={{opacity}}
+        //         // onClick={() => this.ConstraintBoxClicked()}
+    
+        //         >
+        //             <span>{this.props.data.subject + ' ,'}</span>
+        //             <span>{this.props.data.teacher + ' ,'}</span>
+        //             <span>{this.props.data.hours}</span>
+        //             <div>{this.props.classRoom}</div>
+        //         </div>
+    
+        //     );
 
+        // } else {
+        //     return this.props.connectDragSource(
+            
+        //         <div
+        //             className={"d-inline-block card text-center  " + this.state.border}
+        //             style={boxStyle}
+        //         // style={{opacity}}
+        //         // onClick={() => this.ConstraintBoxClicked()}
+    
+        //         >
+        //             {/* <span>{this.props.data.subject + ' ,'}</span>
+        //             <span>{this.props.data.teacher + ' ,'}</span>
+        //             <span>{this.props.data.hours}</span>
+        //             <div>{this.props.classRoom}</div> */}
+        //         </div>
+    
+        //     );
+
+        // }
         return this.props.connectDragSource(
-
+            
             <div
                 className={"d-inline-block card text-center  " + this.state.border}
                 style={boxStyle}
@@ -104,7 +146,7 @@ class DragConstraintBox extends Component {
                 <div>{this.props.classRoom}</div>
             </div>
 
-        )
+        );
     }
 }
 

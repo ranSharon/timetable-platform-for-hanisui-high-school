@@ -39,9 +39,9 @@ const hourTarget = {
         //     // target already handled drop
         //     return
         // }
-        
+
         // Obtain the dragged item
-        const item = monitor.getItem();
+        const item = monitor.getItemType();
         console.log(item);
         if (!props.validToAdd) {
             console.log('cant be added');
@@ -82,11 +82,11 @@ class HourBox extends Component {
         }
     }
 
-    // componentDidUpdate(prevProps, prevState){
-    //     if(this.props.data.constraints.length !== prevState.data.constraints.length){
-    //         this.setState({constraints: [...this.props.data.constraints]})
-    //     }
-    // }
+    componentDidUpdate(prevProps, prevState){
+        // if(this.props.data.constraints.length !== prevState.data.constraints.length){
+        //     this.setState({constraints: [...this.props.data.constraints]})
+        // }
+    }
 
     hourBoxCliced() {
         this.props.click(this.props.data, this.props.day)
@@ -100,13 +100,14 @@ class HourBox extends Component {
         // this.props.drag(true, this.props.data.constraints[0], this.props.data.constraints[0].classRoom);
     }
 
-    removeForHourBox(){
+    removeForHourBox() {
 
     }
 
 
     sohwHourData() {
         if (this.props.data.constraints.length > 0 && this.props.show) {
+        // if (this.props.show) {
             // console.log(this.props.data.constraints);
             return (
                 <div className="w-100 h-100">
@@ -119,7 +120,9 @@ class HourBox extends Component {
                         endDrag={this.props.endDrag}
                         classRoom={this.props.data.constraints[0].classRoom}
                         inTable={true}
-                        >
+                        row={this.props.row}
+                        col={this.props.col}
+                    >
                     </DragConstraintBox>
                 </div>
                 // <div className="text-center">

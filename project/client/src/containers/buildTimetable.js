@@ -37,7 +37,9 @@ class BuildTimetable extends Component {
             classRooms: [],
             grades: [],
 
-            isDrag: false
+            inTable: false,
+            row: 0,
+            col: 0
         }
 
         this.handleConstraintClick = this.handleConstraintClick.bind(this);
@@ -275,10 +277,11 @@ class BuildTimetable extends Component {
         }
 
         let hoursBoxes = [];
-        let prvConstraints = '';
-        let show = true;
-        let validToAdd = true;
-        let currentConstraintEmpty = true;
+        let prvConstraints = ''; // if lesson is more then an hour i want to check it and not showing all lesson hours boxes 
+        let show = true; // // if a box while br shown
+        let validToAdd = true; // if box is green or red
+        let currentConstraintEmpty = true; // if no constriant is chosee in this component then box lavan
+        let data = {};
 
         for (let i = 0; i <= dayView.hours.length - 1; i++) {
             if (dayView.hours[i].constraints.length > 0) {
@@ -323,24 +326,31 @@ class BuildTimetable extends Component {
             //         }
             //     }
             // }
+            data = {...dayView.hours[i]};
+            console.log(data);
+            if(this.state.inTable && this.state.row === i && this.state.col === col){
+                data.constraints = [...data.constraints, this.state.currentConstraint];
+            }
             hoursBoxes = [...hoursBoxes,
             <HourBox
-                key={i}
-                show={show}
-                validToAdd={validToAdd}
-                day={day}
-                data={dayView.hours[i]}
-                endHour={dayView.hours[dayView.hours.length - 1].hour}
-                currentConstraintEmpty={currentConstraintEmpty}
-                row={i}
-                col={col}
+                key={i} // must have for react
+                show={show} // if a box while br shown
+                validToAdd={validToAdd} // if box is green or red
+                day={day} // 
+                data={data} // data about box from timetable, inclulde hour time and lessons array
+                // data={dayView.hours[i]} // data about box from timetable, inclulde hour time and lessons array
+                endHour={dayView.hours[dayView.hours.length - 1].hour} // the end time of currnt hour box
+                // endHour={dayView.hours[dayView.hours.length - 1].hour} // the end time of currnt hour box
+                currentConstraintEmpty={currentConstraintEmpty} // if no constriant is chosee in this component then box lavan
+                row={i} // num of row of box in table - i am not using this info at the app
+                col={col} // num of col of box in table - i am not using this info at the app
                 click={this.handleHourClick}
 
-                drop={this.addConstraintToHour}
-                hover={this.handleHourClick}
+                drop={this.addConstraintToHour} // event for droping lesson in this box
+                hover={this.handleHourClick} // change color or box when hover and also valid to add
 
-                drag={this.handleConstraintDrag}
-                endDrag={this.handleConstraintEndDrag}
+                drag={this.handleConstraintDrag} // event for draging a constraint that are in hour box 
+                endDrag={this.handleConstraintEndDrag} // event for end draging a constraint that are in hour box 
             >
             </HourBox>
             ];
@@ -640,7 +650,12 @@ class BuildTimetable extends Component {
 
     //     });
     // }
-    handleConstraintDrag(isDrag, constraint, classRoom) {
+
+
+    handleConstraintDrag(inTable, constraint, classRoom, row, col) {
+        // if(!inTable){
+        //     return;
+        // }
         let classRooms = [...this.state.classRooms];
         let currentClassRoom = {};
         for (let i = 0; i <= classRooms.length - 1; i++) {
@@ -648,10 +663,6 @@ class BuildTimetable extends Component {
                 currentClassRoom = { ...classRooms[i] };
             }
         }
-
-
-
-
 
         let timeTable = [...this.state.timeTable];
         let hours = parseInt(constraint.hours);
@@ -661,11 +672,11 @@ class BuildTimetable extends Component {
                     if (timeTable[i].days[j].hours[k].constraints.length > 0) {
                         for (let l = 0; l <= timeTable[i].days[j].hours[k].constraints.length - 1; l++) {
                             if (timeTable[i].days[j].hours[k].constraints[l]._id === constraint._id) {
-                                for (let m = 1; m <= hours; m++) {
-                                    timeTable[i].days[j].hours[k + m].constraints = [...timeTable[i].days[j].hours[k + m].constraints.slice(0, l).concat(timeTable[i].days[j].hours[k + m].constraints.slice(l + 1, timeTable[i].days[j].hours[k].constraints.length))];
+                                // for (let m = 1; m <= hours; m++) {
+                                //     timeTable[i].days[j].hours[k + m].constraints = [...timeTable[i].days[j].hours[k + m].constraints.slice(0, l).concat(timeTable[i].days[j].hours[k + m].constraints.slice(l + 1, timeTable[i].days[j].hours[k].constraints.length))];
 
-                                }
-                                // timeTable[i].days[j].hours[k].constraints = [...timeTable[i].days[j].hours[k].constraints.slice(0, l).concat(timeTable[i].days[j].hours[k].constraints.slice(l + 1, timeTable[i].days[j].hours[k].constraints.length))];
+                                // }
+                                timeTable[i].days[j].hours[k].constraints = [...timeTable[i].days[j].hours[k].constraints.slice(0, l).concat(timeTable[i].days[j].hours[k].constraints.slice(l + 1, timeTable[i].days[j].hours[k].constraints.length))];
                             }
                         }
 
@@ -676,7 +687,7 @@ class BuildTimetable extends Component {
             }
         }
 
-        this.setState({ isDrag: isDrag }, function () {
+        this.setState({ inTable: true, row: row, col: col }, function () {
             if (this.objectEmpty(this.state.currentConstraint)) {
                 this.setState({
                     currentConstraint: { ...constraint },
@@ -693,7 +704,7 @@ class BuildTimetable extends Component {
     }
 
     handleConstraintEndDrag() {
-        this.setState({ currentConstraint: {}, isDrag: false }, function () {
+        this.setState({ currentConstraint: {}, inTable: false }, function () {
             console.log(this.state.currentConstraint);
         });
     }
@@ -727,7 +738,7 @@ class BuildTimetable extends Component {
     }
 
     addConstraintToHour(hourData, day) {
-        // setting classConstraintsView withot the added constaraint
+        // setting classConstraintsView without the added constaraint
         this.setState({ currentHourBox: { ...hourData }, currentDay: day }, function () {
             let currentConstraint = { ...this.state.currentConstraint };
             let classConstraints = [...this.state.classConstraints];
@@ -749,6 +760,8 @@ class BuildTimetable extends Component {
             this.setState({
                 currentHourBox: { ...currentHourBox },
                 currentConstraint: currentConstraint,
+                // currentConstraint: {},
+                currentClassRoom: {},
                 classConstraints: classConstraints
             },
                 function () {
