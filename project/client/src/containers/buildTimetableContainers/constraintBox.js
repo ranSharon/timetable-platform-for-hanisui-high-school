@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 
-
 class ConstraintBox extends Component {
     constructor(props) {
         super(props);

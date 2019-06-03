@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import { DropTarget } from 'react-dnd';
 import DragConstraintBox from './dragConstraintBox';
+import TempDragConstraintBox from './tempDragConstraintBox';
 
 
 
@@ -30,7 +31,7 @@ const hourTarget = {
 
         // // You will receive hover() even for items for which canDrop() is false
         // const canDrop = monitor.canDrop()
-        return props.hover(props.data, props.day);
+        // return props.hover(props.data, props.day);
     },
 
     drop(props, monitor, component) {
@@ -45,6 +46,7 @@ const hourTarget = {
         console.log(item);
         if (!props.validToAdd) {
             console.log('cant be added');
+            props.endDrag(false);
             return;
         }
 
@@ -56,7 +58,7 @@ const hourTarget = {
         // which will be available as monitor.getDropResult()
         // in the drag source's endDrag() method
         // return { moved: true }
-        return props.drop(props.data, props.day);
+        return props.drop(props.data, props.day, props.row, props.col);
     }
 };
 
@@ -78,14 +80,18 @@ class HourBox extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            constraints: []
+            constraints: [],
+            // constraintDrag: false
+
         }
+
+        // this.constraintDrag = this.constraintDrag.bind(this);
     }
 
-    componentDidUpdate(prevProps, prevState){
-        // if(this.props.data.constraints.length !== prevState.data.constraints.length){
-        //     this.setState({constraints: [...this.props.data.constraints]})
-        // }
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.data.constraints.length > this.props.data.constraints) {
+            this.setState({ constraints: [...prevProps.data.constraints] });
+        }
     }
 
     hourBoxCliced() {
@@ -95,6 +101,7 @@ class HourBox extends Component {
     handleConstraintClick() {
         console.log('click');
     }
+    
     handleConstraintDrag() {
         console.log('drag');
         // this.props.drag(true, this.props.data.constraints[0], this.props.data.constraints[0].classRoom);
@@ -104,36 +111,59 @@ class HourBox extends Component {
 
     }
 
+    // constraintDrag(isDrag) {
+    //     console.log('draging');
+    //     this.setState({ constraintDrag: true });
+    // }
+
 
     sohwHourData() {
-        if (this.props.data.constraints.length > 0 && this.props.show) {
-        // if (this.props.show) {
-            // console.log(this.props.data.constraints);
-            return (
-                <div className="w-100 h-100">
-                    <DragConstraintBox
-                        data={this.props.data.constraints[0]}
-                        currentConstraint={this.props.data.constraints[0]}
-                        click={this.handleConstraintClick}
-                        // drag={this.handleConstraintDrag}
-                        drag={this.props.drag}
-                        endDrag={this.props.endDrag}
-                        classRoom={this.props.data.constraints[0].classRoom}
-                        inTable={true}
-                        row={this.props.row}
-                        col={this.props.col}
-                    >
-                    </DragConstraintBox>
-                </div>
-                // <div className="text-center">
-                //     <span>{this.props.data.constraints[0].subject + ' ,'}</span>
-                //     <span>{this.props.data.constraints[0].teacher + ' ,'}</span>
-                //     <span>{this.props.data.constraints[0].classRoom}</span>
-                // </div>
-            );
-        } else {
-            return null;
-        }
+        // if (this.state.constraintDrag) {
+        //     console.log('temp');
+        //     return (
+        //         <div className="w-100 h-100" style={{ "height": "50px", "width": "162px" }}>
+        //             <DragConstraintBox
+        //                 temp={true}
+        //             // data={this.state.constraints[0]}
+        //             // currentConstraint={this.state.constraints[0]}
+        //             // click={this.props.click}
+        //             // // drag={this.handleConstraintDrag}
+        //             // drag={this.props.drag}
+        //             // endDrag={this.props.endDrag}
+        //             // classRoom={this.state.constraints[0].classRoom}
+        //             // inTable={true}
+        //             // row={this.props.row}
+        //             // col={this.props.col}
+        //             // isDrag={this.constraintDrag}
+        //             >
+        //             </DragConstraintBox>
+        //         </div>
+        //     );
+        // } else
+            if (this.props.data.constraints.length > 0 && this.props.show) {
+                // if (this.props.show) {
+                // console.log(this.props.data.constraints);
+                return (
+                    <div className="w-100 h-100">
+                        <DragConstraintBox
+                            data={this.props.data.constraints[0]}
+                            currentConstraint={this.props.data.constraints[0]}
+                            click={this.props.click}
+                            
+                            drag={this.props.drag}
+                            endDrag={this.props.endDrag}
+                            classRoom={this.props.data.constraints[0].classRoom}
+                            inTable={true}
+                            row={this.props.row}
+                            col={this.props.col}
+                            
+                        >
+                        </DragConstraintBox>
+                    </div>
+                );
+            } else {
+                return null;
+            }
     }
 
     render() {
@@ -167,8 +197,10 @@ class HourBox extends Component {
         return this.props.connectDropTarget(
             <div
                 className={"row text-center " + border}
-                style={{ "height": height + "px", "width": "162px", "backgroundColor": backgroundColor }}
-                onClick={() => this.hourBoxCliced()}>
+                // style={{ "height": height + "px", "width": "162px", "backgroundColor": backgroundColor }}
+                style={{ "height": "50px", "width": "162px", "backgroundColor": backgroundColor }}
+                // onClick={() => this.hourBoxCliced()}
+                >
                 {/* {'[' + this.props.col + ', ' + this.props.row + ']'} */}
                 {/* {JSON.stringify(this.props.data.constraints.length)} */}
                 {this.sohwHourData()}

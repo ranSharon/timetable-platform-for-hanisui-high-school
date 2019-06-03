@@ -3,36 +3,21 @@ import { DragSource } from 'react-dnd';
 
 
 
-let subject  = '';
+let subject = '';
 let teacher = '';
 let hours = '';
 let classRoom = '';
 
 const constraintSource = {
     endDrag(props, monitor, component) {
-        // if(monitor.didDrop()){
-        // component.setState({ border: '' });
-        // console.log(component);
-        // }
-        if (props.inTable) {
-            // props.drag(true, props.data, props.classRoom);
-            props.endDrag()
-        }
-        // props.endDrag();
-        // props.drag(monitor.isDragging());
-        // console.log(component);
-        // console.log(monitor.didDrop())
         // return props.endDrag();
     },
     beginDrag(props, monitor, component) {
-        // console.log(props.data);
-        // console.log(props.classRoom);
-        console.log(props.inTable);
-        // component.setState({ border: '' });
         if (props.inTable) { // darg function not called when DragConstraintBox not in table
-            // props.drag(true, props.data, props.classRoom);
-            props.drag(props.inTable, props.data, props.classRoom, props.row, props.col );
+            // props.isDrag(true);
+            props.drag(props.inTable, props.data, props.classRoom, props.row, props.col);
         }
+
         // props.drag(monitor.isDragging());
         return props.data;
     }
@@ -81,72 +66,37 @@ class DragConstraintBox extends Component {
     }
 
     render() {
-        let height = 50;
-        let numOfLesson = parseInt(this.props.data.hours);
-        height = height * numOfLesson;
-        height = height + 'px';
-        const opacity = this.props.isDragging ? 0 : 1;
-        // console.log(this.props.isDragging);
-        let boxStyle = {
-            "cursor": "pointer",
-            "width": "162px",
-            "height": height,
-            "opacity": opacity
-        };
-        // console.log(this.props);
-        // if(this.props.inTable){
-        //     return this.props.connectDragSource(
-            
-        //         <div
-        //             className={"d-inline-block card text-center  " + this.state.border}
-        //             style={boxStyle}
-        //         // style={{opacity}}
-        //         // onClick={() => this.ConstraintBoxClicked()}
-    
-        //         >
-        //             <span>{this.props.data.subject + ' ,'}</span>
-        //             <span>{this.props.data.teacher + ' ,'}</span>
-        //             <span>{this.props.data.hours}</span>
-        //             <div>{this.props.classRoom}</div>
-        //         </div>
-    
-        //     );
+        // if (!this.props.temp) {
+            // let height = 50;
+            let numOfLesson = parseInt(this.props.data.hours);
+            // height = height * numOfLesson;
+            // height = height + 'px';
+            const opacity = this.props.isDragging ? 0 : 1;
+            let height = this.props.isDragging ? 50 : 50 * numOfLesson; 
+            height = height + 'px';
+            // console.log(this.props.isDragging);
+            let boxStyle = {
+                "cursor": "pointer",
+                "width": "162px",
+                "height": height,
+                "opacity": opacity
+            };
+            return this.props.connectDragSource(
 
-        // } else {
-        //     return this.props.connectDragSource(
-            
-        //         <div
-        //             className={"d-inline-block card text-center  " + this.state.border}
-        //             style={boxStyle}
-        //         // style={{opacity}}
-        //         // onClick={() => this.ConstraintBoxClicked()}
-    
-        //         >
-        //             {/* <span>{this.props.data.subject + ' ,'}</span>
-        //             <span>{this.props.data.teacher + ' ,'}</span>
-        //             <span>{this.props.data.hours}</span>
-        //             <div>{this.props.classRoom}</div> */}
-        //         </div>
-    
-        //     );
+                <div
+                    className={"d-inline-block card text-center  " + "border border-dark"}
+                    style={boxStyle}
+                    // style={{opacity}}
+                    onClick={() => this.props.click(this.props.inTable, this.props.data, this.props.classRoom)}
 
-        // }
-        return this.props.connectDragSource(
-            
-            <div
-                className={"d-inline-block card text-center  " + this.state.border}
-                style={boxStyle}
-            // style={{opacity}}
-            // onClick={() => this.ConstraintBoxClicked()}
+                >
+                    <span>{this.props.data.subject + ' ,'}</span>
+                    <span>{this.props.data.teacher + ' ,'}</span>
+                    <span>{this.props.data.hours}</span>
+                    <div>{this.props.classRoom}</div>
+                </div>
 
-            >
-                <span>{this.props.data.subject + ' ,'}</span>
-                <span>{this.props.data.teacher + ' ,'}</span>
-                <span>{this.props.data.hours}</span>
-                <div>{this.props.classRoom}</div>
-            </div>
-
-        );
+            );
     }
 }
 
