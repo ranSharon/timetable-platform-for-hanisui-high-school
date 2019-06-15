@@ -445,6 +445,7 @@ class StudySubjects extends Component {
     render() {
         return (
             <div>
+                <h3 style={{ "textAlign": "right" }}>הגדרת מקצועות</h3>
                 <div className="input-group mt-3 mb-3">
                     <div className="input-group-prepend">
                         <span className="input-group-text" id="basic-addon1">הגדר מקצוע חדש</span>

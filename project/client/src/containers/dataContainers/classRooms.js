@@ -278,38 +278,38 @@ class ClassRooms extends Component {
 
     // HandleRoomFeatureCheck(state, roomFeature) {
     //     console.log(roomFeature);
-        // this.setState({
-        //     classRoomFeatures: [...classRoomFeatures, roomFeature],
-        // })
-        // if (state === true) {
-        //     let classRoomFeatures = [...this.state.classRoomFeatures];
-        //     let i = this.checkIfRoomFeatureUnCheckd(roomFeature);
-        //     if (i !== -1) {
-        //         classRoomFeatures = [...classRoomFeatures.slice(0, i).concat(classRoomFeatures.slice(i + 1, classRoomFeatures.length))];
-        //         this.setRoomFeaturesChecked(roomFeature, state);
-        //         this.setState({
-        //             classRoomFeatures: [...classRoomFeatures]
-        //         })
-        //     } else {
-        //         this.setRoomFeaturesChecked(roomFeature, state);
-        //         this.setState({
-        //             classRoomFeatures: [...classRoomFeatures, roomFeature],
-        //         })
-        //     }
-            // let classRoomFeatures = [...this.state.classRoomFeatures];
-            // let i = this.checkIfRoomFeatureUnCheckd(roomFeature);
-            // if (i !== -1) {
-            //     classRoomFeatures = [...classRoomFeatures.slice(0, i).concat(classRoomFeatures.slice(i + 1, classRoomFeatures.length))];
-            //     this.setRoomFeaturesChecked(roomFeature, false);
-            //     this.setState({
-            //         classRoomFeatures: [...classRoomFeatures]
-            //     })
-            // } else {
-            //     this.setRoomFeaturesChecked(roomFeature, true);
-            //     this.setState({
-            //         classRoomFeatures: [...classRoomFeatures, roomFeature],
-            //     })
-            // }
+    // this.setState({
+    //     classRoomFeatures: [...classRoomFeatures, roomFeature],
+    // })
+    // if (state === true) {
+    //     let classRoomFeatures = [...this.state.classRoomFeatures];
+    //     let i = this.checkIfRoomFeatureUnCheckd(roomFeature);
+    //     if (i !== -1) {
+    //         classRoomFeatures = [...classRoomFeatures.slice(0, i).concat(classRoomFeatures.slice(i + 1, classRoomFeatures.length))];
+    //         this.setRoomFeaturesChecked(roomFeature, state);
+    //         this.setState({
+    //             classRoomFeatures: [...classRoomFeatures]
+    //         })
+    //     } else {
+    //         this.setRoomFeaturesChecked(roomFeature, state);
+    //         this.setState({
+    //             classRoomFeatures: [...classRoomFeatures, roomFeature],
+    //         })
+    //     }
+    // let classRoomFeatures = [...this.state.classRoomFeatures];
+    // let i = this.checkIfRoomFeatureUnCheckd(roomFeature);
+    // if (i !== -1) {
+    //     classRoomFeatures = [...classRoomFeatures.slice(0, i).concat(classRoomFeatures.slice(i + 1, classRoomFeatures.length))];
+    //     this.setRoomFeaturesChecked(roomFeature, false);
+    //     this.setState({
+    //         classRoomFeatures: [...classRoomFeatures]
+    //     })
+    // } else {
+    //     this.setRoomFeaturesChecked(roomFeature, true);
+    //     this.setState({
+    //         classRoomFeatures: [...classRoomFeatures, roomFeature],
+    //     })
+    // }
     //     }
     // }
 
@@ -416,6 +416,7 @@ class ClassRooms extends Component {
     render() {
         return (
             <div>
+                <h3 style={{ "textAlign": "right" }}>הגדרת חדרי לימוד</h3>
                 <RoomFeatures
                     roomFeature={this.state.roomFeature}
                     roomFeatures={this.state.roomFeatures}

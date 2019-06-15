@@ -150,7 +150,7 @@ class TimetableStructure extends Component {
                 return true;
             } else if (currDay === days[i].day && currDay !== dayToEdit && this.state.buttonType === 'ערוך') {
                 message = 'יום זה כבר הוגדר';
-                this.setState({ alertMessage: message,  messageStatus: false });
+                this.setState({ alertMessage: message, messageStatus: false });
                 this.alertMessage();
                 return true;
             }
@@ -200,6 +200,7 @@ class TimetableStructure extends Component {
     render() {
         return (
             <div>
+                <h3 style={{ "textAlign": "right" }}>הגדרת שלד המערכת</h3>
                 <div className="input-group mt-3 mb-3">
                     <div className="input-group-append">
                         <label className="input-group-text" htmlFor="inputGroupSelect02">בחר יום בשבוע</label>

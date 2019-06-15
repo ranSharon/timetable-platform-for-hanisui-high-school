@@ -21,7 +21,7 @@ class App extends Component {
             <div className="collpase navbar-collapse">
               <ul className="navbar-nav ml-auto">
                 <li className="navbar-item">
-                  <Link to="/data" className="nav-link">הגדרת נתונים ואילוצים</Link>
+                  <Link to="/data" className="nav-link">הגדרת נתונים ושיעורים</Link>
                 </li>
                 <li className="navbar-item">
                   <Link to="/buildTimetable" className="nav-link">בניית מערכת שעות</Link>

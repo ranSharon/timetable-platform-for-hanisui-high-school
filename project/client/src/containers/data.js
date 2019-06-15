@@ -32,7 +32,7 @@ class Data extends Component {
                                 <Link to="/data/teachers" className="nav-link">מורים</Link>
                             </li>
                             <li className="navbar-item">
-                                <Link to="/data/constraints" className="nav-link">הגדרת אילוצים</Link>
+                                <Link to="/data/constraints" className="nav-link">הגדרת שיעורים</Link>
                             </li>
                         </ul>
                     </div>

@@ -416,6 +416,7 @@ class Teachers extends Component {
     render() {
         return (
             <div>
+                <h3 style={{ "textAlign": "right" }}>הגדרת מורים</h3>
                 <div className="row">
                     <div className="col-4">
                         <h5 style={{ textAlign: "right" }}>{'פרטים'}</h5>

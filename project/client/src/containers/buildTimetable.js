@@ -62,31 +62,38 @@ class BuildTimetable extends Component {
     }
 
     componentDidMount() {
+        this.mounted = true;
         axios.get('http://localhost:4000/data/getConstraints')
             .then(response => {
-                this.setState({ constraints: [...response.data] }, function () {
-                    axios.get('http://localhost:4000/data/getDays')
-                        .then(response => {
-                            this.setState({ days: [...response.data] }, function () {
-                                axios.get('http://localhost:4000/data/getGrades')
-                                    .then(response => {
-                                        this.setState({ grades: [...response.data.sort(this.compareGrade)] }, function () {
-                                            this.initTimeTable();
-                                        });
-                                        console.log('grades:')
-                                        console.log(this.state.grades);
-                                    })
-                                    .catch(function (error) {
-                                        console.log(error);
+                if (this.mounted) {
+                    this.setState({ constraints: [...response.data] }, function () {
+                        axios.get('http://localhost:4000/data/getDays')
+                            .then(response => {
+                                if (this.mounted) {
+                                    this.setState({ days: [...response.data] }, function () {
+                                        axios.get('http://localhost:4000/data/getGrades')
+                                            .then(response => {
+                                                if (this.mounted) {
+                                                    this.setState({ grades: [...response.data.sort(this.compareGrade)] }, function () {
+                                                        this.initTimeTable();
+                                                    });
+                                                }
+                                                console.log('grades:')
+                                                console.log(this.state.grades);
+                                            })
+                                            .catch(function (error) {
+                                                console.log(error);
+                                            });
                                     });
+                                }
+                                console.log('days:')
+                                console.log(this.state.days);
+                            })
+                            .catch(function (error) {
+                                console.log(error);
                             });
-                            console.log('days:')
-                            console.log(this.state.days);
-                        })
-                        .catch(function (error) {
-                            console.log(error);
-                        });
-                });
+                    });
+                }
                 console.log('constraints:')
                 console.log(this.state.constraints);
             })
@@ -95,7 +102,9 @@ class BuildTimetable extends Component {
             });
         axios.get('http://localhost:4000/data/getClassRooms')
             .then(response => {
-                this.setState({ classRooms: [...response.data], classRoomsView: [...response.data] });
+                if (this.mounted) {
+                    this.setState({ classRooms: [...response.data], classRoomsView: [...response.data] });
+                }
                 console.log('classRooms:')
                 console.log(this.state.classRooms);
             })
@@ -104,13 +113,18 @@ class BuildTimetable extends Component {
             });
         axios.get('http://localhost:4000/data/getTeachers')
             .then(response => {
-                this.setState({ teachers: [...response.data] });
+                if (this.mounted) {
+                    this.setState({ teachers: [...response.data] });
+                }
                 console.log('teachers:')
                 console.log(this.state.teachers);
             })
             .catch(function (error) {
                 console.log(error);
             });
+    }
+    componentWillUnmount() {
+        this.mounted = false;
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -778,22 +792,22 @@ class BuildTimetable extends Component {
             }
             switch (teacherDayOf) {
                 case 'ראשון':
-                    this.setState({ backgroundColorSunday: '#f8d7da' })
+                    this.setState({ backgroundColorSunday: '#fff3cd' })
                     break;
                 case 'שני':
-                    this.setState({ backgroundColorMonday: '#f8d7da' })
+                    this.setState({ backgroundColorMonday: '#fff3cd' })
                     break;
                 case 'שלישי':
-                    this.setState({ backgroundColorTuesday: '#f8d7da' })
+                    this.setState({ backgroundColorTuesday: '#fff3cd' })
                     break;
                 case 'רביעי':
-                    this.setState({ backgroundColorWednesday: '#f8d7da' })
+                    this.setState({ backgroundColorWednesday: '#fff3cd' })
                     break;
                 case 'חמישי':
-                    this.setState({ backgroundColorThursday: '#f8d7da' })
+                    this.setState({ backgroundColorThursday: '#fff3cd' })
                     break;
                 case 'שישי':
-                    this.setState({ backgroundColorFriday: '#f8d7da' })
+                    this.setState({ backgroundColorFriday: '#fff3cd' })
                     break;
             }
         });

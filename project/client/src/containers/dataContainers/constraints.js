@@ -1452,7 +1452,7 @@ class Constraints extends Component {
     render() {
         return (
             <div >
-                <h3 style={{ "textAlign": "right" }}>הגדרת אילוצים</h3>
+                <h3 style={{ "textAlign": "right" }}>הגדרת שיעורים</h3>
                 {this.mainConstraintHeadLime()}
                 <Constraint
                     copyConstraint={false}

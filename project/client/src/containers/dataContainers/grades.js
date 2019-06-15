@@ -185,6 +185,7 @@ class Grades extends Component {
     render() {
         return (
             <div>
+                <h3 style={{ "textAlign": "right" }}>הגדרת שכבות וכיתות</h3>
                 <div className="input-group mt-3 mb-3">
                     <div className="input-group-append">
                         <label className="input-group-text" htmlFor="inputGroupSelect02">הגדר שכבה חדשה</label>
