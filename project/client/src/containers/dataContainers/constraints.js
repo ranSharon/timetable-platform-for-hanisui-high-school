@@ -84,6 +84,7 @@ class Constraints extends Component {
     }
 
     componentDidMount() {
+        console.log('componentDidMount');
         axios.get('http://localhost:4000/data/getConstraints')
             .then(response => {
                 let num = 0;
@@ -101,7 +102,7 @@ class Constraints extends Component {
         axios.get('http://localhost:4000/data/getTeachers')
             .then(response => {
                 this.setState({ allTeachers: [...response.data] });
-                // console.log('allTeachers:')
+                console.log('allTeachers:')
                 console.log(this.state.allTeachers);
                 this.setTeachers();
             })
@@ -110,9 +111,9 @@ class Constraints extends Component {
             });
         axios.get('http://localhost:4000/data/getGrades')
             .then(response => {
-                this.setState({ allGrades: [...response.data] });
-                // console.log('allGrades:')
-                // console.log(this.state.allGrades);
+                this.setState({ allGrades: [...response.data], alertMessage: '' });
+                console.log('allGrades:')
+                console.log(this.state.allGrades);
             })
             .catch(function (error) {
                 console.log(error);
@@ -120,8 +121,8 @@ class Constraints extends Component {
         axios.get('http://localhost:4000/data/getSubjects')
             .then(response => {
                 this.setState({ allSubjects: [...response.data] });
-                // console.log('allSubjects:')
-                // console.log(this.state.allSubjects);
+                console.log('allSubjects:')
+                console.log(this.state.allSubjects);
             })
             .catch(function (error) {
                 console.log(error);
@@ -129,7 +130,6 @@ class Constraints extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        // console.log(this.state.teacherDetails);
         if (prevState.hours !== this.state.hours) {
             if (!this.isTeacherDetailsEmpty()) {
                 let teacherDetails = { ...this.state.teacherDetails };
@@ -153,10 +153,7 @@ class Constraints extends Component {
                 num: num
             })
         }
-        if (prevState.constraints.length !== this.state.constraints.length && this.state.buttonType === 'ערוך') {
-            // console.log(this.state.constraints);
-            // console.log(this.state.constraints.length);
-            // console.log(this.state.constraints[this.state.constraints.length-1].num);
+        if (prevState.constraints.length !== this.state.constraints.length && this.state.buttonType === 'סיים עריכה') {
             let num = 0;
             if (this.state.constraints.length > 0) {
                 num = this.state.constraints[this.state.constraints.length - 1].num + 1;
@@ -169,6 +166,10 @@ class Constraints extends Component {
         if (prevState.constraints.length === this.state.constraints.length && this.state.mainButtonDisable) {
             this.setState({ mainButtonDisable: false });
         }
+        if (prevState.constraints.length !== this.state.constraints.length && prevState.constraints.length === 0) {
+            this.setState({alertMessage: ''});
+        }
+
     }
 
     setTeachers() {
@@ -716,7 +717,7 @@ class Constraints extends Component {
                         });
                     });
             }
-        } else if (this.state.buttonType === 'ערוך') {
+        } else if (this.state.buttonType === 'סיים עריכה') {
             this.setState({
                 buttonType: 'אישור'
             }, function () {
@@ -1285,28 +1286,19 @@ class Constraints extends Component {
             constraintsIdToDelete = [...constraintsIdToDelete, this.state.constraints[index]._id];
             index--;
         }
-        // console.log(fatherConstraint.subject);
-        // console.log(this.state.allSubjects);
-        // console.log(fatherConstraint.subjectGrouping);
-        // console.log(fatherConstraint.groupingTeachers);
         let gmol = 0;
         let allSubjects = [...this.state.allSubjects];
         for (let i = 0; i <= allSubjects.length - 1; i++) {
             if (allSubjects[i].subjectName === fatherConstraint.subject && allSubjects[i].bagrut) {
                 gmol = this.getGmol(allSubjects[i].gmol);
-                // console.log(gmol);
                 break;
             }
         }
-
-        // console.log(parseInt(fatherConstraint.hours) + gmol);
-        // console.log(fatherConstraint);
 
         let newCurrentTeachHours = (parseInt(fatherConstraint.hours) + gmol) * (-1);
         if (fatherConstraint.lessonSplit) {
             newCurrentTeachHours = (fatherConstraint.firstLesson + fatherConstraint.secondlesson + fatherConstraint.thirdlesson + gmol) * (-1);
         }
-        // console.log(newCurrentTeachHours);
         for (let i = 0; i <= fatherConstraint.groupingTeachers.length - 1; i++) {
             axios.post('http://localhost:4000/data/updateTeacherByName/', { name: fatherConstraint.groupingTeachers[i], hours: newCurrentTeachHours })
                 .then(res => {
@@ -1318,9 +1310,6 @@ class Constraints extends Component {
                     }
                     this.setState({
                         allTeachers: [...teachers]
-                    }, function () {
-                        // console.log(this.state.newCurrentTeachHours);
-                        // console.log(this.state.allTeachers);
                     });
                 });
         }
@@ -1354,7 +1343,7 @@ class Constraints extends Component {
         }
         // console.log(fatherConstraint);
         this.setState({
-            buttonType: 'ערוך',
+            buttonType: 'סיים עריכה',
             mainButtonDisable: true
         });
 
@@ -1452,7 +1441,7 @@ class Constraints extends Component {
     render() {
         return (
             <div >
-                <h3 style={{ "textAlign": "right" }}>הגדרת שיעורים</h3>
+                <h4 style={{ "textAlign": "right" }}>הגדרת שיעורים</h4>
                 {this.mainConstraintHeadLime()}
                 <Constraint
                     copyConstraint={false}

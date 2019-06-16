@@ -24,7 +24,7 @@ const constraintsTableRow = (props) => {
             return <td></td>;
         } else {
             return (
-                <td className="border-top border-dark">
+                <td className="border-top border-dark text-left">
                     <button onClick={() => props.onEdit(props.constraint._id)}>ערוך</button>
                     <div style={{ display: "inline" }}></div>
                     <button onClick={() => props.onDelete(props.constraint._id)}>מחק</button>
@@ -46,7 +46,7 @@ const constraintsTableRow = (props) => {
         props.constraint.copyConstraint
     ) {
         return (
-            <tr >
+            <tr className="text-center">
                 <td>{props.constraint.num}</td>
                 <td>{props.constraint.hours}</td>
                 <td>{props.constraint.teacher}</td>
@@ -54,18 +54,13 @@ const constraintsTableRow = (props) => {
                 <td>{props.constraint.grade}</td>
                 <td>{showClasses()}</td>
                 <td>{yesOrNo(props.constraint.lessonSplit)}</td>
-                <td>{yesOrNo(props.constraint.subjectMix)}</td>
+                <td>{yesOrNo(props.constraint.subjectGrouping)}</td>
                 {actionButtons()}
-                {/* <button onClick={() => props.onEdit(props.id)} disabled={props.disableButtons}>ערוך</button>
-                <div style={{ display: "inline" }}>  </div>
-                <button onClick={() => props.onDelete(props.id)} disabled={props.disableButtons}>מחק</button> */}
-                {/* <button onClick={() => props.onDelete(props.FeatureName)}>מחק</button> */}
-
             </tr>
         );
     } else {
         return (
-            <tr >
+            <tr className="text-center">
                 <td className="border-top border-dark">{props.constraint.num}</td>
                 <td className="border-top border-dark">{props.constraint.hours}</td>
                 <td className="border-top border-dark">{props.constraint.teacher}</td>
@@ -73,34 +68,11 @@ const constraintsTableRow = (props) => {
                 <td className="border-top border-dark">{props.constraint.grade}</td>
                 <td className="border-top border-dark" >{showClasses()}</td>
                 <td className="border-top border-dark">{yesOrNo(props.constraint.lessonSplit)}</td>
-                <td className="border-top border-dark">{yesOrNo(props.constraint.subjectMix)}</td>
+                <td className="border-top border-dark">{yesOrNo(props.constraint.subjectGrouping)}</td>
                 {actionButtons()}
-                {/* <button onClick={() => props.onEdit(props.id)} disabled={props.disableButtons}>ערוך</button>
-                <div style={{ display: "inline" }}>  </div>
-                <button onClick={() => props.onDelete(props.id)} disabled={props.disableButtons}>מחק</button> */}
-                {/* <button onClick={() => props.onDelete(props.FeatureName)}>מחק</button> */}
-
             </tr>
         );
     }
-
-    // return (
-    //     <tr>
-    //         <td>{props.constraint.hours}</td>
-    //         <td>{props.constraint.teacher}</td>
-    //         <td>{props.constraint.subject}</td>
-    //         <td>{props.constraint.grade}</td>
-    //         <td>{showClasses()}</td>
-    //         <td>{yesOrNo(props.constraint.lessonSplit)}</td>
-    //         <td>{yesOrNo(props.constraint.subjectMix)}</td>
-    //         {actionButtons()}
-    //         {/* <button onClick={() => props.onEdit(props.id)} disabled={props.disableButtons}>ערוך</button>
-    //             <div style={{ display: "inline" }}>  </div>
-    //             <button onClick={() => props.onDelete(props.id)} disabled={props.disableButtons}>מחק</button> */}
-    //         {/* <button onClick={() => props.onDelete(props.FeatureName)}>מחק</button> */}
-
-    //     </tr>
-    // );
 };
 
 export default constraintsTableRow; 

@@ -64,7 +64,7 @@ class Grades extends Component {
                     });
                     this.resetInputs();
                 });
-        } else if (this.state.buttonType === 'ערוך') {
+        } else if (this.state.buttonType === 'סיים עריכה') {
             axios.post('http://localhost:4000/data/updateGrade/' + gradeToEditId, newGrade)
                 .then(res => {
                     let grades = [...this.state.grades];
@@ -114,7 +114,7 @@ class Grades extends Component {
                 this.setState({ alertMessage: message, messageStatus: false });
                 this.alertMessage();
                 return true;
-            } else if (currDrade === grades[i].grade && currDrade !== greadeToEdit && this.state.buttonType === 'ערוך') {
+            } else if (currDrade === grades[i].grade && currDrade !== greadeToEdit && this.state.buttonType === 'סיים עריכה') {
                 message = 'שכבה זו כבר הוגדרה';
                 this.setState({ alertMessage: message, messageStatus: false });
                 this.alertMessage();
@@ -155,7 +155,7 @@ class Grades extends Component {
                     numOfClasses: response.data.numOfClasses,
                     alertMessage: alertMessage,
                     messageStatus: true,
-                    buttonType: 'ערוך',
+                    buttonType: 'סיים עריכה',
                     disableButtons: true
                 })
                 this.alertMessage();
@@ -185,7 +185,7 @@ class Grades extends Component {
     render() {
         return (
             <div>
-                <h3 style={{ "textAlign": "right" }}>הגדרת שכבות וכיתות</h3>
+                <h4 style={{ "textAlign": "right" }}>הגדרת נתונים ושיעורים/ שכבות וכיתות</h4>
                 <div className="input-group mt-3 mb-3">
                     <div className="input-group-append">
                         <label className="input-group-text" htmlFor="inputGroupSelect02">הגדר שכבה חדשה</label>

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import DataTable from '../dataContainers/tableDisplay/table';
-import RoomFeatures from '../../components/roomFeatures';
-import RoomFeatureCheckBox from '../../components/roomFeatureCheckBox';
+import RoomFeatures from '../../components/classRoomsComponents/roomFeatures';
+import RoomFeatureCheckBox from '../../components/classRoomsComponents/roomFeatureCheckBox';
 import AlertMessage from '../../components/alertMessage';
 import axios from 'axios';
 
@@ -24,7 +24,10 @@ class ClassRooms extends Component {
             alertMessageForFeaturesStatus: false,
             roomFeaturesChecked: [],
             buttonType: 'אישור',
-            disableButtons: false
+            disableButtons: false,
+
+            showRoomFeatures: false,
+            RoomFeaturesButtonType: 'הצג הגדרת מאפייני חדר'
 
         }
         this.HandleRoomFeatureChange = this.HandleRoomFeatureChange.bind(this);
@@ -39,30 +42,26 @@ class ClassRooms extends Component {
         axios.get('http://localhost:4000/data/getClassRooms')
             .then(response => {
                 this.setState({ classRooms: [...response.data] });
-                console.log(response.data);
             })
             .catch(function (error) {
                 console.log(error);
             })
         axios.get('http://localhost:4000/data/getRoomFeatures')
             .then(response => {
-                //console.log(response.data);
                 let roomFeatures = [];
                 for (let i = 0; i <= response.data.length - 1; i++) {
                     roomFeatures.push(response.data[i].roomFeature);
                 }
                 this.setState({ roomFeatures: [...roomFeatures] }, function () {
                     this.initRoomFeaturesChecked();
+                    if (this.state.roomFeatures.length === 0) {
+                        this.setState({ showRoomFeatures: true, RoomFeaturesButtonType: 'הסתר הגדרת מאפייני חדר'});
+                    }
                 });
-                console.log(roomFeatures);
             })
             .catch(function (error) {
                 console.log(error);
             })
-    }
-
-    componentDidUpdate(prevProps, prevState) {
-        console.log(this.state.roomFeaturesChecked);
     }
 
     initRoomFeaturesChecked() {
@@ -72,12 +71,7 @@ class ClassRooms extends Component {
             let featuresChecked = { roomFeature: roomFeatures[i], checked: false };
             roomFeaturesChecked = [...roomFeaturesChecked, featuresChecked];
         }
-        console.log(roomFeaturesChecked);
-        console.log(this.state.roomFeaturesChecked);
-        this.setState({ roomFeaturesChecked: [...roomFeaturesChecked] },
-            function () {
-                console.log(this.state.roomFeaturesChecked);
-            });
+        this.setState({ roomFeaturesChecked: [...roomFeaturesChecked] });
     }
 
     onClassRoomNameChange(e) {
@@ -105,7 +99,7 @@ class ClassRooms extends Component {
                     });
                     this.resetInputs();
                 });
-        } else if (this.state.buttonType === 'ערוך') {
+        } else if (this.state.buttonType === 'סיים עריכה') {
             axios.post('http://localhost:4000/data/updateClassRoom/' + classRoomToEditId, newClassRoom)
                 .then(res => {
                     let classRooms = [...this.state.classRooms];
@@ -150,7 +144,7 @@ class ClassRooms extends Component {
                 this.setState({ alertMessage: message, messageStatus: false });
                 this.alertMessage();
                 return true;
-            } else if (currClassRoomName === classRooms[i].classRoomName && currClassRoomName !== classRoomToEdit && this.state.buttonType === 'ערוך') {
+            } else if (currClassRoomName === classRooms[i].classRoomName && currClassRoomName !== classRoomToEdit && this.state.buttonType === 'סיים עריכה') {
                 message = 'הוזנה כבר כיתה כזאת';
                 this.setState({ alertMessage: message, messageStatus: false });
                 this.alertMessage();
@@ -276,43 +270,6 @@ class ClassRooms extends Component {
         }
     }
 
-    // HandleRoomFeatureCheck(state, roomFeature) {
-    //     console.log(roomFeature);
-    // this.setState({
-    //     classRoomFeatures: [...classRoomFeatures, roomFeature],
-    // })
-    // if (state === true) {
-    //     let classRoomFeatures = [...this.state.classRoomFeatures];
-    //     let i = this.checkIfRoomFeatureUnCheckd(roomFeature);
-    //     if (i !== -1) {
-    //         classRoomFeatures = [...classRoomFeatures.slice(0, i).concat(classRoomFeatures.slice(i + 1, classRoomFeatures.length))];
-    //         this.setRoomFeaturesChecked(roomFeature, state);
-    //         this.setState({
-    //             classRoomFeatures: [...classRoomFeatures]
-    //         })
-    //     } else {
-    //         this.setRoomFeaturesChecked(roomFeature, state);
-    //         this.setState({
-    //             classRoomFeatures: [...classRoomFeatures, roomFeature],
-    //         })
-    //     }
-    // let classRoomFeatures = [...this.state.classRoomFeatures];
-    // let i = this.checkIfRoomFeatureUnCheckd(roomFeature);
-    // if (i !== -1) {
-    //     classRoomFeatures = [...classRoomFeatures.slice(0, i).concat(classRoomFeatures.slice(i + 1, classRoomFeatures.length))];
-    //     this.setRoomFeaturesChecked(roomFeature, false);
-    //     this.setState({
-    //         classRoomFeatures: [...classRoomFeatures]
-    //     })
-    // } else {
-    //     this.setRoomFeaturesChecked(roomFeature, true);
-    //     this.setState({
-    //         classRoomFeatures: [...classRoomFeatures, roomFeature],
-    //     })
-    // }
-    //     }
-    // }
-
     checkIfRoomFeatureUnCheckd(roomFeature) {
         let classRoomFeatures = [...this.state.classRoomFeatures];
         for (let i = 0; i <= classRoomFeatures.length - 1; i++) {
@@ -343,8 +300,6 @@ class ClassRooms extends Component {
     }
 
     setCheckStatus(classRoomFeatures) {
-        console.log(classRoomFeatures);
-        console.log(this.state.roomFeatures);
         let roomFeaturesChecked = [...this.state.roomFeaturesChecked];
         for (let i = 0; i <= classRoomFeatures.length - 1; i++) {
             for (let j = 0; j <= roomFeaturesChecked.length - 1; j++) {
@@ -353,11 +308,7 @@ class ClassRooms extends Component {
                 }
             }
         }
-        this.setState({ roomFeaturesChecked: [...roomFeaturesChecked] }, function () {
-            console.log(this.state.roomFeaturesChecked);
-        }
-
-        );
+        this.setState({ roomFeaturesChecked: [...roomFeaturesChecked] });
     }
 
     getClassRoom(classRoomId) {
@@ -373,7 +324,7 @@ class ClassRooms extends Component {
                     classRoomFeatures: [...classRoomFeatures],
                     alertMessage: alertMessage,
                     messageStatus: true,
-                    buttonType: 'ערוך',
+                    buttonType: 'סיים עריכה',
                     disableButtons: true
                 })
                 this.alertMessage();
@@ -413,11 +364,44 @@ class ClassRooms extends Component {
         return classRoomFeaturesForEdit;
     }
 
+    showRoomFeatures() {
+        if (!this.state.showRoomFeatures) {
+            return null;
+        }
+        return (
+            <RoomFeatures
+                roomFeature={this.state.roomFeature}
+                roomFeatures={this.state.roomFeatures}
+                roomFeatureChange={this.HandleRoomFeatureChange}
+                addRoomFeature={this.HandleAddRoomFeature}
+                alertMessage={this.state.alertMessageForFeatures}
+                alertMessageForFeaturesStatus={this.state.alertMessageForFeaturesStatus}
+                onDelete={this.handleDeleteRoomFeature}
+            >
+            </RoomFeatures>
+        );
+    }
+
+    setShowRoomFeatures() {
+        this.setState({ showRoomFeatures: !this.state.showRoomFeatures });
+        let RoomFeaturesButtonType = this.state.RoomFeaturesButtonType;
+        if(RoomFeaturesButtonType === 'הצג הגדרת מאפייני חדר'){
+            RoomFeaturesButtonType = 'הסתר הגדרת מאפייני חדר';
+        } else {
+            RoomFeaturesButtonType = 'הצג הגדרת מאפייני חדר';
+        }
+        this.setState({RoomFeaturesButtonType: RoomFeaturesButtonType});
+    }
+
     render() {
         return (
             <div>
-                <h3 style={{ "textAlign": "right" }}>הגדרת חדרי לימוד</h3>
-                <RoomFeatures
+                <h4 style={{ "textAlign": "right" }}>הגדרת נתונים ושיעורים/ חדרי לימוד</h4>
+                <div style={{ "textAlign": "right" }}>
+                    <button type="button" className="btn btn-outline-dark ml-2 my-2" onClick={() => this.setShowRoomFeatures()}>{this.state.RoomFeaturesButtonType}</button>
+                </div>
+                {this.showRoomFeatures()}
+                {/* <RoomFeatures
                     roomFeature={this.state.roomFeature}
                     roomFeatures={this.state.roomFeatures}
                     roomFeatureChange={this.HandleRoomFeatureChange}
@@ -426,7 +410,7 @@ class ClassRooms extends Component {
                     alertMessageForFeaturesStatus={this.state.alertMessageForFeaturesStatus}
                     onDelete={this.handleDeleteRoomFeature}
                 >
-                </RoomFeatures>
+                </RoomFeatures> */}
                 <div >
                     <div className="input-group mt-3 mb-3">
                         <div className="input-group-prepend">

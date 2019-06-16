@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import GradeTableRow from '../../../components/gradeTableRow';
-import WeekTableRow from '../../../components/weekTableRow';
-import SubjectTableRow from '../../../components/subjectTableRow';
-import RoomTableRow from '../../../components/roomTableRow';
-import SubjectToChoseTableRow from '../../../components/subjetToChoseTableRow';
-import TeacherTableRow from '../../../components/teacherTableRow';
+import GradeTableRow from '../../../components/tableRowComponents/gradeTableRow';
+import WeekTableRow from '../../../components/tableRowComponents/weekTableRow';
+import SubjectTableRow from '../../../components/tableRowComponents/subjectTableRow';
+import RoomTableRow from '../../../components/tableRowComponents/roomTableRow';
+import SubjectToChoseTableRow from '../../../components/tableRowComponents/subjetToChoseTableRow';
+import TeacherTableRow from '../../../components/tableRowComponents/teacherTableRow';
 import RoomFeatureTableRow from '../../../components/tableRowComponents/roomFeatureTableRow';
 import ConstraintTableRow from '../../../components/tableRowComponents/constraintTableRow';
 
@@ -22,7 +22,6 @@ class DataTable extends Component {
             </ConstraintTableRow>
             ]
         }
-        //console.log(constraints);
         return constraints;
     }
 
@@ -30,16 +29,16 @@ class DataTable extends Component {
         if (this.props.table === 'grades') {
             return (
                 <div>
-                    <h3 className="mt-3 float-right">שכבות קיימות</h3>
+                    <h5 className="mt-3 float-right">שכבות וכיתות שהוגדרו</h5>
                     <table className="table table-striped" style={{ marginTop: 20 }} >
                         <thead>
-                            <tr>
+                            <tr className="text-center">
                                 <th >שכבה</th>
                                 <th >כיתה 1</th>
                                 <th >כיתה 2</th>
                                 <th >כיתה 3</th>
                                 <th >כיתה 4</th>
-                                <th >action</th>
+                                <th ></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -61,14 +60,14 @@ class DataTable extends Component {
         } else if (this.props.table === 'week') {
             return (
                 <div>
-                    <h3 className="mt-3 float-right">ימי לימוד</h3>
+                    <h5 className="mt-3 float-right">ימי לימוד שהוגדרו</h5>
                     <table className="table table-striped " style={{ marginTop: 20 }} >
                         <thead>
-                            <tr >
+                            <tr className="text-center">
                                 <th>יום</th>
                                 <th>שעת התחלת היום</th>
                                 <th>שעת סיום היום</th>
-                                <th>Action</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -90,20 +89,21 @@ class DataTable extends Component {
             );
         } else if (this.props.table === 'subjects') {
             return (
-                <div style={{ textAlign: "center" }}>
-                    <h3 className="mt-3 float-right">מקצועות</h3>
+                // <div style={{ textAlign: "center" }}>
+                <div >
+                    <h5 className="mt-3 float-right">מקצועות שהוגדרו</h5>
                     <table className="table table-striped " style={{ marginTop: 20 }} >
                         <thead>
-                            <tr>
+                            <tr className="text-center">
                                 <th>מקצוע</th>
                                 <th>נלמד בכיתות</th>
-                                <th>מקצוע לבגרות</th>
+                                <th>נלמד לבגרות</th>
                                 <th>גמול</th>
-                                <th>מקצוע שמערבב שכבה</th>
-                                <th>מקצוע שמחלוק להקבצות</th>
+                                <th>מערבב שכבה</th>
+                                <th>מחולק להקבצות</th>
                                 <th>מספר הקבצות</th>
                                 <th>המקצוע דורש</th>
-                                <th>Action</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -131,13 +131,13 @@ class DataTable extends Component {
         } else if (this.props.table === 'rooms') {
             return (
                 <div>
-                    <h3 className="mt-3 float-right">חדרי לימוד קיימים</h3>
+                    <h5 className="mt-3 float-right">חדרי לימוד שהוגדרו</h5>
                     <table className="table table-striped" style={{ marginTop: 20 }} >
                         <thead>
-                            <tr>
+                            <tr className="text-center">
                                 <th >חדר לימוד</th>
                                 <th >מאפיינים</th>
-                                <th >action</th>
+                                <th ></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -161,9 +161,9 @@ class DataTable extends Component {
                 <div style={{ "position": "relative", "height": "200px", "overflow": "auto", "display": "block" }}>
                     <table className="table table-striped">
                         <thead >
-                            <tr>
+                            <tr className="text-center">
                                 <th >מאפיין</th>
-                                <th >Action</th>
+                                <th ></th>
                             </tr>
                         </thead>
                         <tbody >
@@ -185,10 +185,9 @@ class DataTable extends Component {
         } else if (this.props.table === 'subjetsTochose') {
             return (
                 <div>
-                    {/* <h3 className="mt-3 float-right"></h3> */}
                     <table className="table table-striped" style={{ marginTop: 20 }} >
                         <thead>
-                            <tr>
+                            <tr className="text-center">
                                 <th >מקצוע</th>
                             </tr>
                         </thead>
@@ -214,17 +213,17 @@ class DataTable extends Component {
         } else if (this.props.table === 'teachers') {
             return (
                 <div>
-                    {/* <h3 className="mt-3 float-right"></h3> */}
+                    <h5 className="mt-3 float-right">מורים שהוגדרו</h5>
                     <table className="table table-striped" style={{ marginTop: 20 }} >
                         <thead>
-                            <tr>
+                            <tr className="text-center">
                                 <th >שם המורה</th>
                                 <th >מלמד ב...</th>
                                 <th >מלמד בכיתות</th>
                                 <th >מקצועות שמלמד</th>
                                 <th >יום חופש רצוי</th>
                                 <th >מספר שעות הוראה שבועיות</th>
-                                <th >action</th>
+                                <th ></th>
                             </tr>
                         </thead>
                         {<tbody >
@@ -238,7 +237,6 @@ class DataTable extends Component {
                                         subjects={teacher.subjectsForTeacher}
                                         dayOff={teacher.dayOff}
                                         maxTeachHours={teacher.maxTeachHours}
-                                        //onChose={this.props.onChose}
                                         id={teacher._id}
                                         onEdit={this.props.onEdit}
                                         onDelete={this.props.onDelete}
@@ -254,10 +252,10 @@ class DataTable extends Component {
         } else if (this.props.table === 'constraints') {
             return (
                 <div>
-                    <h3 className="mt-3 float-right">שיעורים שהוגדרו</h3>
+                    <h5 className="mt-3 float-right">שיעורים שהוגדרו</h5>
                     <table className="table table-striped" style={{ marginTop: 20 }} >
-                        <thead > 
-                            <tr >
+                        <thead >
+                            <tr className="text-center">
                                 <th className="border-bottom-0">מספר</th>
                                 <th className="border-bottom-0">שעות</th>
                                 <th className="border-bottom-0">מורה</th>
@@ -266,7 +264,7 @@ class DataTable extends Component {
                                 <th className="border-bottom-0">כיתות</th>
                                 <th className="border-bottom-0">חלק משיעור מפוצל</th>
                                 <th className="border-bottom-0">הקבצה</th>
-                                <th className="border-bottom-0">action</th>
+                                <th className="border-bottom-0"></th>
                             </tr>
                         </thead>
                         {<tbody >

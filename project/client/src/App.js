@@ -6,12 +6,6 @@ import BuildTimetable from './containers/buildTimetable';
 import DataOnTimetable from './containers/dataOnTimetable';
 import General from './containers/general';
 
-// import { DragDropContext } from 'react-dnd';
-import { DragDropContextProvider } from 'react-dnd';
-import HTML5Backend from 'react-dnd-html5-backend';
-import withScrolling from 'react-dnd-scrollzone';
-
-
 class App extends Component {
   render() {
     return (
@@ -45,9 +39,6 @@ class App extends Component {
     );
   }
 }
-
-
-
 
 export default App;
 // export default DragDropContext(HTML5Backend)(App);

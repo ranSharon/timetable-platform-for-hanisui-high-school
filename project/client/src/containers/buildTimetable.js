@@ -142,6 +142,7 @@ class BuildTimetable extends Component {
             .then(response => {
                 if (response.data.length > 0) {
                     this.setState({ timeTable: [...response.data] }, function () {
+                        this.updateTimeTable();
                         console.log('timeTable');
                         console.log(this.state.timeTable);
                     });
@@ -177,6 +178,80 @@ class BuildTimetable extends Component {
             .catch(function (error) {
                 console.log(error);
             });
+    }
+
+    updateTimeTable() {
+        let timeTable = [...this.state.timeTable];
+        let constraints = [...this.state.constraints];
+        let constraintsToAdd = [];
+        let constraintsToRemove = [];
+        let timeTableConstraints = [];
+
+        for (let i = 0; i <= timeTable.length - 1; i++) {
+            for (let j = 0; j <= timeTable[i].constaraintsToAdd.length - 1; j++) {
+                timeTableConstraints = [...timeTableConstraints, timeTable[i].constaraintsToAdd[j]];
+            }
+        }
+
+        for (let i = 0; i <= timeTable.length - 1; i++) {
+            for (let j = 0; j <= timeTable[i].days.length - 1; j++) {
+                for (let k = 0; k <= timeTable[i].days[j].hours.length - 1; k++) {
+                    for (let l = 0; l <= timeTable[i].days[j].hours[k].constraints.length - 1; l++) {
+                        timeTableConstraints = [...timeTableConstraints, timeTable[i].days[j].hours[k].constraints[l]];
+                    }
+                }
+            }
+
+        }
+
+        const uniqueTimeTableConstraints = Array.from(new Set(timeTableConstraints.map(a => a._id)))
+            .map(_id => {
+                return timeTableConstraints.find(a => a._id === _id)
+            })
+
+        constraintsToAdd = constraints.filter(item1 =>
+            !uniqueTimeTableConstraints.some(item2 => (item2._id === item1._id)));
+
+        // adding new constraints
+        for (let i = 0; i <= constraintsToAdd.length - 1; i++) {
+            for (let j = 0; j <= constraintsToAdd[i].classNumber.length - 1; j++) {
+                for (let k = 0; k <= timeTable.length - 1; k++) {
+                    if (timeTable[k].classNumber === constraintsToAdd[i].classNumber[j]) {
+                        timeTable[k].constaraintsToAdd = [...timeTable[k].constaraintsToAdd, constraintsToAdd[i]];
+                    }
+                }
+            }
+
+        }
+
+        constraintsToRemove = uniqueTimeTableConstraints.filter(item1 =>
+            !constraints.some(item2 => (item2._id === item1._id)));
+
+        // removing constraints from constraints to add of each table
+        for (let i = 0; i <= constraintsToRemove.length - 1; i++) {
+            for (let j = 0; j <= timeTable.length - 1; j++) {
+                for (let k = 0; k <= timeTable[j].constaraintsToAdd.length - 1; k++) {
+                    if (constraintsToRemove[i]._id === timeTable[j].constaraintsToAdd[k]._id) {
+                        timeTable[j].constaraintsToAdd = [...timeTable[j].constaraintsToAdd.slice(0, k).concat(timeTable[j].constaraintsToAdd.slice(k + 1, timeTable[j].constaraintsToAdd.length))];
+                    }
+                }
+            }
+        }
+
+        // removing constraints from each table
+        for (let i = 0; i <= constraintsToRemove.length - 1; i++) {
+            for (let j = 0; j <= timeTable.length - 1; j++) {
+                for (let k = 0; k <= timeTable[j].days.length - 1; k++) {
+                    for (let l = 0; l <= timeTable[j].days[k].hours.length - 1; l++) {
+                        for (let m = 0; m <= timeTable[j].days[k].hours[l].constraints.length - 1; m++) {
+                            if(constraintsToRemove[i]._id === timeTable[j].days[k].hours[l].constraints[m]._id){
+                                timeTable[j].days[k].hours[l].constraints = [...timeTable[j].days[k].hours[l].constraints.slice(0, m).concat(timeTable[j].days[k].hours[l].constraints.slice(m + 1, timeTable[j].days[k].hours[l].constraints))];
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     setConstaraintsToAdd(classNumber) {

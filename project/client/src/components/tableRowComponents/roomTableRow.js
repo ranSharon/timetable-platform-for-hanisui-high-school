@@ -11,10 +11,10 @@ const roomTableRow = (props) => {
     }
 
     return (
-        <tr>
+        <tr className="text-center">
             <td >{props.classRoomName}</td>
             <td >{showClassRoomFeatures()}</td>
-            <td>
+            <td className="text-left">
                 <button onClick={() => props.onEdit(props.id)} disabled={props.disableButtons}>ערוך</button>
                 <div style={{ display: "inline" }}>  </div>
                 <button onClick={() => props.onDelete(props.id)} disabled={props.disableButtons}>מחק</button>

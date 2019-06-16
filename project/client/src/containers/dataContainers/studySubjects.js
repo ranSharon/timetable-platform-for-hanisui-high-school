@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import DataTable from '../dataContainers/tableDisplay/table';
-import RoomFeatureCheckBox from '../../components/roomFeatureCheckBox';
+import RoomFeatureCheckBox from '../../components/classRoomsComponents/roomFeatureCheckBox';
 import AlertMessage from '../../components/alertMessage';
 import axios from 'axios';
 
@@ -32,7 +32,6 @@ class StudySubjects extends Component {
             },
             alertMessage: '',
             messageStatus: false,
-            // alertMessageForFeatures: '',
             featuresChecked: [],
             buttonType: 'אישור',
             disableButtons: false
@@ -46,7 +45,6 @@ class StudySubjects extends Component {
     componentDidMount() {
         axios.get('http://localhost:4000/data/getSubjects')
             .then(response => {
-                console.log(response.data)
                 this.setState({ subjects: [...response.data] });
             })
             .catch(function (error) {
@@ -209,7 +207,7 @@ class StudySubjects extends Component {
                     });
                     this.resetInputs();
                 });
-        } else if (this.state.buttonType === 'ערוך') {
+        } else if (this.state.buttonType === 'סיים עריכה') {
             if(!this.state.grouping){
                 newSubject.numOfMix = '';
             }
@@ -279,7 +277,7 @@ class StudySubjects extends Component {
                 this.setState({ alertMessage: message, messageStatus: false });
                 this.alertMessage();
                 return true;
-            } else if (currSubjectName === subjects[i].subjectName && currSubjectName !== subjectToEdit && this.state.buttonType === 'ערוך') {
+            } else if (currSubjectName === subjects[i].subjectName && currSubjectName !== subjectToEdit && this.state.buttonType === 'סיים עריכה') {
                 message = 'מקצוע זה כבר הוגדר';
                 this.setState({ alertMessage: message, messageStatus: false });
                 this.alertMessage();
@@ -403,7 +401,7 @@ class StudySubjects extends Component {
                     numOfMix: response.data.numOfMix,
                     alertMessage: alertMessage,
                     messageStatus: true,
-                    buttonType: 'ערוך',
+                    buttonType: 'סיים עריכה',
                     disableButtons: true
                 })
                 this.alertMessage();
@@ -445,7 +443,7 @@ class StudySubjects extends Component {
     render() {
         return (
             <div>
-                <h3 style={{ "textAlign": "right" }}>הגדרת מקצועות</h3>
+                <h4 style={{ "textAlign": "right" }}>הגדרת נתונים ושיעורים/ מקצועות</h4>
                 <div className="input-group mt-3 mb-3">
                     <div className="input-group-prepend">
                         <span className="input-group-text" id="basic-addon1">הגדר מקצוע חדש</span>

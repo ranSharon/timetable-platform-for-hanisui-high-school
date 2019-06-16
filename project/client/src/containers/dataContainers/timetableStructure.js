@@ -37,12 +37,10 @@ class TimetableStructure extends Component {
     }
 
     onChangeDay(e) {
-        console.log(e.target.value);
         this.setState({ day: e.target.value });
     }
 
     onChangeStartTime(e) {
-        console.log(e.target.value);
         this.setState({ startTime: e.target.value });
     }
 
@@ -72,7 +70,7 @@ class TimetableStructure extends Component {
                     });
                     this.resetInputs();
                 });
-        } else if (this.state.buttonType === 'ערוך') {
+        } else if (this.state.buttonType === 'סיים עריכה') {
             axios.post('http://localhost:4000/data/updateDay/' + dayToEditId, newDay)
                 .then(res => {
                     let days = [...this.state.days];
@@ -148,7 +146,7 @@ class TimetableStructure extends Component {
                 this.setState({ alertMessage: message, messageStatus: false });
                 this.alertMessage();
                 return true;
-            } else if (currDay === days[i].day && currDay !== dayToEdit && this.state.buttonType === 'ערוך') {
+            } else if (currDay === days[i].day && currDay !== dayToEdit && this.state.buttonType === 'סיים עריכה') {
                 message = 'יום זה כבר הוגדר';
                 this.setState({ alertMessage: message, messageStatus: false });
                 this.alertMessage();
@@ -170,7 +168,7 @@ class TimetableStructure extends Component {
                     endTime: response.data.endTime,
                     alertMessage: alertMessage,
                     messageStatus: true,
-                    buttonType: 'ערוך',
+                    buttonType: 'סיים עריכה',
                     disableButtons: true
                 })
                 this.alertMessage();
@@ -200,7 +198,7 @@ class TimetableStructure extends Component {
     render() {
         return (
             <div>
-                <h3 style={{ "textAlign": "right" }}>הגדרת שלד המערכת</h3>
+                <h4 style={{ "textAlign": "right" }}>הגדרת נתונים ושיעורים/ שלד המערכת</h4>
                 <div className="input-group mt-3 mb-3">
                     <div className="input-group-append">
                         <label className="input-group-text" htmlFor="inputGroupSelect02">בחר יום בשבוע</label>

@@ -11,7 +11,6 @@ const teacherTableRow = (props) => {
         }
         let text = ``;
         array.forEach(element => {
-            //console.log(element);
             text = `${text} ${element},`;
         });
         return text.substr(0, text.length - 1);
@@ -30,14 +29,14 @@ const teacherTableRow = (props) => {
         return schoolType;
     }
     return (
-        <tr>
+        <tr className="text-center">
             <td >{props.teacherName}</td>
             <td >{schoolsType(props.school)}</td>
             <td >{showGrades('grades')}</td>
             <td >{showGrades('subjects')}</td>
             <td >{props.dayOff}</td>
             <td >{props.maxTeachHours}</td>
-            <td>
+            <td className="text-left">
                 <button onClick={() => props.onEdit(props.id)} disabled={props.disableButtons}>ערוך</button>
                 <div style={{ display: "inline" }}>  </div>
                 <button onClick={() => props.onDelete(props.id)} disabled={props.disableButtons}>מחק</button>

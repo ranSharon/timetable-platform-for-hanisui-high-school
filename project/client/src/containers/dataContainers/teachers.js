@@ -61,6 +61,26 @@ class Teachers extends Component {
             });
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        if ((prevState.juniorHighSchool !== this.state.juniorHighSchool && this.state.juniorHighSchool === false) ||
+            (prevState.highSchool !== this.state.highSchool && this.state.highSchool === false)
+        ) {
+            let checked = this.state.checked;
+            checked['ז'] = false;
+            checked['ח'] = false;
+            checked['ט'] = false;
+            checked['י'] = false;
+            checked['יא'] = false;
+            checked['יב'] = false;
+            this.setState({
+                checked: { ...checked },
+                subjects: [],
+                subjectsForTeacher: [],
+                grades: []
+            });
+        }
+    }
+
     onlySubjectsAndGrades(subjects) {
         allSubject = [];
         subjects.forEach(subject => {
@@ -189,6 +209,9 @@ class Teachers extends Component {
         if (this.teacherNameIsTaken()) {
             return;
         }
+
+        let grades = [...this.setCorrecthGrades()];
+
         const newTeacher = {
             name: this.state.name,
             juniorHighSchool: this.state.juniorHighSchool,
@@ -196,9 +219,10 @@ class Teachers extends Component {
             maxTeachHours: this.state.maxTeachHours,
             currentTeachHours: 0,
             dayOff: this.state.dayOff,
-            grades: [...this.state.grades],
+            grades: [...grades],
             subjectsForTeacher: [...this.state.subjectsForTeacher]
         };
+
         if (this.state.buttonType === 'אישור') {
             let teacher = {};
             axios.post('http://localhost:4000/data/addTeacher', newTeacher)
@@ -209,7 +233,7 @@ class Teachers extends Component {
                     });
                     this.resetInputs();
                 });
-        } else if (this.state.buttonType === 'ערוך') {
+        } else if (this.state.buttonType === 'סיים עריכה') {
             axios.post('http://localhost:4000/data/updateTeacher/' + teacherToEditId, newTeacher)
                 .then(res => {
                     let teachers = [...this.state.teachers];
@@ -228,6 +252,30 @@ class Teachers extends Component {
         }
     }
 
+    setCorrecthGrades() {
+        let correcthGrades = [];
+        let subjectsForTeacher = [...this.state.subjectsForTeacher];
+        let grades = [...this.state.grades];
+
+        for (let i = 0; i <= subjectsForTeacher.length - 1; i++) {
+            for (let j = 0; j <= allSubject.length - 1; j++) {
+                if (allSubject[j].subjectName === subjectsForTeacher[i]) {
+                    for (let k = 0; k <= grades.length - 1; k++) {
+                        for (let l = 0; l <= allSubject[j].grades.length - 1; l++) {
+                            if(grades[k] === allSubject[j].grades[l]){
+                                correcthGrades = [...correcthGrades,grades[k]];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        correcthGrades = correcthGrades.filter((item, index) => correcthGrades.indexOf(item) === index);
+        return correcthGrades;
+
+    }
+
     teacherNameIsTaken() {
         let message = '';
         let teachers = [...this.state.teachers];
@@ -238,7 +286,7 @@ class Teachers extends Component {
                 this.setState({ alertMessage: message, messageStatus: false });
                 this.alertMessage();
                 return true;
-            } else if (currTeacherName === teachers[i].name && currTeacherName !== teacherToEdit && this.state.buttonType === 'ערוך') {
+            } else if (currTeacherName === teachers[i].name && currTeacherName !== teacherToEdit && this.state.buttonType === 'סיים עריכה') {
                 message = 'הוזן כבר מורה עם השם הזה';
                 this.setState({ alertMessage: message, messageStatus: false });
                 this.alertMessage();
@@ -289,7 +337,6 @@ class Teachers extends Component {
     }
 
     alertMessage() {
-        //let alertMessage = this.state.alertMessage;
         return <AlertMessage
             message={this.state.alertMessage}
             messageStatus={this.state.messageStatus}>
@@ -366,7 +413,7 @@ class Teachers extends Component {
                     dayOff: response.data.dayOff,
                     alertMessage: alertMessage,
                     messageStatus: true,
-                    buttonType: 'ערוך',
+                    buttonType: 'סיים עריכה',
                     disableButtons: true
                 })
                 this.alertMessage();
@@ -413,10 +460,55 @@ class Teachers extends Component {
 
     }
 
+    showJuniorHighSchool() {
+        if (!this.state.juniorHighSchool) {
+            return null;
+        }
+
+        return (
+            <div>
+                <div style={{ textAlign: "right" }}>
+                    <input type="checkbox" lable="ז" value="ז" checked={this.state.checked['ז']} onChange={(e) => this.onClassCheck(e)} />
+                    <div style={{ display: "inline" }}> {'ז'}</div>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                    <input type="checkbox" lable="ח" value="ח" checked={this.state.checked['ח']} onChange={(e) => this.onClassCheck(e)} />
+                    <div style={{ display: "inline" }}> {'ח'}</div>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                    <input type="checkbox" lable="ט" value="ט" checked={this.state.checked['ט']} onChange={(e) => this.onClassCheck(e)} />
+                    <div style={{ display: "inline" }}> {'ט'}</div>
+                </div>
+            </div>
+        );
+    }
+
+    showHighSchool() {
+        if (!this.state.highSchool) {
+            return null;
+        }
+        return (
+            <div>
+                <div style={{ textAlign: "right" }}>
+                    <input type="checkbox" lable="י" value="י" checked={this.state.checked['י']} onChange={(e) => this.onClassCheck(e)} />
+                    <div style={{ display: "inline" }}> {'י'}</div>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                    <input type="checkbox" lable="יא" value="יא" checked={this.state.checked['יא']} onChange={(e) => this.onClassCheck(e)} />
+                    <div style={{ display: "inline" }}> {'יא'}</div>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                    <input type="checkbox" lable="יב" value="יב" checked={this.state.checked['יב']} onChange={(e) => this.onClassCheck(e)} />
+                    <div style={{ display: "inline" }}> {'יב'}</div>
+                </div>
+            </div>
+        );
+    }
+
     render() {
         return (
             <div>
-                <h3 style={{ "textAlign": "right" }}>הגדרת מורים</h3>
+                <h4 style={{ "textAlign": "right" }}>הגדרת נתונים ושיעורים/ מורים</h4>
                 <div className="row">
                     <div className="col-4">
                         <h5 style={{ textAlign: "right" }}>{'פרטים'}</h5>
@@ -478,30 +570,8 @@ class Teachers extends Component {
                     <div className="col-2">
                         <div style={{ float: "right" }}>
                             <h5 style={{ textAlign: "right" }}>{'מלמד בכיתות'}</h5>
-                            <div style={{ textAlign: "right" }}>
-                                <input type="checkbox" lable="ז" value="ז" checked={this.state.checked['ז']} onChange={(e) => this.onClassCheck(e)} />
-                                <div style={{ display: "inline" }}> {'ז'}</div>
-                            </div>
-                            <div style={{ textAlign: "right" }}>
-                                <input type="checkbox" lable="ח" value="ח" checked={this.state.checked['ח']} onChange={(e) => this.onClassCheck(e)} />
-                                <div style={{ display: "inline" }}> {'ח'}</div>
-                            </div>
-                            <div style={{ textAlign: "right" }}>
-                                <input type="checkbox" lable="ט" value="ט" checked={this.state.checked['ט']} onChange={(e) => this.onClassCheck(e)} />
-                                <div style={{ display: "inline" }}> {'ט'}</div>
-                            </div>
-                            <div style={{ textAlign: "right" }}>
-                                <input type="checkbox" lable="י" value="י" checked={this.state.checked['י']} onChange={(e) => this.onClassCheck(e)} />
-                                <div style={{ display: "inline" }}> {'י'}</div>
-                            </div>
-                            <div style={{ textAlign: "right" }}>
-                                <input type="checkbox" lable="יא" value="יא" checked={this.state.checked['יא']} onChange={(e) => this.onClassCheck(e)} />
-                                <div style={{ display: "inline" }}> {'יא'}</div>
-                            </div>
-                            <div style={{ textAlign: "right" }}>
-                                <input type="checkbox" lable="יב" value="יב" checked={this.state.checked['יב']} onChange={(e) => this.onClassCheck(e)} />
-                                <div style={{ display: "inline" }}> {'יב'}</div>
-                            </div>
+                            {this.showJuniorHighSchool()}
+                            {this.showHighSchool()}
                         </div>
                     </div>
                     <div className="col-6">

@@ -3,8 +3,6 @@ import React, { Component } from 'react';
 class roomFeatureCheckBox extends Component {
 
     featureCheck(e) {
-        console.log(e.target.value);
-        // this.props.roomFeatureCheck(e.target.value, this.props.roomFeature);
         this.props.roomFeatureCheck(e.target.value);
     }
 
@@ -13,11 +11,9 @@ class roomFeatureCheckBox extends Component {
             <div className="pt-2" style={{ textAlign: "right" }}>
                 <input
                     type="checkbox"
-                    //value={this.props.check}
                     value={this.props.roomFeature}
                     onChange={(e) => this.featureCheck(e)}
-                    // onChange={() => this.roomFeatureCheck(this.props.roomFeature)}
-                    checked={this.props.check}
+                    checked={this.props.checked}
                 />
                 <div style={{ display: "inline" }}>{this.props.roomFeature}</div>
             </div>

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import DataTable from '../containers/dataContainers/tableDisplay/table';
-import AlertMessage from '../components/alertMessage';
+import DataTable from '../../containers/dataContainers/tableDisplay/table';
+import AlertMessage from '../alertMessage';
 
 class RoomFeatures extends Component {
     state = {
