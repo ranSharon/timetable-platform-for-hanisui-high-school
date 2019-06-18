@@ -23,7 +23,7 @@ class SubjectToChoseTableRow extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (prevProps.numOfRow != this.props.numOfRow) {
+        if (prevProps.numOfRow !== this.props.numOfRow) {
             let subjects = [...this.props.chosenSubjects];
             for (let i = 0; i <= subjects.length - 1; i++) {
                 if (subjects[i] === this.props.subjectName) {

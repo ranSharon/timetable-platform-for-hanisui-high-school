@@ -3,6 +3,8 @@ import DataTable from '../dataContainers/tableDisplay/table';
 import RoomFeatureCheckBox from '../../components/classRoomsComponents/roomFeatureCheckBox';
 import AlertMessage from '../../components/alertMessage';
 import axios from 'axios';
+import down from '../../assets/sort-down.png';
+import up from '../../assets/sort-up.png';
 
 let subjectToEdit = '';
 let subjectToEditId = '';
@@ -34,17 +36,26 @@ class StudySubjects extends Component {
             messageStatus: false,
             featuresChecked: [],
             buttonType: 'אישור',
-            disableButtons: false
+            disableButtons: false,
+
+            subjectSortImg: down,
+            gradeSortImg: down
+            
         }
         this.handleFeatureCheck = this.handleFeatureCheck.bind(this);
         this.getSubject = this.getSubject.bind(this);
         this.deleteSubject = this.deleteSubject.bind(this);
+        this.sortBySubject = this.sortBySubject.bind(this);
+        this.compareSubject = this.compareSubject.bind(this);
+        this.sortByGrade = this.sortByGrade.bind(this);
+        this.compareGrade = this.compareGrade.bind(this);
 
     }
 
     componentDidMount() {
         axios.get('http://localhost:4000/data/getSubjects')
             .then(response => {
+                console.log(response.data);
                 this.setState({ subjects: [...response.data] });
             })
             .catch(function (error) {
@@ -371,6 +382,7 @@ class StudySubjects extends Component {
     }
 
     getSubject(subjectId) {
+        window.scrollTo(0, 0);
         subjectToEditId = subjectId;
         axios.get('http://localhost:4000/data/getSubject/' + subjectId)
             .then(response => {
@@ -438,6 +450,74 @@ class StudySubjects extends Component {
             .catch(function (error) {
                 console.log(error);
             })
+    }
+
+    sortBySubject() {
+        let imgSrc = this.state.subjectSortImg;
+        if (imgSrc === down) {
+            imgSrc = up;
+        } else if (imgSrc === up) {
+            imgSrc = down;
+        }
+        this.setState({
+            subjects: [...this.state.subjects.sort(this.compareSubject)],
+            subjectSortImg: imgSrc
+        });
+    }
+
+    compareSubject(a, b) {
+        const subjectA = a.subjectName;
+        const subjectB = b.subjectName;
+
+        let comparison = 0;
+        if (this.state.subjectSortImg === down) {
+            if (subjectA > subjectB) {
+                comparison = 1;
+            } else if (subjectA < subjectB) {
+                comparison = -1;
+            }
+        } else if (this.state.subjectSortImg === up) {
+            if (subjectA < subjectB) {
+                comparison = 1;
+            } else if (subjectA > subjectB) {
+                comparison = -1;
+            }
+        }
+        return comparison;
+    }
+
+    sortByGrade() {
+        let imgSrc = this.state.gradeSortImg;
+        if (imgSrc === down) {
+            imgSrc = up;
+        } else if (imgSrc === up) {
+            imgSrc = down;
+        }
+        this.setState({
+            subjects: [...this.state.subjects.sort(this.compareGrade)],
+            gradeSortImg: imgSrc
+        });
+    }
+
+    compareGrade(a, b) {
+        const gradeA = a.grades[0];
+        const gradeB = b.grades[0];
+
+        let comparison = 0;
+        if (this.state.gradeSortImg === down) {
+            if (gradeA > gradeB) {
+                comparison = 1;
+            } else if (gradeA < gradeB) {
+                comparison = -1;
+            }
+        } else if (this.state.gradeSortImg === up) {
+            if (gradeA < gradeB) {
+                comparison = 1;
+            } else if (gradeA > gradeB) {
+                comparison = -1;
+            }
+        }
+        return comparison;
     }
 
     render() {
@@ -517,7 +597,11 @@ class StudySubjects extends Component {
                     table="subjects"
                     onEdit={this.getSubject}
                     onDelete={this.deleteSubject}
-                    disableButtons={this.state.disableButtons}>
+                    disableButtons={this.state.disableButtons}
+                    sortBySubject={this.sortBySubject}
+                    subjectSortImg={this.state.subjectSortImg}
+                    sortByGrade={this.sortByGrade}
+                    gradeSortImg={this.state.gradeSortImg}>
                 </DataTable>
             </div>
         );

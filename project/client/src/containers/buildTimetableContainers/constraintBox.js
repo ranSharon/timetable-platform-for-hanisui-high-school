@@ -33,6 +33,15 @@ class ConstraintBox extends Component {
             this.setState({ border: '' });
         }
     }
+    
+    showTeachers() {
+        let array = [...this.props.data.groupingTeachers];
+        let text = ``;
+        array.forEach(element => {
+            text = `${text} ${element},`;
+        });
+        return text.substr(0, text.length - 1);
+    }
 
     render() {
         let height = 50;
@@ -48,12 +57,12 @@ class ConstraintBox extends Component {
         };
 
         return (
-            <div
+            <div 
                 className={"d-inline-block card text-center m-1 " + this.state.border}
                 style={boxStyle}
                 onClick={() => this.ConstraintBoxClicked()}>
                 <span>{this.props.data.subject + ', '}</span>
-                <span>{this.props.data.teacher + ', '}</span>
+                <span>{this.showTeachers() + ', '}</span>
                 <span>{this.props.data.hours+', '}</span>
                 <span>{this.props.data.classNumber+', '}</span>
             </div>

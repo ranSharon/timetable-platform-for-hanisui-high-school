@@ -4,6 +4,8 @@ import RoomFeatures from '../../components/classRoomsComponents/roomFeatures';
 import RoomFeatureCheckBox from '../../components/classRoomsComponents/roomFeatureCheckBox';
 import AlertMessage from '../../components/alertMessage';
 import axios from 'axios';
+import down from '../../assets/sort-down.png';
+import up from '../../assets/sort-up.png';
 
 let classRoomToEdit = '';
 let classRoomToEditId = '';
@@ -27,7 +29,10 @@ class ClassRooms extends Component {
             disableButtons: false,
 
             showRoomFeatures: false,
-            RoomFeaturesButtonType: 'הצג הגדרת מאפייני חדר'
+            RoomFeaturesButtonType: 'הצג הגדרת מאפייני חדר',
+            
+            classroomSortImg: down,
+
 
         }
         this.HandleRoomFeatureChange = this.HandleRoomFeatureChange.bind(this);
@@ -36,11 +41,14 @@ class ClassRooms extends Component {
         this.handleDeleteRoomFeature = this.handleDeleteRoomFeature.bind(this);
         this.getClassRoom = this.getClassRoom.bind(this);
         this.deleteClassRoom = this.deleteClassRoom.bind(this);
+        this.sortByClassroom = this.sortByClassroom.bind(this);
+        this.compareClassroom = this.compareClassroom.bind(this);
     }
 
     componentDidMount() {
         axios.get('http://localhost:4000/data/getClassRooms')
             .then(response => {
+                console.log(response.data);
                 this.setState({ classRooms: [...response.data] });
             })
             .catch(function (error) {
@@ -312,6 +320,7 @@ class ClassRooms extends Component {
     }
 
     getClassRoom(classRoomId) {
+        window.scrollTo(0, 0);
         classRoomToEditId = classRoomId;
         axios.get('http://localhost:4000/data/getClassRoom/' + classRoomId)
             .then(response => {
@@ -393,6 +402,40 @@ class ClassRooms extends Component {
         this.setState({RoomFeaturesButtonType: RoomFeaturesButtonType});
     }
 
+    sortByClassroom() {
+        let imgSrc = this.state.classroomSortImg;
+        if (imgSrc === down) {
+            imgSrc = up;
+        } else if (imgSrc === up) {
+            imgSrc = down;
+        }
+        this.setState({
+            classRooms: [...this.state.classRooms.sort(this.compareClassroom)],
+            classroomSortImg: imgSrc
+        });
+    }
+
+    compareClassroom(a, b) {
+        const classroomA = a.classRoomName;
+        const classroomB = b.classRoomName;
+
+        let comparison = 0;
+        if (this.state.classroomSortImg === down) {
+            if (classroomA > classroomB) {
+                comparison = 1;
+            } else if (classroomA < classroomB) {
+                comparison = -1;
+            }
+        } else if (this.state.classroomSortImg === up) {
+            if (classroomA < classroomB) {
+                comparison = 1;
+            } else if (classroomA > classroomB) {
+                comparison = -1;
+            }
+        }
+        return comparison;
+    }
+
     render() {
         return (
             <div>
@@ -452,7 +495,9 @@ class ClassRooms extends Component {
                     table="rooms"
                     onEdit={this.getClassRoom}
                     onDelete={this.deleteClassRoom}
-                    disableButtons={this.state.disableButtons}>
+                    disableButtons={this.state.disableButtons}
+                    sortByClassroom={this.sortByClassroom}
+                    classroomSortImg={this.state.classroomSortImg}>
                 </DataTable>
             </div>
         )

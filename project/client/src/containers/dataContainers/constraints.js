@@ -4,8 +4,8 @@ import Constraint from '../../components/constraintComponents/constraint';
 import AlertMessage from '../../components/alertMessage';
 import LessonSplit from '../../components/constraintComponents/lessonSplit';
 import DataTable from '../dataContainers/tableDisplay/table';
-
-let numEdit = 0;
+import down from '../../assets/sort-down.png';
+import up from '../../assets/sort-up.png';
 
 class Constraints extends Component {
     constructor(props) {
@@ -64,9 +64,14 @@ class Constraints extends Component {
             subjectAlertMessage: '',
             buttonType: 'אישור',
             disableButtons: false,
-            teacherButtonType: 'הצג פרטיי מורה',
-            subjectButtonType: 'הצג פרטיי מקצוע',
-            mainButtonDisable: false
+            teacherButtonType: 'הצג פרטי מורה',
+            subjectButtonType: 'הצג פרטי מקצוע',
+            mainButtonDisable: false,
+
+            teacherSortImg: down,
+            gradeSortImg: down,
+            subjectSortImg: down,
+            classSortImg: down
 
         }
         this.setSubjects = this.setSubjects.bind(this);
@@ -81,6 +86,14 @@ class Constraints extends Component {
         this.setThirdlesson = this.setThirdlesson.bind(this);
         this.deleteConstraint = this.deleteConstraint.bind(this);
         this.getConstraint = this.getConstraint.bind(this);
+        this.sortConstraintsByTeacher = this.sortConstraintsByTeacher.bind(this);
+        this.compareTeacher = this.compareTeacher.bind(this);
+        this.sortConstraintsByGrade = this.sortConstraintsByGrade.bind(this);
+        this.compareGrade = this.compareGrade.bind(this);
+        this.sortConstraintsBySubject = this.sortConstraintsBySubject.bind(this);
+        this.compareSubject = this.compareSubject.bind(this);
+        this.sortConstraintsByClass = this.sortConstraintsByClass.bind(this);
+        this.compareClass = this.compareClass.bind(this);
     }
 
     componentDidMount() {
@@ -167,7 +180,7 @@ class Constraints extends Component {
             this.setState({ mainButtonDisable: false });
         }
         if (prevState.constraints.length !== this.state.constraints.length && prevState.constraints.length === 0) {
-            this.setState({alertMessage: ''});
+            this.setState({ alertMessage: '' });
         }
 
     }
@@ -351,7 +364,7 @@ class Constraints extends Component {
             grade: '',
             classNumber: [''],
             classes: [],
-        }, function(){
+        }, function () {
             console.log(this.state.subjectMix);
             console.log(this.state.subjectGrouping);
             console.log(this.state.subjectNumOfMix);
@@ -662,10 +675,15 @@ class Constraints extends Component {
         console.log(newConstraint);
 
         if (this.state.buttonType === 'אישור') {
-            if (newConstraint.subjectGrouping) {
-                let copyConstraints = [...this.createCopyConstraints(newConstraint)];
-                this.addCopyAndSplitConstraintsToDB(newConstraint, copyConstraints);
-            } else if (newConstraint.lessonSplit && !newConstraint.subjectGrouping) {
+            // if (newConstraint.subjectGrouping) {
+            //     let copyConstraints = [...this.createCopyConstraints(newConstraint)];
+            //     this.addCopyAndSplitConstraintsToDB(newConstraint, copyConstraints);
+            // } else 
+            // if (newConstraint.lessonSplit && !newConstraint.subjectGrouping) {
+            //     let splitConstraints = [...this.createSplitsBrosConstraints(newConstraint)];
+            //     this.addSplitConstraintsToDB(newConstraint, splitConstraints, this.state.num);
+            // } else {
+            if (newConstraint.lessonSplit) {
                 let splitConstraints = [...this.createSplitsBrosConstraints(newConstraint)];
                 this.addSplitConstraintsToDB(newConstraint, splitConstraints, this.state.num);
             } else {
@@ -858,8 +876,8 @@ class Constraints extends Component {
             alertMessage: alertMessage,
             teacherAlertMessage: '',
             subjectAlertMessage: '',
-            teacherButtonType: 'הצג פרטיי מורה',
-            subjectButtonType: 'הצג פרטיי מקצוע',
+            teacherButtonType: 'הצג פרטי מורה',
+            subjectButtonType: 'הצג פרטי מקצוע',
             messageStatus: true
         });
     }
@@ -1200,16 +1218,16 @@ class Constraints extends Component {
         if (this.state.teacher === '') {
             return;
         }
-        if (teacherButtonType === 'הצג פרטיי מורה') {
-            teacherButtonType = 'הסתר פרטיי מורה';
+        if (teacherButtonType === 'הצג פרטי מורה') {
+            teacherButtonType = 'הסתר פרטי מורה';
         } else {
-            teacherButtonType = 'הצג פרטיי מורה';
+            teacherButtonType = 'הצג פרטי מורה';
         }
         this.setState({ teacherButtonType: teacherButtonType });
     }
 
     showTeacherDetails() {
-        if (this.state.teacherButtonType === 'הסתר פרטיי מורה') {
+        if (this.state.teacherButtonType === 'הסתר פרטי מורה') {
             return (
                 <AlertMessage
                     message={this.state.teacherAlertMessage}
@@ -1226,16 +1244,16 @@ class Constraints extends Component {
         if (this.state.subject === '') {
             return;
         }
-        if (subjectButtonType === 'הצג פרטיי מקצוע') {
-            subjectButtonType = 'הסתר פרטיי מקצוע';
+        if (subjectButtonType === 'הצג פרטי מקצוע') {
+            subjectButtonType = 'הסתר פרטי מקצוע';
         } else {
-            subjectButtonType = 'הצג פרטיי מקצוע';
+            subjectButtonType = 'הצג פרטי מקצוע';
         }
         this.setState({ subjectButtonType: subjectButtonType });
     }
 
     showSubjectDetails() {
-        if (this.state.subjectButtonType === 'הסתר פרטיי מקצוע') {
+        if (this.state.subjectButtonType === 'הסתר פרטי מקצוע') {
             return (
                 <AlertMessage
                     className="col-6"
@@ -1274,11 +1292,12 @@ class Constraints extends Component {
         }
 
         let numOfConstraintToDelete = 1;
-        if (fatherConstraint.subjectGrouping && fatherConstraint.lessonSplit) {
-            numOfConstraintToDelete = fatherConstraint.subjectNumOfMix * fatherConstraint.numOfSplits;
-        } else if (fatherConstraint.subjectGrouping) {
-            numOfConstraintToDelete = fatherConstraint.subjectNumOfMix;
-        } else if (fatherConstraint.lessonSplit) {
+        // if (fatherConstraint.subjectGrouping && fatherConstraint.lessonSplit) {
+        //     numOfConstraintToDelete = fatherConstraint.subjectNumOfMix * fatherConstraint.numOfSplits;
+        // } else if (fatherConstraint.subjectGrouping) {
+        //     numOfConstraintToDelete = fatherConstraint.subjectNumOfMix;
+        // } else 
+        if (fatherConstraint.lessonSplit) {
             numOfConstraintToDelete = fatherConstraint.numOfSplits;
         }
 
@@ -1333,8 +1352,10 @@ class Constraints extends Component {
     }
 
     getConstraint(constraintId) {
+        window.scrollTo(0, 0);
         let fatherConstraint = {};
-        let constraints = [...this.state.constraints];
+        let constraints = [...this.state.constraints.sort(this.compare)];
+
         for (let index = 0; index <= constraints.length - 1; index++) {
             if (constraints[index]._id === constraintId) {
                 fatherConstraint = { ...constraints[index] };
@@ -1426,6 +1447,7 @@ class Constraints extends Component {
                     });
             });
         });
+
         // }.bind(this));
         /* axios.post('http://localhost:4000/data/dropConstraints/')
             .then(response => {
@@ -1436,6 +1458,142 @@ class Constraints extends Component {
             }) */
     }
 
+    sortConstraintsByTeacher() {
+        let imgSrc = this.state.teacherSortImg;
+        if (imgSrc === down) {
+            imgSrc = up;
+        } else if (imgSrc === up) {
+            imgSrc = down;
+        }
+        this.setState({
+            constraints: [...this.state.constraints.sort(this.compareTeacher)],
+            teacherSortImg: imgSrc
+        });
+    }
+
+    compareTeacher(a, b) {
+        const teacherA = a.groupingTeachers[0];
+        const teacherB = b.groupingTeachers[0];
+
+        let comparison = 0;
+        if (this.state.teacherSortImg === down) {
+            if (teacherA > teacherB) {
+                comparison = 1;
+            } else if (teacherA < teacherB) {
+                comparison = -1;
+            }
+        } else if (this.state.teacherSortImg === up) {
+            if (teacherA < teacherB) {
+                comparison = 1;
+            } else if (teacherA > teacherB) {
+                comparison = -1;
+            }
+        }
+        return comparison;
+    }
+
+    sortConstraintsByGrade() {
+        let imgSrc = this.state.gradeSortImg;
+        if (imgSrc === down) {
+            imgSrc = up;
+        } else if (imgSrc === up) {
+            imgSrc = down;
+        }
+        this.setState({
+            constraints: [...this.state.constraints.sort(this.compareGrade)],
+            gradeSortImg: imgSrc
+        });
+    }
+
+    compareGrade(a, b) {
+        const gradeA = a.grade;
+        const gradeB = b.grade;
+
+        let comparison = 0;
+        if (this.state.gradeSortImg === down) {
+            if (gradeA > gradeB) {
+                comparison = 1;
+            } else if (gradeA < gradeB) {
+                comparison = -1;
+            }
+        } else if (this.state.gradeSortImg === up) {
+            if (gradeA < gradeB) {
+                comparison = 1;
+            } else if (gradeA > gradeB) {
+                comparison = -1;
+            }
+        }
+        return comparison;
+    }
+
+    sortConstraintsBySubject() {
+        let imgSrc = this.state.subjectSortImg;
+        if (imgSrc === down) {
+            imgSrc = up;
+        } else if (imgSrc === up) {
+            imgSrc = down;
+        }
+        this.setState({
+            constraints: [...this.state.constraints.sort(this.compareSubject)],
+            subjectSortImg: imgSrc
+        });
+    }
+
+    compareSubject(a, b) {
+        const subjectA = a.subject;
+        const subjectB = b.subject;
+
+        let comparison = 0;
+        if (this.state.subjectSortImg === down) {
+            if (subjectA > subjectB) {
+                comparison = 1;
+            } else if (subjectA < subjectB) {
+                comparison = -1;
+            }
+        } else if (this.state.subjectSortImg === up) {
+            if (subjectA < subjectB) {
+                comparison = 1;
+            } else if (subjectA > subjectB) {
+                comparison = -1;
+            }
+        }
+        return comparison;
+    }
+
+    sortConstraintsByClass() {
+        console.log('click')
+        let imgSrc = this.state.classSortImg;
+        if (imgSrc === down) {
+            imgSrc = up;
+        } else if (imgSrc === up) {
+            imgSrc = down;
+        }
+        this.setState({
+            constraints: [...this.state.constraints.sort(this.compareClass)],
+            classSortImg: imgSrc
+        });
+    }
+
+    compareClass(a, b) {
+        const classA = a.classNumber[0];
+        const classB = b.classNumber[0];
+
+        let comparison = 0;
+        if (this.state.classSortImg === down) {
+            if (classA > classB) {
+                comparison = 1;
+            } else if (classA < classB) {
+                comparison = -1;
+            }
+        } else if (this.state.classSortImg === up) {
+            if (classA < classB) {
+                comparison = 1;
+            } else if (classA > classB) {
+                comparison = -1;
+            }
+        }
+        return comparison;
+    }
 
 
     render() {
@@ -1492,7 +1650,16 @@ class Constraints extends Component {
                     constraints={this.state.constraints}
                     table="constraints"
                     onDelete={this.deleteConstraint}
-                    onEdit={this.getConstraint}>
+                    onEdit={this.getConstraint}
+                    sortByTeacher={this.sortConstraintsByTeacher}
+                    teacherSortImg={this.state.teacherSortImg}
+                    sortByGrade={this.sortConstraintsByGrade}
+                    gradeSortImg={this.state.gradeSortImg}
+                    sortBySubject={this.sortConstraintsBySubject}
+                    subjectSortImg={this.state.subjectSortImg}
+                    sortByClass={this.sortConstraintsByClass}
+                    classSortImg={this.state.classSortImg}
+                >
                 </DataTable>
             </div>
         );

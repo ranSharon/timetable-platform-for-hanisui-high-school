@@ -95,8 +95,18 @@ class DataTable extends Component {
                     <table className="table table-striped " style={{ marginTop: 20 }} >
                         <thead>
                             <tr className="text-center">
-                                <th>מקצוע</th>
-                                <th>נלמד בכיתות</th>
+                                <th
+                                    style={{ "cursor": "pointer" }}
+                                    onClick={this.props.sortBySubject}>מקצוע
+                                    <div style={{ display: "inline" }}>  </div>
+                                    <img src={this.props.subjectSortImg} alt="arrow" style={{ "height": "1rem", "width": "1rem" }}></img>
+                                </th>
+                                <th
+                                    style={{ "cursor": "pointer" }}
+                                    onClick={this.props.sortByGrade}>נלמד בכיתות
+                                    <div style={{ display: "inline" }}>  </div>
+                                    <img src={this.props.gradeSortImg} alt="arrow" style={{ "height": "1rem", "width": "1rem" }}></img>
+                                </th>
                                 <th>נלמד לבגרות</th>
                                 <th>גמול</th>
                                 <th>מערבב שכבה</th>
@@ -135,7 +145,12 @@ class DataTable extends Component {
                     <table className="table table-striped" style={{ marginTop: 20 }} >
                         <thead>
                             <tr className="text-center">
-                                <th >חדר לימוד</th>
+                                <th
+                                    style={{ "cursor": "pointer" }}
+                                    onClick={this.props.sortByClassroom}>חדר לימוד
+                                    <div style={{ display: "inline" }}>  </div>
+                                    <img src={this.props.classroomSortImg} alt="arrow" style={{ "height": "1rem", "width": "1rem" }}></img>
+                                </th>
                                 <th >מאפיינים</th>
                                 <th ></th>
                             </tr>
@@ -217,12 +232,22 @@ class DataTable extends Component {
                     <table className="table table-striped" style={{ marginTop: 20 }} >
                         <thead>
                             <tr className="text-center">
-                                <th >שם המורה</th>
+                                <th
+                                    style={{ "cursor": "pointer" }}
+                                    onClick={this.props.sortByTeacher}>שם המורה
+                                    <div style={{ display: "inline" }}>  </div>
+                                    <img src={this.props.teacherSortImg} alt="arrow" style={{ "height": "1rem", "width": "1rem" }}></img>
+                                </th>
                                 <th >מלמד ב...</th>
-                                <th >מלמד בכיתות</th>
+                                <th style={{ "cursor": "pointer" }}
+                                    onClick={this.props.sortByGrade}>מלמד בכיתות
+                                    <div style={{ display: "inline" }}>  </div>
+                                    <img src={this.props.gradeSortImg} alt="arrow" style={{ "height": "1rem", "width": "1rem" }}></img>
+                                </th>
                                 <th >מקצועות שמלמד</th>
                                 <th >יום חופש רצוי</th>
-                                <th >מספר שעות הוראה שבועיות</th>
+                                <th >שעות הוראה שבועיות מקסימליות</th>
+                                <th >שעות הוראה שבועיות נוכחיות</th>
                                 <th ></th>
                             </tr>
                         </thead>
@@ -237,6 +262,7 @@ class DataTable extends Component {
                                         subjects={teacher.subjectsForTeacher}
                                         dayOff={teacher.dayOff}
                                         maxTeachHours={teacher.maxTeachHours}
+                                        currentTeachHours={teacher.currentTeachHours}
                                         id={teacher._id}
                                         onEdit={this.props.onEdit}
                                         onDelete={this.props.onDelete}
@@ -256,12 +282,36 @@ class DataTable extends Component {
                     <table className="table table-striped" style={{ marginTop: 20 }} >
                         <thead >
                             <tr className="text-center">
-                                <th className="border-bottom-0">מספר</th>
+                                {/* <th className="border-bottom-0">מספר</th> */}
                                 <th className="border-bottom-0">שעות</th>
-                                <th className="border-bottom-0">מורה</th>
-                                <th className="border-bottom-0">מקצוע</th>
-                                <th className="border-bottom-0">שכבה</th>
-                                <th className="border-bottom-0">כיתות</th>
+                                <th
+                                    className="border-bottom-0"
+                                    style={{ "cursor": "pointer" }}
+                                    onClick={this.props.sortByTeacher}>מורה
+                                    <div style={{ display: "inline" }}>  </div>
+                                    <img src={this.props.teacherSortImg} alt="arrow" style={{ "height": "1rem", "width": "1rem" }}></img>
+                                </th>
+                                <th
+                                    className="border-bottom-0"
+                                    style={{ "cursor": "pointer" }}
+                                    onClick={this.props.sortBySubject}>מקצוע
+                                    <div style={{ display: "inline" }}>  </div>
+                                    <img src={this.props.subjectSortImg} alt="arrow" style={{ "height": "1rem", "width": "1rem" }}></img>
+                                </th>
+                                <th
+                                    className="border-bottom-0"
+                                    style={{ "cursor": "pointer" }}
+                                    onClick={this.props.sortByGrade}>שכבה
+                                    <div style={{ display: "inline" }}>  </div>
+                                    <img src={this.props.gradeSortImg} alt="arrow" style={{ "height": "1rem", "width": "1rem" }}></img>
+                                </th>
+                                <th
+                                    className="border-bottom-0"
+                                    style={{ "cursor": "pointer" }}
+                                    onClick={this.props.sortByClass}>כיתות
+                                    <div style={{ display: "inline" }}>  </div>
+                                    <img src={this.props.classSortImg} alt="arrow" style={{ "height": "1rem", "width": "1rem" }}></img>
+                                </th>
                                 <th className="border-bottom-0">חלק משיעור מפוצל</th>
                                 <th className="border-bottom-0">הקבצה</th>
                                 <th className="border-bottom-0"></th>

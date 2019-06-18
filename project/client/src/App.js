@@ -24,7 +24,7 @@ class App extends Component {
                   <Link to="/dataOnTimetable" className="nav-link">הצגת נתונים על המערכת</Link>
                 </li>
                 <li className="navbar-item">
-                  <Link to="/general" className="nav-link">הגדרות כלליות</Link>
+                  <Link to="/general" className="nav-link">מדריך משתמש</Link>
                 </li>
               </ul>
             </div>

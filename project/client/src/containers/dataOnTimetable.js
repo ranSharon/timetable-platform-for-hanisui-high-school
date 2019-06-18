@@ -615,6 +615,10 @@ class DataOnTimetable extends Component {
                 </div>
             </div>
             <div className="w-100 text-right p-0 card mb-3">
+                <h6 className="text-center">איזה מורים מלמדים ביום מסויים</h6>
+                {this.fifthQuery()}
+            </div>
+            <div className="w-100 text-right p-0 card mb-3">
                 <h6 className="text-center">באיזה שעות מורה שמלמד ביום מסוים פנוי</h6>
                 <div className="w-100 h-100">
                     {this.thirdQuery()}
@@ -626,10 +630,7 @@ class DataOnTimetable extends Component {
                     {this.fourthQuery()}
                 </div>
             </div>
-            <div className="w-100 text-right p-0 card mb-3">
-                <h6 className="text-center">איזה מורים מלמדים ביום מסויים</h6>
-                {this.fifthQuery()}
-            </div>
+
             {/* <div
                 className="w-100 text-right p-0 card mb-3">
                 <h6 className="text-center">איזה כיתות פנויות יש עבור כל יום ובאיזה שעה</h6>

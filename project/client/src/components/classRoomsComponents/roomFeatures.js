@@ -14,7 +14,7 @@ class RoomFeatures extends Component {
     render() {
         return (
             <div className="card">
-                <h5 className="mt-3" style={{ "textAlign": "center" }}>לפני הגדרת חדרי לימוד ומקצועות יש להגדיר מאפייני חדרי לימוד כלליים</h5>
+                <h5 className="mt-3" style={{ "textAlign": "center" }}>לפני הגדרת חדרי לימוד ומקצועות יש להגדיר מאפייני חדרי לימוד כלליים (מאפיין לדוגמא: חדר לימוד המצריך מקרן)</h5>
                 <div className="card-body">
                     <div className="row">
                         <div className="col-6">

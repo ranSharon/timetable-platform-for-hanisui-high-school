@@ -21,7 +21,7 @@ class ClassRoomBox extends Component {
     render() {
         return (
             <div
-                className={"col card text-right m-1 " + this.state.border}
+                className={"card text-center m-1 d-inline-block " + this.state.border}
                 style={{ "height": "50px", "cursor": "pointer", "width": "120px" }}
                 onClick={() => this.props.click(this.props.data)}>
                 {this.props.data.classRoomName}

@@ -1,13 +1,6 @@
 import React, { Component } from 'react';
 import { DragSource } from 'react-dnd';
 
-
-
-let subject = '';
-let teacher = '';
-let hours = '';
-let classRoom = '';
-
 const constraintSource = {
     endDrag(props, monitor, component) {
         // return props.endDrag();
@@ -65,6 +58,15 @@ class DragConstraintBox extends Component {
         this.props.click(this.props.data);
     }
 
+    showTeachers() {
+        let array = [...this.props.data.groupingTeachers];
+        let text = ``;
+        array.forEach(element => {
+            text = `${text} ${element},`;
+        });
+        return text.substr(0, text.length - 1);
+    }
+
     render() {
         // if (!this.props.temp) {
             // let height = 50;
@@ -84,14 +86,13 @@ class DragConstraintBox extends Component {
             return this.props.connectDragSource(
 
                 <div
-                    className={"d-inline-block card text-center  " + "border border-dark"}
+                    className={"d-inline-block card text-center border border-dark"}
                     style={boxStyle}
                     // style={{opacity}}
                     onClick={() => this.props.click(this.props.inTable, this.props.data, this.props.classRoom)}
-
                 >
                     <span>{this.props.data.subject + ' ,'}</span>
-                    <span>{this.props.data.teacher + ' ,'}</span>
+                    <span>{this.showTeachers() + ' ,'}</span>
                     <span>{this.props.data.hours}</span>
                     <div>{this.props.classRoom}</div>
                 </div>

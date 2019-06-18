@@ -2,9 +2,6 @@ import React, { Component } from 'react';
 
 import { DropTarget } from 'react-dnd';
 import DragConstraintBox from './dragConstraintBox';
-import TempDragConstraintBox from './tempDragConstraintBox';
-
-
 
 const hourTarget = {
     // canDrop(props, monitor) {
@@ -167,7 +164,6 @@ class HourBox extends Component {
     }
 
     render() {
-        let height = 50;
         let backgroundColor = '#f8d7da';
 
         let border = 'border-top border-dark';

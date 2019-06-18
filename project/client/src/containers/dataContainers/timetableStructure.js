@@ -157,6 +157,7 @@ class TimetableStructure extends Component {
     }
 
     getDay(dayId) {
+        window.scrollTo(0, 0);
         dayToEditId = dayId;
         axios.get('http://localhost:4000/data/getDay/' + dayId)
             .then(response => {

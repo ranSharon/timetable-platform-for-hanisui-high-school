@@ -7,7 +7,15 @@ const constraintsTableRow = (props) => {
         let array = [...props.constraint.classNumber];
         let text = ``;
         array.forEach(element => {
-            //console.log(element);
+            text = `${text} ${element},`;
+        });
+        return text.substr(0, text.length - 1);
+    }
+
+    const showTeachers = () => {
+        let array = [...props.constraint.groupingTeachers];
+        let text = ``;
+        array.forEach(element => {
             text = `${text} ${element},`;
         });
         return text.substr(0, text.length - 1);
@@ -15,18 +23,13 @@ const constraintsTableRow = (props) => {
 
 
     const actionButtons = () => {
-        // if ((props.constraint.lessonSplit &&
-        //     props.constraint.constraintSplitsBros.length === 0) ||
-        //     props.constraint.copyConstraint
-        // ) {
-        //     return <td></td>;
         if (!props.constraint.mainConstraint) {
             return <td></td>;
         } else {
             return (
                 <td className="border-top border-dark text-left">
                     <button onClick={() => props.onEdit(props.constraint._id)}>ערוך</button>
-                    <div style={{ display: "inline" }}></div>
+                    <div style={{ display: "inline" }}> </div>
                     <button onClick={() => props.onDelete(props.constraint._id)}>מחק</button>
                 </td>
             );
@@ -41,15 +44,18 @@ const constraintsTableRow = (props) => {
             return 'לא';
     }
 
+    // if ((props.constraint.lessonSplit &&
+    //     props.constraint.constraintSplitsBros.length === 0) ||
+    //     props.constraint.copyConstraint
+    // ) {
     if ((props.constraint.lessonSplit &&
-        props.constraint.constraintSplitsBros.length === 0) ||
-        props.constraint.copyConstraint
+        props.constraint.constraintSplitsBros.length === 0)
     ) {
         return (
             <tr className="text-center">
-                <td>{props.constraint.num}</td>
+                {/* <td>{props.constraint.num}</td> */}
                 <td>{props.constraint.hours}</td>
-                <td>{props.constraint.teacher}</td>
+                <td>{showTeachers()}</td>
                 <td>{props.constraint.subject}</td>
                 <td>{props.constraint.grade}</td>
                 <td>{showClasses()}</td>
@@ -61,9 +67,9 @@ const constraintsTableRow = (props) => {
     } else {
         return (
             <tr className="text-center">
-                <td className="border-top border-dark">{props.constraint.num}</td>
+                {/* <td className="border-top border-dark">{props.constraint.num}</td> */}
                 <td className="border-top border-dark">{props.constraint.hours}</td>
-                <td className="border-top border-dark">{props.constraint.teacher}</td>
+                <td className="border-top border-dark">{showTeachers()}</td>
                 <td className="border-top border-dark">{props.constraint.subject}</td>
                 <td className="border-top border-dark">{props.constraint.grade}</td>
                 <td className="border-top border-dark" >{showClasses()}</td>

@@ -1,10 +1,6 @@
 import React, { Component } from 'react';
 import { DragSource } from 'react-dnd';
 
-let subject = '';
-let teacher = '';
-let hours = '';
-let classRoom = '';
 
 const constraintSource = {
     endDrag(props, monitor, component) {

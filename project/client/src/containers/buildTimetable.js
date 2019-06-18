@@ -7,11 +7,12 @@ import DragConstraintBox from './buildTimetableContainers/dragConstraintBox';
 
 
 import { DragDropContext } from 'react-dnd';
-import { DragDropContextProvider } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 // import withScrolling from 'react-dnd-scrollzone';
 
 // const ScrollingComponent = withScrolling('div');
+let teacherClashMessage = [];
+let classroomClashMessage = [];
 
 class BuildTimetable extends Component {
     constructor(props) {
@@ -49,7 +50,15 @@ class BuildTimetable extends Component {
             backgroundColorTuesday: 'white',
             backgroundColorWednesday: 'white',
             backgroundColorThursday: 'white',
-            backgroundColorFriday: 'white'
+            backgroundColorFriday: 'white',
+
+            showTeacherClashMessage: false,
+            showClassroomClashMessage: false,
+            showTeacherClashButtonType: 'הצג התנגשויות עבור מורה',
+            showClassroomClashButtonType: 'הצג התנגשויות עבור חדר לימוד'
+
+            // teacherClashMessage: '',
+            // classroomClashMessage: '',
         }
 
         this.handleConstraintClick = this.handleConstraintClick.bind(this);
@@ -66,7 +75,7 @@ class BuildTimetable extends Component {
         axios.get('http://localhost:4000/data/getConstraints')
             .then(response => {
                 if (this.mounted) {
-                    this.setState({ constraints: [...response.data] }, function () {
+                    this.setState({ constraints: [...response.data.sort(this.compareTeacher)] }, function () {
                         axios.get('http://localhost:4000/data/getDays')
                             .then(response => {
                                 if (this.mounted) {
@@ -103,7 +112,7 @@ class BuildTimetable extends Component {
         axios.get('http://localhost:4000/data/getClassRooms')
             .then(response => {
                 if (this.mounted) {
-                    this.setState({ classRooms: [...response.data], classRoomsView: [...response.data] });
+                    this.setState({ classRooms: [...response.data.sort(this.compareClassroom)], classRoomsView: [...response.data] });
                 }
                 console.log('classRooms:')
                 console.log(this.state.classRooms);
@@ -244,7 +253,7 @@ class BuildTimetable extends Component {
                 for (let k = 0; k <= timeTable[j].days.length - 1; k++) {
                     for (let l = 0; l <= timeTable[j].days[k].hours.length - 1; l++) {
                         for (let m = 0; m <= timeTable[j].days[k].hours[l].constraints.length - 1; m++) {
-                            if(constraintsToRemove[i]._id === timeTable[j].days[k].hours[l].constraints[m]._id){
+                            if (constraintsToRemove[i]._id === timeTable[j].days[k].hours[l].constraints[m]._id) {
                                 timeTable[j].days[k].hours[l].constraints = [...timeTable[j].days[k].hours[l].constraints.slice(0, m).concat(timeTable[j].days[k].hours[l].constraints.slice(m + 1, timeTable[j].days[k].hours[l].constraints))];
                             }
                         }
@@ -257,7 +266,7 @@ class BuildTimetable extends Component {
     setConstaraintsToAdd(classNumber) {
         let constraints = [...this.state.constraints];
         let constaraintsToAdd = [];
-        let constaraintsInTable = [];
+        // let constaraintsInTable = [];
         for (let i = 0; i <= constraints.length - 1; i++) {
             for (let j = 0; j <= constraints[i].classNumber.length; j++) {
                 if (classNumber === constraints[i].classNumber[j]) {
@@ -294,6 +303,32 @@ class BuildTimetable extends Component {
         return comparison;
     }
 
+    compareClassroom(a, b) {
+        const classroomA = a.classRoomName;
+        const classroomB = b.classRoomName;
+
+        let comparison = 0;
+        if (classroomA > classroomB) {
+            comparison = 1;
+        } else if (classroomA < classroomB) {
+            comparison = -1;
+        }
+        return comparison;
+    }
+
+    compareTeacher(a, b) {
+        const teacherA = a.groupingTeachers[0];
+        const teacherB = b.groupingTeachers[0];
+
+        let comparison = 0;
+        if (teacherA > teacherB) {
+            comparison = 1;
+        } else if (teacherA < teacherB) {
+            comparison = -1;
+        }
+        return comparison;
+    }
+
     setNavbar() {
         let grades = [...this.state.grades];
         let navBar = [];
@@ -319,6 +354,8 @@ class BuildTimetable extends Component {
     }
 
     handleClassClick(classNumber) {
+        classroomClashMessage = [];
+        teacherClashMessage = [];
         if (this.state.timeTable.length === 0) {
             return;
         }
@@ -329,7 +366,11 @@ class BuildTimetable extends Component {
             inTable: false,
             row: -1,
             col: -1,
-            showDeleteButton: false
+            showDeleteButton: false,
+            showTeacherClashMessage: false,
+            showClassroomClashMessage: false,
+            showTeacherClashButtonType: 'הצג התנגשויות עבור מורה',
+            showClassroomClashButtonType: 'הצג התנגשויות עבור חדר לימוד'
         }, function () {
             this.setDayOf()
             let tableViewForClass = { ...this.setTableViewForClass(classNumber) };
@@ -381,8 +422,8 @@ class BuildTimetable extends Component {
         let currentConstraintEmpty = true; // if no constriant is chosee in this component then box lavan
         let data = {};
 
-        let first = true // when edeting we use this flag  
-        let dummy = false;
+        // let first = true // when edeting we use this flag  
+        // let dummy = false;
         for (let i = 0; i <= dayView.hours.length - 1; i++) {
             if (i === 0 && col === 0) {
                 // console.log('start:')
@@ -482,7 +523,6 @@ class BuildTimetable extends Component {
                 break;
             }
         }
-        let message = '';
         let timeTable = [...this.state.timeTable];
 
         for (let i = 1; i <= numOfClasses; i++) {
@@ -516,7 +556,6 @@ class BuildTimetable extends Component {
             return false
         }
 
-        let message = '';
         let timeTableView = { ...this.state.tableViewForClass };
 
         for (let j = 0; j <= timeTableView.days.length - 1; j++) {
@@ -540,20 +579,23 @@ class BuildTimetable extends Component {
 
     chekTeacherOtherDays(day, hour, endofDay, constraint) {
         let canBeAdded = true;
-        let lessonHours = parseInt(constraint.hours);
         let message = '';
         let timeTable = [...this.state.timeTable];
+        let teachers = constraint.groupingTeachers;
 
-        for (let i = 0; i <= timeTable.length - 1; i++) {
-            if (timeTable[i].classNumber !== this.state.currentClass) {
-                for (let j = 0; j <= timeTable[i].days.length - 1; j++) {
-                    if (timeTable[i].days[j].day === day) {
-                        for (let k = 0; k <= timeTable[i].days[j].hours.length - 1; k++) {
-                            if (timeTable[i].days[j].hours[k].hour === hour) {
-                                for (let l = 0; l <= timeTable[i].days[j].hours[k].constraints.length - 1; l++) {
-                                    if (timeTable[i].days[j].hours[k].constraints[l].teacher === constraint.teacher) {
-                                        message = "the teacher " + timeTable[i].days[j].hours[k].constraints[l].teacher + ' teach alrady at the same time: day: ' + day + ' hour: ' + hour + ' in class: ' + timeTable[i].classNumber;
-                                        return false;
+        for (let t = 0; t <= teachers.length - 1; t++) {
+            for (let i = 0; i <= timeTable.length - 1; i++) {
+                if (timeTable[i].classNumber !== this.state.currentClass) {
+                    for (let j = 0; j <= timeTable[i].days.length - 1; j++) {
+                        if (timeTable[i].days[j].day === day) {
+                            for (let k = 0; k <= timeTable[i].days[j].hours.length - 1; k++) {
+                                if (timeTable[i].days[j].hours[k].hour === hour) {
+                                    for (let l = 0; l <= timeTable[i].days[j].hours[k].constraints.length - 1; l++) {
+                                        if (timeTable[i].days[j].hours[k].constraints[l].teacher === teachers[t]) {
+                                            message = 'המורה ' + teachers[t] + ' כבר מלמד ביום: ' + day + ', בשעה ' + (hour - 1) + ':00-' + + hour + ':00, בכיתה ' + timeTable[i].classNumber;
+                                            teacherClashMessage = [...teacherClashMessage, message];
+                                            return false;
+                                        }
                                     }
                                 }
                             }
@@ -579,7 +621,8 @@ class BuildTimetable extends Component {
                             if (timeTable[i].days[j].hours[k].hour === hour) {
                                 for (let l = 0; l <= timeTable[i].days[j].hours[k].constraints.length - 1; l++) {
                                     if (timeTable[i].days[j].hours[k].constraints[l].classRoom === classRoom.classRoomName) {
-                                        message = "the class  " + classRoom.classRoomName + ' is uesd in day: ' + day + ' ,at class: ' + timeTable[i].classNumber + ' ,at time: ' + timeTable[i].days[j].hours[k].hour;
+                                        message = 'חדר הלימוד ' + classRoom.classRoomName + ' תפוס כבר ביום ' + day + ', ע"י כיתה ' + timeTable[i].classNumber + ' , ביום ' + timeTable[i].days[j].day + ', בשעה ' + (hour - 1) + ':00-' + hour + ':00';
+                                        classroomClashMessage = [...classroomClashMessage, message];
                                         return false;
                                     }
                                 }
@@ -603,22 +646,22 @@ class BuildTimetable extends Component {
                 {this.createTimeCol()}
                 </div>
                 <div className="col-11 row">
-                    <div className="col col-2 border border-dark text-center" style={{ "backgroundColor": this.state.backgroundColorSunday }} value='ראשון'>ראשון
+                    <div className="col-2 border border-dark text-center" ><div style={{ "backgroundColor": this.state.backgroundColorSunday, "marginRight": "-15px", "marginLeft": "-15px" }} value='ראשון'>ראשון</div>
                         {this.createBoxesForDay('ראשון', 0)}
                     </div>
-                    <div className="col-2 border border-dark text-center" style={{ "backgroundColor": this.state.backgroundColorMonday }} value='שני'>שני
+                    <div className="col-2 border border-dark text-center" ><div style={{ "backgroundColor": this.state.backgroundColorMonday, "marginRight": "-15px", "marginLeft": "-15px" }} value='שני'>שני</div>
                         {this.createBoxesForDay('שני', 1)}
                     </div>
-                    <div className="col-2 border border-dark text-center" style={{ "backgroundColor": this.state.backgroundColorTuesday }} value='שלישי'>שלישי
+                    <div className="col-2 border border-dark text-center" ><div style={{ "backgroundColor": this.state.backgroundColorTuesday, "marginRight": "-15px", "marginLeft": "-15px" }} value='שלישי'>שלישי</div>
                         {this.createBoxesForDay('שלישי', 2)}
                     </div>
-                    <div className="col-2 border border-dark text-center" style={{ "backgroundColor": this.state.backgroundColorWednesday }} value='רביעי'>רביעי
+                    <div className="col-2 border border-dark text-center" ><div style={{ "backgroundColor": this.state.backgroundColorWednesday, "marginRight": "-15px", "marginLeft": "-15px" }} value='רביעי'>רביעי</div>
                         {this.createBoxesForDay('רביעי', 3)}
                     </div>
-                    <div className="col-2 border border-dark text-center" style={{ "backgroundColor": this.state.backgroundColorThursday }} value='חמישי'>חמישי
+                    <div className="col-2 border border-dark text-center" ><div style={{ "backgroundColor": this.state.backgroundColorThursday, "marginRight": "-15px", "marginLeft": "-15px" }} value='חמישי'>חמישי</div>
                         {this.createBoxesForDay('חמישי', 4)}
                     </div>
-                    <div className="col-2 border border-dark text-center" style={{ "backgroundColor": this.state.backgroundColorFriday }} value='שישי'>שישי
+                    <div className="col-2 border border-dark text-center" ><div style={{ "backgroundColor": this.state.backgroundColorFriday, "marginRight": "-15px", "marginLeft": "-15px" }} value='שישי'>שישי</div>
                         {this.createBoxesForDay('שישי', 5)}
                     </div>
                 </div>
@@ -642,7 +685,7 @@ class BuildTimetable extends Component {
         for (let i = minStartTime; i < maxEndTime; i++) {
             let time = i + ':00-' + (i + 1) + ':00';
             TimeCol = [...TimeCol,
-            <div key={i} className="row  border-top border-dark text-center" style={{ "height": "50px" }}>{time}</div>
+            <div key={i} className="row border-top border-dark text-center" style={{ "height": "50px" }}>{time}</div>
             ];
         }
         return TimeCol;
@@ -666,11 +709,29 @@ class BuildTimetable extends Component {
     }
 
     handleClassRoomClick(classRoomData) {
+        classroomClashMessage = [];
+        if (this.state.inTable) {
+            this.setState({
+                inTable: false,
+                currentConstraint: {}
+            })
+        }
         if (JSON.stringify(classRoomData) === JSON.stringify(this.state.currentClassRoom)) {
-            this.setState({ currentClassRoom: {} }, function () {
-            });
+            this.setState({
+                currentClassRoom: {},
+                showTeacherClashMessage: false,
+                showClassroomClashMessage: false,
+                showTeacherClashButtonType: 'הצג התנגשויות עבור מורה',
+                showClassroomClashButtonType: 'הצג התנגשויות עבור חדר לימוד'
+            },
+                function () {
+                });
         } else {
-            this.setState({ currentClassRoom: { ...classRoomData } }, function () {
+            this.setState({
+                currentClassRoom: { ...classRoomData },
+                showClassroomClashMessage: false,
+                showClassroomClashButtonType: 'הצג התנגשויות עבור חדר לימוד'
+            }, function () {
             });
         }
     }
@@ -694,13 +755,28 @@ class BuildTimetable extends Component {
     }
 
     handleConstraintClick(constraintData) {
+        teacherClashMessage = [];
+        if (this.state.inTable) {
+            this.setState({
+                inTable: false,
+                currentClassRoom: {}
+            })
+        }
         if (JSON.stringify(constraintData) === JSON.stringify(this.state.currentConstraint)) {
-            this.setState({ currentConstraint: {} }, function () {
+            this.setState({
+                currentConstraint: {},
+                showTeacherClashMessage: false,
+                showTeacherClashButtonType: 'הצג התנגשויות עבור מורה',
+            }, function () {
                 this.setDayOf();
                 this.setClassRoomForLesson();
             });
         } else {
-            this.setState({ currentConstraint: { ...constraintData } }, function () {
+            this.setState({
+                currentConstraint: { ...constraintData },
+                showTeacherClashMessage: false,
+                showTeacherClashButtonType: 'הצג התנגשויות עבור מורה',
+            }, function () {
                 this.setDayOf();
                 this.setClassRoomForLesson();
             });
@@ -711,6 +787,8 @@ class BuildTimetable extends Component {
         if (!inTable) {
             return;
         }
+        teacherClashMessage = [];
+        classroomClashMessage = [];
         let classRooms = [...this.state.classRooms];
         let currentClassRoom = {};
         for (let i = 0; i <= classRooms.length - 1; i++) {
@@ -720,17 +798,27 @@ class BuildTimetable extends Component {
         }
         if (JSON.stringify(constraint) === JSON.stringify(this.state.currentConstraint)) {
             this.setState({
+                inTable: false,
                 currentConstraint: {},
                 currentClassRoom: {},
-                showDeleteButton: false
+                showDeleteButton: false,
+                showTeacherClashMessage: false,
+                showClassroomClashMessage: false,
+                showTeacherClashButtonType: 'הצג התנגשויות עבור מורה',
+                showClassroomClashButtonType: 'הצג התנגשויות עבור חדר לימוד'
             }, function () {
                 this.setDayOf()
             });
         } else {
             this.setState({
+                inTable: true,
                 currentConstraint: { ...constraint },
                 currentClassRoom: { ...currentClassRoom },
-                showDeleteButton: true
+                showDeleteButton: true,
+                showTeacherClashMessage: false,
+                showClassroomClashMessage: false,
+                showTeacherClashButtonType: 'הצג התנגשויות עבור מורה',
+                showClassroomClashButtonType: 'הצג התנגשויות עבור חדר לימוד'
             }, function () {
                 this.setDayOf()
             });
@@ -738,6 +826,28 @@ class BuildTimetable extends Component {
     }
 
     handleConstraintDrag(inTable, constraint, classRoom, row, col) {
+        // let tableView = { ...this.state.tableViewForClass }
+
+        // for (let i = 0; i <= tableView.days.length - 1; i++) {
+        //     for (let j = 0; j <= tableView.days[i].hours.length - 1; j++) {
+        //         for (let k = 0; k <= tableView.days[i].hours[j].constraints.length - 1; k++) {
+        //             if (tableView.days[i].hours[j].constraints[k]._id === this.state.currentConstraint._id) {
+        //                 this.setState({
+        //                     inTable: false,
+        //                     currentConstraint: {},
+        //                     currentClassRoom: {},
+        //                     showDeleteButton: false,
+        //                     showTeacherClashMessage: false,
+        //                     showClassroomClashMessage: false,
+        //                     showTeacherClashButtonType: 'הצג התנגשויות עבור מורה',
+        //                     showClassroomClashButtonType: 'הצג התנגשויות עבור חדר לימוד'
+        //                 });
+        //                 return;
+        //             }
+        //         }
+        //     }
+        // }
+
         let classRooms = [...this.state.classRooms];
         let currentClassRoom = {};
         for (let i = 0; i <= classRooms.length - 1; i++) {
@@ -747,7 +857,6 @@ class BuildTimetable extends Component {
         }
 
         let timeTable = [...this.state.timeTable];
-        let hours = parseInt(constraint.hours);
         for (let i = 0; i <= timeTable.length - 1; i++) {
             for (let j = 0; j <= timeTable[i].days.length - 1; j++) {
                 for (let k = 0; k <= timeTable[i].days[j].hours.length - 1; k++) {
@@ -761,7 +870,6 @@ class BuildTimetable extends Component {
                         }
 
                     }
-
 
                 }
             }
@@ -823,17 +931,18 @@ class BuildTimetable extends Component {
             case 5:
                 day = 'שישי';
                 break;
+            default:
+                break;
+
         }
 
-        outerLoop:
+
         for (let i = 0; i <= tableViewForClass.days.length - 1; i++) {
             if (tableViewForClass.days[i].day === day) {
                 hourData = { ...tableViewForClass.days[i].hours[this.state.row] };
-                break outerLoop;
+                break;
             }
         }
-        // console.log(day);
-        // console.log(hourData);
         this.addConstraintToHour(hourData, day);
     }
 
@@ -883,6 +992,8 @@ class BuildTimetable extends Component {
                     break;
                 case 'שישי':
                     this.setState({ backgroundColorFriday: '#fff3cd' })
+                    break;
+                default:
                     break;
             }
         });
@@ -955,7 +1066,11 @@ class BuildTimetable extends Component {
                 currentClassRoom: {},
                 classConstraints: classConstraints,
                 row: -1,
-                col: -1
+                col: -1,
+                showTeacherClashMessage: false,
+                showClassroomClashMessage: false,
+                showTeacherClashButtonType: 'הצג התנגשויות עבור מורה',
+                showClassroomClashButtonType: 'הצג התנגשויות עבור חדר לימוד'
             },
                 function () {
                     this.setDayOf();
@@ -977,7 +1092,8 @@ class BuildTimetable extends Component {
                         }
                         let timeTableViews = [];
                         for (let i = 1; i <= numOfClasses; i++) {
-                            let timeTableView = { ...this.addHourToTableView((grade + i), this.state.currentConstraint) };
+                            // timeTableView = { ...this.addHourToTableView((grade + i), this.state.currentConstraint) };
+                            // let timeTableView = { ...this.addHourToTableView((grade + i), this.state.currentConstraint) };
                             timeTableViews = [...timeTableViews, this.addHourToTableView((grade + i), this.state.currentConstraint)];
                             // console.log(timeTableView);
                         }
@@ -1007,6 +1123,8 @@ class BuildTimetable extends Component {
     }
 
     addHourToTableView(classNumber, constaraint) {
+        teacherClashMessage = [];
+        classroomClashMessage = [];
         let tableViewForClass = {};
         if (classNumber !== this.state.classNumber) { // condition for mix lesson
             tableViewForClass = { ...this.setTableViewForClass(classNumber) };
@@ -1138,6 +1256,8 @@ class BuildTimetable extends Component {
     }
 
     removeConstraint() {
+        teacherClashMessage = [];
+        classroomClashMessage = [];
         let timeTable = [...this.state.timeTable];
         for (let i = 0; i <= timeTable.length - 1; i++) {
             for (let j = 0; j <= timeTable[i].days.length - 1; j++) {
@@ -1182,9 +1302,99 @@ class BuildTimetable extends Component {
         })
     }
 
+    teacherClashMessage() {
+        if (!this.state.showTeacherClashMessage) {
+            return;
+        }
+        teacherClashMessage = teacherClashMessage.filter((item, index) => teacherClashMessage.indexOf(item) === index);
+        if (teacherClashMessage.length === 0) {
+            return null
+        }
+
+        let content = [];
+        teacherClashMessage.forEach((element, index) => {
+            content = [...content, <li key={index} style={{ textAlign: "right" }}>{element}</li>];
+        });
+
+        return (
+            <div
+                className="col-5 alert alert-danger m-1 text-center"
+                role="alert"
+                style={{ textAlign: "right" }}>
+                {content}
+            </div>
+        );
+    }
+
+    classroomClashMessage() {
+        if (!this.state.showClassroomClashMessage) {
+            return;
+        }
+        classroomClashMessage = classroomClashMessage.filter((item, index) => classroomClashMessage.indexOf(item) === index);
+        if (classroomClashMessage.length === 0) {
+            return null
+        }
+
+        let content = [];
+        classroomClashMessage.forEach((element, index) => {
+            content = [...content, <li key={index} style={{ textAlign: "right" }}>{element}</li>];
+        });
+
+        return (
+            <div
+                className="col-5 alert alert-danger m-1 text-center"
+                role="alert"
+                style={{ textAlign: "right" }}>
+                {content}
+            </div>
+        );
+    }
+
+    showTeacherClashMessage() {
+        let buttonType = '';
+        if (this.state.showTeacherClashButtonType === 'הסתר התנגשויות עבור מורה') {
+            buttonType = 'הצג התנגשויות עבור מורה';
+        } else if (this.state.showTeacherClashButtonType === 'הצג התנגשויות עבור מורה') {
+            buttonType = 'הסתר התנגשויות עבור מורה';
+        }
+        this.setState({ showTeacherClashButtonType: buttonType, showTeacherClashMessage: !this.state.showTeacherClashMessage })
+    }
+
+    showClassroomClashMessage() {
+        let buttonType = '';
+        if (this.state.showClassroomClashButtonType === 'הסתר התנגשויות עבור חדר לימוד') {
+            buttonType = 'הצג התנגשויות עבור חדר לימוד';
+        } else if (this.state.showClassroomClashButtonType === 'הצג התנגשויות עבור חדר לימוד') {
+            buttonType = 'הסתר התנגשויות עבור חדר לימוד';
+        }
+        this.setState({ showClassroomClashButtonType: buttonType, showClassroomClashMessage: !this.state.showClassroomClashMessage })
+    }
+
+    clashButtons() {
+        if (teacherClashMessage.length > 0 && classroomClashMessage.length > 0) {
+            return (
+                <div className="text-center">
+                    <button type="button" className="btn btn-outline-dark" onClick={() => this.showTeacherClashMessage()}>{this.state.showTeacherClashButtonType}</button>
+                    <button type="button" className="btn btn-outline-dark my-2" onClick={() => this.showClassroomClashMessage()}>{this.state.showClassroomClashButtonType}</button>
+                </div>
+            );
+        } else if (teacherClashMessage.length > 0) {
+            return (
+                <div className="text-center">
+                    <button type="button" className="btn btn-outline-dark my-2" onClick={() => this.showTeacherClashMessage()}>{this.state.showTeacherClashButtonType}</button>
+                </div>
+            );
+        } else if (classroomClashMessage.length > 0) {
+            return (
+                <div className="text-center">
+                    <button type="button" className="btn btn-outline-dark my-2" onClick={() => this.showClassroomClashMessage()}>{this.state.showClassroomClashButtonType}</button>
+                </div>
+            );
+        }
+    }
+
 
     render() {
-        // console.log('render');
         return (
             <div>
                 <nav className="navbar navbar-expand-lg navbar-light bg-light p-auto ">
@@ -1200,24 +1410,29 @@ class BuildTimetable extends Component {
                     <button type="button" className="btn btn-secondary ml-2" onClick={() => this.addTimeTable()}>שמור שינויים</button>
                     {this.deleteConstraintFromTable()}
                 </div>
+                <div className="row" >
+                    {this.teacherClashMessage()}
+                    {this.classroomClashMessage()}
+                </div>
                 <div className="row w-100 mt-2">
                     <div className="col-5">
                         <div
-                            className="d-inline-block w-100  text-right p-0 card"
+                            className="d-inline-block w-100 text-center p-0 card"
                             style={{ "position": "relative", "height": "400px", "overflow": "auto", "display": "block" }}>
                             <h6 className="text-center">שיעורים עבור כיתה זו</h6>
                             {this.createConstraintsBoxes()}
                         </div>
                     </div>
-                    <div className="col-5">
+                    <div className="col-3">
                         <div className="w-100 h-100 text-right p-0 card">
                             <h6 className="text-center mb-4">נתונים על שיעור פוטנציאלי לשיבוץ</h6>
                             {this.createPotential()}
+                            {this.clashButtons()}
                         </div>
                     </div>
-                    <div className="col-2">
+                    <div className="col-4">
                         <div
-                            className="w-100 text-right p-0 card"
+                            className="w-100 text-center p-0 card"
                             style={{ "position": "relative", "height": "400px", "overflow": "auto", "display": "block" }}>
                             <h6 className="text-center">חדרי לימוד</h6>
                             {this.createClassRoomBoxes()}

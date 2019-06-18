@@ -145,6 +145,7 @@ class Grades extends Component {
     }
 
     getGrade(gradeId) {
+        window.scrollTo(0, 0);
         gradeToEditId = gradeId;
         axios.get('http://localhost:4000/data/getGrade/' + gradeId)
             .then(response => {
