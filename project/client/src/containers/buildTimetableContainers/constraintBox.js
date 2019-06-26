@@ -33,9 +33,26 @@ class ConstraintBox extends Component {
             this.setState({ border: '' });
         }
     }
-    
+
     showTeachers() {
         let array = [...this.props.data.groupingTeachers];
+        let text = ``;
+        array.forEach(element => {
+            text = `${text} ${element},`;
+        });
+        return text.substr(0, text.length - 1);
+    }
+
+    showGrouping() {
+        let text = ``;
+        if (this.props.data.subjectGrouping) {
+            text = `הקבצות ,`
+        }
+        return text;
+    }
+
+    showClasses() {
+        let array = [...this.props.data.classNumber];
         let text = ``;
         array.forEach(element => {
             text = `${text} ${element},`;
@@ -48,24 +65,30 @@ class ConstraintBox extends Component {
         let numOfLesson = parseInt(this.props.data.hours);
         height = height * numOfLesson;
         height = height + 'px';
-        const opacity = this.props.isDragging ? 0: 1;
+        const opacity = this.props.isDragging ? 0 : 1;
+        let fontSize = "100%";
+        if (height === "50px") {
+            fontSize = "80%"
+        }
         let boxStyle = {
             "cursor": "pointer",
             "width": "162px",
             "height": height,
-            "opacity": opacity
+            "opacity": opacity,
+            "fontSize": fontSize
         };
 
         return (
-            <div 
+            <div
                 className={"d-inline-block card text-center m-1 " + this.state.border}
                 style={boxStyle}
                 onClick={() => this.ConstraintBoxClicked()}>
-                <span>{this.props.data.subject + ', '}</span>
-                <span>{this.showTeachers() + ', '}</span>
-                <span>{this.props.data.hours+', '}</span>
-                <span>{this.props.data.classNumber+', '}</span>
+                {this.props.data.subject + ', '}
+                {this.showTeachers() + ', '}
+                {this.showClasses() + ', '}
+                {this.showGrouping()}
             </div>
+
         );
     }
 }

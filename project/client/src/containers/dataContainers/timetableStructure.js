@@ -25,7 +25,6 @@ class TimetableStructure extends Component {
         this.deleteDay = this.deleteDay.bind(this);
     }
 
-
     componentDidMount() {
         axios.get('http://localhost:4000/data/getDays')
             .then(response => {
