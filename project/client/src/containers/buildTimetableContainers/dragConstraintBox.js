@@ -94,20 +94,20 @@ class DragConstraintBox extends Component {
         let height = this.props.isDragging ? 50 : 50 * numOfLesson;
         height = height + 'px';
         // console.log(this.props.isDragging);
-        let fontSize = "100%";
-        if (height === "50px") {
-            fontSize = "80%"
-        }
+        // let fontSize = "100%";
+        // if (height === "50px") {
+        //     fontSize = "80%"
+        // }
         let boxStyle = {
             "cursor": "pointer",
             "width": "162px",
             "height": height,
             "opacity": opacity,
-            "fontSize": fontSize
+            "fontSize": '11px'
         };
         return this.props.connectDragSource(
             <div
-                className={"d-inline-block card text-center border border-dark"}
+                className={"m-auto card text-center border border-dark"}
                 style={boxStyle}
                 onClick={() => this.props.click(this.props.inTable, this.props.data, this.props.classRoom)}
             >
@@ -116,7 +116,6 @@ class DragConstraintBox extends Component {
                 {this.showClasses() + ', '}
                 {this.showGrouping()}
                 {this.props.classRoom}
-
             </div>
         );
     }

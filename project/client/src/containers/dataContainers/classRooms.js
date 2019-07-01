@@ -321,6 +321,7 @@ class ClassRooms extends Component {
 
     getClassRoom(classRoomId) {
         window.scrollTo(0, 0);
+        console.log(this.state.roomFeaturesChecked);
         classRoomToEditId = classRoomId;
         axios.get('http://localhost:4000/data/getClassRoom/' + classRoomId)
             .then(response => {
@@ -379,7 +380,7 @@ class ClassRooms extends Component {
         }
         return (
             <RoomFeatures
-                roomFeature={this.state.roomFeature}
+                // roomFeature={this.state.roomFeature}
                 roomFeatures={this.state.roomFeatures}
                 roomFeatureChange={this.HandleRoomFeatureChange}
                 addRoomFeature={this.HandleAddRoomFeature}
@@ -472,13 +473,15 @@ class ClassRooms extends Component {
                 </div>
                 <div >
                     <h5 style={{ "textAlign": "right" }}>מאפייני חדר</h5>
-                    {this.state.roomFeatures.map((roomFeature, index) => {
+                    {/* {this.state.roomFeatures.map((roomFeature, index) => { */}
+                    {this.state.roomFeaturesChecked.map((roomFeature, index) => {
                         return (
                             <RoomFeatureCheckBox
                                 key={index}
-                                roomFeature={roomFeature}
+                                roomFeature={roomFeature.roomFeature}
                                 roomFeatureCheck={this.HandleRoomFeatureCheck}
-                                check={this.getCheckStatus(roomFeature)}>
+                                // checked={this.getCheckStatus(roomFeature)}>
+                                checked={roomFeature.checked}>
                             </RoomFeatureCheckBox>
                         )
                     })}

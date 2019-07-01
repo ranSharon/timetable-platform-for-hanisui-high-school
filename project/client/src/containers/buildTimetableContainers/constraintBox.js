@@ -67,15 +67,15 @@ class ConstraintBox extends Component {
         height = height + 'px';
         const opacity = this.props.isDragging ? 0 : 1;
         let fontSize = "100%";
-        if (height === "50px") {
-            fontSize = "80%"
-        }
+        // if (height === "50px") {
+        //     fontSize = "40px"
+        // }
         let boxStyle = {
             "cursor": "pointer",
             "width": "162px",
             "height": height,
             "opacity": opacity,
-            "fontSize": fontSize
+            "fontSize": '11px'
         };
 
         return (

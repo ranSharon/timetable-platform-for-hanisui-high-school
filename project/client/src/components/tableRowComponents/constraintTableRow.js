@@ -29,7 +29,7 @@ const constraintsTableRow = (props) => {
             return (
                 <td className="border-top border-dark text-left">
                     <button onClick={() => props.onEdit(props.constraint._id)}>ערוך</button>
-                    <div style={{ display: "inline" }}> </div>
+                    <div style={{ display: "inline" }}>  </div>
                     <button onClick={() => props.onDelete(props.constraint._id)}>מחק</button>
                 </td>
             );
@@ -44,10 +44,6 @@ const constraintsTableRow = (props) => {
             return 'לא';
     }
 
-    // if ((props.constraint.lessonSplit &&
-    //     props.constraint.constraintSplitsBros.length === 0) ||
-    //     props.constraint.copyConstraint
-    // ) {
     if ((props.constraint.lessonSplit &&
         props.constraint.constraintSplitsBros.length === 0)
     ) {

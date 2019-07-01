@@ -137,6 +137,33 @@ class BuildTimetable extends Component {
     initTimeTable() {
         axios.get('http://localhost:4000/data/getTimeTable')
             .then(response => {
+                // if (response.data.length > 0) {
+                // this.setState({ timeTable: [...response.data] }, function () {
+                //     this.updateTimeTable();
+                //     console.log('timeTable');
+                //     console.log(this.state.timeTable);
+                // });
+                // }
+                // else {
+                let grades = [...this.state.grades];
+                let days = [...this.state.days];
+                let timeTable = [...this.state.timeTable];
+                for (let i = 0; i <= grades.length - 1; i++) {
+                    for (let j = 1; j <= grades[i].numOfClasses; j++) {
+                        let tableViewForClass = { classNumber: grades[i].grade + j, days: [], constaraintsToAdd: [...this.setConstaraintsToAdd(grades[i].grade + j)] };
+                        for (let k = 0; k <= days.length - 1; k++) {
+                            let day = { day: days[k].day, hours: [] };
+                            let startTime = parseInt(days[k].startTime);
+                            let endTime = parseInt(days[k].endTime);
+                            for (let l = startTime + 1; l <= endTime; l++) {
+                                let hour = { hour: l, constraints: [] };
+                                day.hours = [...day.hours, hour];
+                            }
+                            tableViewForClass.days = [...tableViewForClass.days, day];
+                        }
+                        timeTable = [...timeTable, tableViewForClass];
+                    }
+                }
                 if (response.data.length > 0) {
                     this.setState({ timeTable: [...response.data] }, function () {
                         this.updateTimeTable();
@@ -145,32 +172,16 @@ class BuildTimetable extends Component {
                     });
                 }
                 else {
-                    let grades = [...this.state.grades];
-                    let days = [...this.state.days];
-                    let timeTable = [...this.state.timeTable];
-                    for (let i = 0; i <= grades.length - 1; i++) {
-                        for (let j = 1; j <= grades[i].numOfClasses; j++) {
-                            let tableViewForClass = { classNumber: grades[i].grade + j, days: [], constaraintsToAdd: [...this.setConstaraintsToAdd(grades[i].grade + j)] };
-                            for (let k = 0; k <= days.length - 1; k++) {
-                                let day = { day: days[k].day, hours: [] };
-                                let startTime = parseInt(days[k].startTime);
-                                let endTime = parseInt(days[k].endTime);
-                                for (let l = startTime + 1; l <= endTime; l++) {
-                                    let hour = { hour: l, constraints: [] };
-                                    day.hours = [...day.hours, hour];
-                                }
-                                tableViewForClass.days = [...tableViewForClass.days, day];
-                            }
-                            timeTable = [...timeTable, tableViewForClass];
-                        }
-
-                    }
                     this.setState({ timeTable: timeTable }, function () {
+                        if (response.data.length > 0){
+                            this.setState({ timeTable: [...response.data] }, function () {
+                            });
+                        }
                         console.log('timeTable');
                         console.log(this.state.timeTable);
                     });
-
                 }
+                // }
             })
             .catch(function (error) {
                 console.log(error);

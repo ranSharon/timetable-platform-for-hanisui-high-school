@@ -198,6 +198,7 @@ class StudySubjects extends Component {
         if (this.subjectNameIsTaken()) {
             return;
         }
+        console.log(this.state.subjectFeatures);
         const newSubject = {
             subjectName: this.state.subjectName,
             grades: [...this.state.grades],
@@ -311,10 +312,12 @@ class StudySubjects extends Component {
         let numOfMix = '';
         let grouping = false;
         let subjectFeatures = [];
+        // console.log(this.state.featuresChecked);
         let featuresChecked = [...this.state.featuresChecked];
         for (let i = 0; i <= featuresChecked.length - 1; i++) {
             featuresChecked[i].checked = false;
         }
+        // console.log(featuresChecked);
         subjectFeatures = [...this.state.subjectFeatures];
         let alertMessage = 'הערך נשמר - אשפר להזין מקצוע חדש';
         this.setState({
@@ -330,10 +333,13 @@ class StudySubjects extends Component {
             alertMessage: alertMessage,
             messageStatus: true,
             featuresChecked: [...featuresChecked]
+        },function(){
+            console.log(this.state.featuresChecked)
         });
     }
 
     handleFeatureCheck(feature) {
+        // console.log(feature);
         let i = this.checkIfFeatureUnCheckd(feature);
         let subjectFeatures = [...this.state.subjectFeatures];
         if (i !== -1) {
@@ -383,6 +389,7 @@ class StudySubjects extends Component {
 
     getSubject(subjectId) {
         window.scrollTo(0, 0);
+        console.log(this.state.featuresChecked);
         subjectToEditId = subjectId;
         axios.get('http://localhost:4000/data/getSubject/' + subjectId)
             .then(response => {
@@ -414,7 +421,8 @@ class StudySubjects extends Component {
                     alertMessage: alertMessage,
                     messageStatus: true,
                     buttonType: 'סיים עריכה',
-                    disableButtons: true
+                    disableButtons: true,
+                    subjectFeatures: [...response.data.subjectFeatures]
                 })
                 this.alertMessage();
             })
@@ -424,6 +432,8 @@ class StudySubjects extends Component {
     }
 
     setFeaturesCheckStatus(subjectFeatures) {
+        // console.log(subjectFeatures);
+        // console.log(this.state.featuresChecked);
         let featuresChecked = [...this.state.featuresChecked];
         for (let i = 0; i <= subjectFeatures.length - 1; i++) {
             for (let j = 0; j <= featuresChecked.length - 1; j++) {
@@ -432,7 +442,9 @@ class StudySubjects extends Component {
                 }
             }
         }
-        this.setState({ featuresChecked: [...featuresChecked] });
+        this.setState({ featuresChecked: [...featuresChecked] },function(){
+            // console.log(this.state.featuresChecked);
+        });
     }
 
     deleteSubject(subjectId) {
@@ -578,13 +590,15 @@ class StudySubjects extends Component {
                     </div>
                     {this.mixIsCheked()}
                     <h6 className="pt-2 mb-0" style={{ "textAlign": "right" }}>המקצוע דורש:</h6>
-                    {this.state.roomFeatures.map((roomFeature, index) => {
+                    {/* {this.state.roomFeatures.map((roomFeature, index) => { */}
+                    {this.state.featuresChecked.map((roomFeature, index) => {
                         return (
                             <RoomFeatureCheckBox
                                 key={index}
-                                roomFeature={roomFeature}
+                                roomFeature={roomFeature.roomFeature}
                                 roomFeatureCheck={this.handleFeatureCheck}
-                                checked={this.getCheckStatus(roomFeature)}>
+                                // checked={this.getCheckStatus(roomFeature)}>
+                                checked={roomFeature.checked}>
                             </RoomFeatureCheckBox>
                         )
                     })}

@@ -11,8 +11,9 @@ class roomFeatureCheckBox extends Component {
             <div className="pt-2" style={{ textAlign: "right" }}>
                 <input
                     type="checkbox"
-                    value={this.props.roomFeature}
-                    onChange={(e) => this.featureCheck(e)}
+                    // value={this.props.checked}
+                    // onChange={(e) => this.featureCheck(e)}
+                    onChange={() => this.props.roomFeatureCheck(this.props.roomFeature)}
                     checked={this.props.checked}
                 />
                 <div style={{ display: "inline" }}>{this.props.roomFeature}</div>
