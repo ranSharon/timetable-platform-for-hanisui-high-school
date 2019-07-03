@@ -14,6 +14,7 @@ B.Sc. in software engineering at Azrieli College of Engineering Jerusalem.
 
 * Install [Node.js](https://nodejs.org/en/) on your computer
 
+After installing Node.js open the command lind and write the fowling commands  
  
 * Clone this repository
 ```bash
@@ -29,13 +30,28 @@ B.Sc. in software engineering at Azrieli College of Engineering Jerusalem.
 ```bash
     cd project  
 ```
+
+* Open 'client' folder
+```bash
+    cd client  
+```
+
+* Install with npm 
+```bash
+    npm install  
+```
+
+* Go back to 'project' folder
+```bash
+    cd..  
+```
  
 * Open 'server' folder
 ```bash
      cd server  
 ```
   
- * Install with npm 
+* Install with npm 
 ```bash
     npm install  
 ```
