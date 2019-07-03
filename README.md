@@ -20,6 +20,11 @@ B.Sc. in software engineering at Azrieli College of Engineering Jerusalem.
     git clone https://github.com/ranSharon/timetable-platform-for-hanisui-high-school.git
 ```
  
+* Open the repository
+```bash
+    cd timetable-platform-for-hanisui-high-school  
+```
+
 * Open 'project' folder
 ```bash
     cd project  
