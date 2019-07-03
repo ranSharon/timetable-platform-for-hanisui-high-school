@@ -32,12 +32,12 @@ B.Sc. in software engineering at Azrieli College of Engineering Jerusalem.
   
  * Install with npm 
 ```bash
-    npm run install  
+    npm install  
 ```
 
 * Run the application with 
 ```bash
-    npm run start
+    npm start
  ``` 
  
 * Open your browser at the address http://localhost:3000

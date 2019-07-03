@@ -222,6 +222,7 @@ class Teachers extends Component {
         }
 
         let grades = [...this.setCorrecthGrades()];
+        let subjectsForTeacher = [...this.setCorrectSubjectsForTeacher()]
 
         const newTeacher = {
             name: this.state.name,
@@ -231,7 +232,7 @@ class Teachers extends Component {
             currentTeachHours: 0,
             dayOff: this.state.dayOff,
             grades: [...grades],
-            subjectsForTeacher: [...this.state.subjectsForTeacher]
+            subjectsForTeacher: [...subjectsForTeacher]
         };
 
         if (this.state.buttonType === 'אישור') {
@@ -285,6 +286,27 @@ class Teachers extends Component {
         correcthGrades = correcthGrades.filter((item, index) => correcthGrades.indexOf(item) === index);
         return correcthGrades;
 
+    }
+
+    setCorrectSubjectsForTeacher(){
+        let CorrectSubjectsForTeacher = [];
+        let subjectsForTeacher = [...this.state.subjectsForTeacher];
+        let subjectsForTeacherToRemove = [];
+
+        outerLoop:
+        for (let i = 0; i <= subjectsForTeacher.length - 1; i++) {
+            for (let j = 0; j <= allSubject.length - 1; j++) {
+                if (allSubject[j].subjectName === subjectsForTeacher[i]) {
+                    continue outerLoop;
+                } else if ( j === allSubject.length -1 ){
+                    subjectsForTeacherToRemove = [...subjectsForTeacherToRemove,subjectsForTeacher[i]];
+                }
+            }
+        }
+
+        CorrectSubjectsForTeacher = subjectsForTeacher.filter(x => !subjectsForTeacherToRemove.includes(x));
+        return CorrectSubjectsForTeacher;
+        
     }
 
     teacherNameIsTaken() {

@@ -4,7 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Data from './containers/data';
 import BuildTimetable from './containers/buildTimetable';
 import DataOnTimetable from './containers/dataOnTimetable';
-import General from './containers/general';
+import Guide from './containers/guide';
 
 class App extends Component {
   render() {
@@ -24,7 +24,7 @@ class App extends Component {
                   <Link to="/dataOnTimetable" className="nav-link">הצגת נתונים על המערכת</Link>
                 </li>
                 <li className="navbar-item">
-                  <Link to="/general" className="nav-link">מדריך משתמש</Link>
+                  <Link to="/guide" className="nav-link">מדריך משתמש</Link>
                 </li>
               </ul>
             </div>
@@ -32,7 +32,7 @@ class App extends Component {
           <Route path="/data" component={Data} />
           <Route path="/buildTimetable" component={BuildTimetable} />
           <Route path="/dataOnTimetable" component={DataOnTimetable} />
-          <Route path="/general" component={General} />
+          <Route path="/guide" component={Guide} />
         </div>
       </Router>
 
