@@ -64,7 +64,7 @@ After installing Node.js open the command lind and write the fowling commands
 * Open your browser at the address http://localhost:3000
 
 ##Example usage + short description
-[Final report](https://github.com/ranSharon/timetable-platform-for-hanisui-high-school/blob/master/docs/%D7%93%D7%95%D7%97%20%D7%A1%D7%95%D7%A4%D7%99%20-%20%D7%A8%D7%9F%20%D7%A9%D7%A8%D7%95%D7%9F.pdf 
+[Poster](https://github.com/ranSharon/timetable-platform-for-hanisui-high-school/blob/master/docs/%D7%A4%D7%95%D7%A1%D7%98%D7%A8%20%D7%A4%D7%A8%D7%95%D7%99%D7%A7%D7%98.pdf 
 )  
 
  
