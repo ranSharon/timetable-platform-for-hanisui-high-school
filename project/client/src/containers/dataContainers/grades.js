@@ -89,7 +89,7 @@ class Grades extends Component {
         let message = 'ישנה בעיה עם לפחות אחד מן השדות:$';
         let originalMessage = message;
         if (grade === '') {
-            message += 'לא נבחרה שכבה.';
+            message += 'לא נבחרה שכבה$';
         }
         if (numOfClasses === '') {
             message += 'לא נחברו מספר כיתות בשכבה$';

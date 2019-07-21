@@ -251,7 +251,7 @@ class StudySubjects extends Component {
         let message = 'ישנה בעיה עם לפחות אחד מן השדות:$';
         let originalMessage = message;
         if (subjectName === '') {
-            message += 'לא הוזן מקצוע.';
+            message += 'לא הוזן מקצוע$';
         }
         if (bagrut === true && gmol === '') {
             message += 'המקצוע נבחר כנלמד לבגרות אך לא צוין גמול$';
