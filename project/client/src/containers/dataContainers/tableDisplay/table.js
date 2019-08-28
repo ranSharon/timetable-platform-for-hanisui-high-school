@@ -3,7 +3,7 @@ import GradeTableRow from '../../../components/tableRowComponents/gradeTableRow'
 import WeekTableRow from '../../../components/tableRowComponents/weekTableRow';
 import SubjectTableRow from '../../../components/tableRowComponents/subjectTableRow';
 import RoomTableRow from '../../../components/tableRowComponents/roomTableRow';
-import SubjectToChoseTableRow from '../../../components/tableRowComponents/subjetToChoseTableRow';
+import SubjectToChooseTableRow from './tableRowContainers/SubjectToChooseTableRow';
 import TeacherTableRow from '../../../components/tableRowComponents/teacherTableRow';
 import RoomFeatureTableRow from '../../../components/tableRowComponents/roomFeatureTableRow';
 import ConstraintTableRow from '../../../components/tableRowComponents/constraintTableRow';
@@ -197,7 +197,7 @@ class DataTable extends Component {
                 </div>
             );
 
-        } else if (this.props.table === 'subjetsTochose') {
+        } else if (this.props.table === 'subjetsToChoose') {
             return (
                 <div>
                     <table className="table table-striped" style={{ marginTop: 20 }} >
@@ -209,7 +209,7 @@ class DataTable extends Component {
                         <tbody style={{ 'width': '100%', 'height': '300px', overflowX: 'hidden', overflowY: 'scroll', 'display': 'block', 'textAlign': 'center' }}>
                             {this.props.subjects.map((subject, index) => {
                                 return (
-                                    <SubjectToChoseTableRow
+                                    <SubjectToChooseTableRow
                                         key={index}
                                         subjectName={subject}
                                         chosenSubjects={this.props.chosenSubjects}
@@ -218,7 +218,7 @@ class DataTable extends Component {
                                         rowNum={index}
                                         numOfRow={this.props.subjects.length}
                                     >
-                                    </SubjectToChoseTableRow>)
+                                    </SubjectToChooseTableRow>)
                             }
                             )}
                         </tbody>

@@ -2,7 +2,23 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="baf4ff64-9769-405f-973a-65e24fa4c775" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/client/src/components/classRoomsComponents/roomFeatureCheckBox.js" beforeDir="false" afterPath="$PROJECT_DIR$/project/client/src/components/classRoomsComponents/roomFeatureCheckBox.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/client/src/components/classRoomsComponents/roomFeatures.js" beforeDir="false" afterPath="$PROJECT_DIR$/project/client/src/components/classRoomsComponents/roomFeatures.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/client/src/components/constraintComponents/grades.js" beforeDir="false" afterPath="$PROJECT_DIR$/project/client/src/components/constraintComponents/grades.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/client/src/components/constraintComponents/lessonSplit.js" beforeDir="false" afterPath="$PROJECT_DIR$/project/client/src/components/constraintComponents/lessonSplit.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/client/src/components/constraintComponents/subjects.js" beforeDir="false" afterPath="$PROJECT_DIR$/project/client/src/components/constraintComponents/subjects.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/client/src/components/constraintComponents/teachers.js" beforeDir="false" afterPath="$PROJECT_DIR$/project/client/src/components/constraintComponents/teachers.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/client/src/components/tableRowComponents/subjetToChoseTableRow.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/client/src/containers/buildTimetableContainers/constraintBox.js" beforeDir="false" afterPath="$PROJECT_DIR$/project/client/src/containers/buildTimetableContainers/constraintBox.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/client/src/containers/buildTimetableContainers/hourBox.js" beforeDir="false" afterPath="$PROJECT_DIR$/project/client/src/containers/buildTimetableContainers/hourBox.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/client/src/containers/buildTimetableContainers/tempDragConstraintBox.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/client/src/containers/dataContainers/classRooms.js" beforeDir="false" afterPath="$PROJECT_DIR$/project/client/src/containers/dataContainers/classRooms.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/client/src/containers/dataContainers/constraints.js" beforeDir="false" afterPath="$PROJECT_DIR$/project/client/src/containers/dataContainers/constraints.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/client/src/containers/dataContainers/tableDisplay/table.js" beforeDir="false" afterPath="$PROJECT_DIR$/project/client/src/containers/dataContainers/tableDisplay/table.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/client/src/containers/dataContainers/teachers.js" beforeDir="false" afterPath="$PROJECT_DIR$/project/client/src/containers/dataContainers/teachers.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/client/src/containers/dataOnTimetable.js" beforeDir="false" afterPath="$PROJECT_DIR$/project/client/src/containers/dataOnTimetable.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/client/src/containers/guide.js" beforeDir="false" afterPath="$PROJECT_DIR$/project/client/src/containers/guide.js" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -30,7 +46,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/project/server/package.json">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="329">
+            <state relative-caret-position="399">
               <caret line="19" column="25" selection-start-line="19" selection-start-column="25" selection-end-line="19" selection-end-column="25" />
             </state>
           </provider>
@@ -58,7 +74,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="25" />
     <option name="y" value="50" />
     <option name="width" value="2950" />
@@ -69,6 +85,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -85,19 +102,25 @@
               <item name="timetable-platform-for-hanisui-high-school" type="b2602c69:ProjectViewProjectNode" />
               <item name="timetable-platform-for-hanisui-high-school" type="462c0819:PsiDirectoryNode" />
               <item name="project" type="462c0819:PsiDirectoryNode" />
-              <item name="server" type="462c0819:PsiDirectoryNode" />
+              <item name="client" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="timetable-platform-for-hanisui-high-school" type="b2602c69:ProjectViewProjectNode" />
+              <item name="timetable-platform-for-hanisui-high-school" type="462c0819:PsiDirectoryNode" />
+              <item name="project" type="462c0819:PsiDirectoryNode" />
+              <item name="client" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../Webbeast/module3-exercises-dev/practice" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -137,16 +160,16 @@
       <workItem from="1561963338770" duration="2401000" />
       <workItem from="1562014994610" duration="58000" />
       <workItem from="1562192864244" duration="744000" />
-      <workItem from="1563742057878" duration="16000" />
+      <workItem from="1563742057878" duration="307000" />
+      <workItem from="1563903529311" duration="19000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="3219000" />
+    <option name="totallyTimeSpent" value="3529000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-6" y="-6" width="1213" height="773" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24978687" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -171,13 +194,6 @@
     <option name="version" value="1" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/project/server/package.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="329">
-          <caret line="19" column="25" selection-start-line="19" selection-start-column="25" selection-end-line="19" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
@@ -185,6 +201,13 @@
             <caret line="65" column="3" selection-start-line="65" selection-start-column="3" selection-end-line="65" selection-end-column="3" />
           </first_editor>
           <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/project/server/package.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="399">
+          <caret line="19" column="25" selection-start-line="19" selection-start-column="25" selection-end-line="19" selection-end-column="25" />
         </state>
       </provider>
     </entry>

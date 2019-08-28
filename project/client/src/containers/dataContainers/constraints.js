@@ -918,214 +918,214 @@ class Constraints extends Component {
         return splitConstraint;
     }
 
-    createCopyConstraints(realConstraint) {
-        let copyConstraints = [];
-        for (let i = this.state.groupingTeachers.length - 1; i >= 1; i--) {
-            const newConstraint = {
-                teacher: this.state.groupingTeachers[i],
-                subject: realConstraint.subject,
-                grade: realConstraint.grade,
-                hours: realConstraint.hours,
-                classNumber: [...realConstraint.classNumber],
-                lessonSplit: realConstraint.lessonSplit,
-                numOfSplits: realConstraint.numOfSplits,
-                firstLesson: realConstraint.firstLesson,
-                secondlesson: realConstraint.secondlesson,
-                thirdlesson: realConstraint.thirdlesson,
-                subjectGrouping: realConstraint.subjectGrouping,
-                subjectMix: realConstraint.subjectMix,
-                subjectNumOfMix: realConstraint.realConstraint,
-                subjectFeatures: [...realConstraint.subjectFeatures],
-                groupingTeachers: [...realConstraint.groupingTeachers],
-                constraintSplitsBros: [],
-                constraintCopyBros: [],
-                copyConstraint: true,
-                num: realConstraint.num,
-                mainConstraint: false,
-                classRoom: realConstraint.classRoom
-            };
+    // createCopyConstraints(realConstraint) {
+    //     let copyConstraints = [];
+    //     for (let i = this.state.groupingTeachers.length - 1; i >= 1; i--) {
+    //         const newConstraint = {
+    //             teacher: this.state.groupingTeachers[i],
+    //             subject: realConstraint.subject,
+    //             grade: realConstraint.grade,
+    //             hours: realConstraint.hours,
+    //             classNumber: [...realConstraint.classNumber],
+    //             lessonSplit: realConstraint.lessonSplit,
+    //             numOfSplits: realConstraint.numOfSplits,
+    //             firstLesson: realConstraint.firstLesson,
+    //             secondlesson: realConstraint.secondlesson,
+    //             thirdlesson: realConstraint.thirdlesson,
+    //             subjectGrouping: realConstraint.subjectGrouping,
+    //             subjectMix: realConstraint.subjectMix,
+    //             subjectNumOfMix: realConstraint.realConstraint,
+    //             subjectFeatures: [...realConstraint.subjectFeatures],
+    //             groupingTeachers: [...realConstraint.groupingTeachers],
+    //             constraintSplitsBros: [],
+    //             constraintCopyBros: [],
+    //             copyConstraint: true,
+    //             num: realConstraint.num,
+    //             mainConstraint: false,
+    //             classRoom: realConstraint.classRoom
+    //         };
 
-            copyConstraints = [...copyConstraints, newConstraint];
-        }
-        return copyConstraints;
-    }
+    //         copyConstraints = [...copyConstraints, newConstraint];
+    //     }
+    //     return copyConstraints;
+    // }
 
-    addCopyAndSplitConstraintsToDB(realConstraint, copyConstraints) {
-        if (realConstraint.lessonSplit) {
-            if (copyConstraints.length === 1) {
-                let splitConstraints1 = [...this.createSplitsBrosConstraints(copyConstraints[0])];
-                let num1 = this.state.num;
-                this.addSplitConstraintsToDB(copyConstraints[0], splitConstraints1, num1);
-                let splitConstraintsForReal = [...this.createSplitsBrosConstraints(realConstraint)];
-                let numForReal = num1 + copyConstraints.length + 1;
-                realConstraint.copyConstraint = false;
-                this.addSplitConstraintsToDB(realConstraint, splitConstraintsForReal, numForReal);
-            } else if (copyConstraints.length === 2) {
-                let splitConstraints1 = [...this.createSplitsBrosConstraints(copyConstraints[0])];
-                let splitConstraints2 = [...this.createSplitsBrosConstraints(copyConstraints[1])];
-                let num1 = this.state.num;
-                let num2 = num1 + copyConstraints.length + 1;
-                this.addSplitConstraintsToDB(copyConstraints[0], splitConstraints1, num1);
-                this.addSplitConstraintsToDB(copyConstraints[1], splitConstraints2, num2);
-                let splitConstraintsForReal = [...this.createSplitsBrosConstraints(realConstraint)];
-                let numForReal = num2 + copyConstraints.length + 1;
-                realConstraint.copyConstraint = false;
-                this.addSplitConstraintsToDB(realConstraint, splitConstraintsForReal, numForReal);
-            } else if (copyConstraints.length === 3) {
-                let splitConstraints1 = [...this.createSplitsBrosConstraints(copyConstraints[0])];
-                let splitConstraints2 = [...this.createSplitsBrosConstraints(copyConstraints[1])];
-                let splitConstraints3 = [...this.createSplitsBrosConstraints(copyConstraints[2])];
-                let num1 = this.state.num;
-                let num2 = num1 + copyConstraints.length + 1;
-                let num3 = num2 + copyConstraints.length + 1;
-                this.addSplitConstraintsToDB(copyConstraints[0], splitConstraints1, num1);
-                this.addSplitConstraintsToDB(copyConstraints[1], splitConstraints2, num2);
-                this.addSplitConstraintsToDB(copyConstraints[2], splitConstraints3, num3);
-                let splitConstraintsForReal = [...this.createSplitsBrosConstraints(realConstraint)];
-                let numForReal = num3 + copyConstraints.length + 1;
-                realConstraint.copyConstraint = false;
-                this.addSplitConstraintsToDB(realConstraint, splitConstraintsForReal, numForReal);
-            } else if (copyConstraints.length === 4) {
-                let splitConstraints1 = [...this.createSplitsBrosConstraints(copyConstraints[0])];
-                let splitConstraints2 = [...this.createSplitsBrosConstraints(copyConstraints[1])];
-                let splitConstraints3 = [...this.createSplitsBrosConstraints(copyConstraints[2])];
-                let splitConstraints4 = [...this.createSplitsBrosConstraints(copyConstraints[3])];
-                let num1 = this.state.num;
-                let num2 = num1 + copyConstraints.length + 1;
-                let num3 = num2 + copyConstraints.length + 1;
-                let num4 = num3 + copyConstraints.length + 1;
-                this.addSplitConstraintsToDB(copyConstraints[0], splitConstraints1, num1);
-                this.addSplitConstraintsToDB(copyConstraints[1], splitConstraints2, num2);
-                this.addSplitConstraintsToDB(copyConstraints[2], splitConstraints3, num3);
-                this.addSplitConstraintsToDB(copyConstraints[3], splitConstraints4, num4);
-                let splitConstraintsForReal = [...this.createSplitsBrosConstraints(realConstraint)];
-                let numForReal = num4 + copyConstraints.length + 1;
-                realConstraint.copyConstraint = false;
-                this.addSplitConstraintsToDB(realConstraint, splitConstraintsForReal, numForReal);
-            }
-        } else {
-            let constraint = {};
-            let num = this.state.num;
-            copyConstraints[0].num = num;
-            num += 1;
-            this.setState({ num: num });
-            axios.post('http://localhost:4000/data/addConstraint', copyConstraints[0])
-                .then(res => {
-                    constraint = { ...res.data };
-                    realConstraint.constraintCopyBros = [...realConstraint.constraintCopyBros, res.data._id];
-                    this.setState({
-                        constraints: [...this.state.constraints, constraint]
-                    });
-                    if (copyConstraints.length === 1) {
-                        let constraint = {};
-                        let num = this.state.num;
-                        realConstraint.num = num;
-                        realConstraint.copyConstraint = false;
-                        num += 1;
-                        this.setState({ num: num });
-                        axios.post('http://localhost:4000/data/addConstraint', realConstraint)
-                            .then(res => {
-                                constraint = { ...res.data };
-                                //console.log(constraint);
-                                this.setState({
-                                    constraints: [...this.state.constraints, constraint]
-                                });
-                            });
-                    }
-                    if (copyConstraints.length > 1) {
-                        let constraint = {};
-                        let num = this.state.num;
-                        copyConstraints[1].num = num;
-                        num += 1;
-                        this.setState({ num: num });
-                        axios.post('http://localhost:4000/data/addConstraint', copyConstraints[1])
-                            .then(res => {
-                                constraint = { ...res.data };
-                                realConstraint.constraintCopyBros = [...realConstraint.constraintCopyBros, res.data._id];
-                                this.setState({
-                                    constraints: [...this.state.constraints, constraint]
-                                });
-                                if (copyConstraints.length === 2) {
-                                    let constraint = {};
-                                    let num = this.state.num;
-                                    realConstraint.num = num;
-                                    realConstraint.copyConstraint = false;
-                                    num += 1;
-                                    this.setState({ num: num });
-                                    axios.post('http://localhost:4000/data/addConstraint', realConstraint)
-                                        .then(res => {
-                                            constraint = { ...res.data };
-                                            this.setState({
-                                                constraints: [...this.state.constraints, constraint]
-                                            });
-                                        });
-                                }
-                                if (copyConstraints.length > 2) {
-                                    let constraint = {};
-                                    let num = this.state.num;
-                                    copyConstraints[2].num = num;
-                                    num += 1;
-                                    this.setState({ num: num });
-                                    axios.post('http://localhost:4000/data/addConstraint', copyConstraints[2])
-                                        .then(res => {
-                                            constraint = { ...res.data };
-                                            realConstraint.constraintCopyBros = [...realConstraint.constraintCopyBros, res.data._id];
-                                            this.setState({
-                                                constraints: [...this.state.constraints, constraint]
-                                            });
-                                            if (copyConstraints.length === 3) {
+    // addCopyAndSplitConstraintsToDB(realConstraint, copyConstraints) {
+    //     if (realConstraint.lessonSplit) {
+    //         if (copyConstraints.length === 1) {
+    //             let splitConstraints1 = [...this.createSplitsBrosConstraints(copyConstraints[0])];
+    //             let num1 = this.state.num;
+    //             this.addSplitConstraintsToDB(copyConstraints[0], splitConstraints1, num1);
+    //             let splitConstraintsForReal = [...this.createSplitsBrosConstraints(realConstraint)];
+    //             let numForReal = num1 + copyConstraints.length + 1;
+    //             realConstraint.copyConstraint = false;
+    //             this.addSplitConstraintsToDB(realConstraint, splitConstraintsForReal, numForReal);
+    //         } else if (copyConstraints.length === 2) {
+    //             let splitConstraints1 = [...this.createSplitsBrosConstraints(copyConstraints[0])];
+    //             let splitConstraints2 = [...this.createSplitsBrosConstraints(copyConstraints[1])];
+    //             let num1 = this.state.num;
+    //             let num2 = num1 + copyConstraints.length + 1;
+    //             this.addSplitConstraintsToDB(copyConstraints[0], splitConstraints1, num1);
+    //             this.addSplitConstraintsToDB(copyConstraints[1], splitConstraints2, num2);
+    //             let splitConstraintsForReal = [...this.createSplitsBrosConstraints(realConstraint)];
+    //             let numForReal = num2 + copyConstraints.length + 1;
+    //             realConstraint.copyConstraint = false;
+    //             this.addSplitConstraintsToDB(realConstraint, splitConstraintsForReal, numForReal);
+    //         } else if (copyConstraints.length === 3) {
+    //             let splitConstraints1 = [...this.createSplitsBrosConstraints(copyConstraints[0])];
+    //             let splitConstraints2 = [...this.createSplitsBrosConstraints(copyConstraints[1])];
+    //             let splitConstraints3 = [...this.createSplitsBrosConstraints(copyConstraints[2])];
+    //             let num1 = this.state.num;
+    //             let num2 = num1 + copyConstraints.length + 1;
+    //             let num3 = num2 + copyConstraints.length + 1;
+    //             this.addSplitConstraintsToDB(copyConstraints[0], splitConstraints1, num1);
+    //             this.addSplitConstraintsToDB(copyConstraints[1], splitConstraints2, num2);
+    //             this.addSplitConstraintsToDB(copyConstraints[2], splitConstraints3, num3);
+    //             let splitConstraintsForReal = [...this.createSplitsBrosConstraints(realConstraint)];
+    //             let numForReal = num3 + copyConstraints.length + 1;
+    //             realConstraint.copyConstraint = false;
+    //             this.addSplitConstraintsToDB(realConstraint, splitConstraintsForReal, numForReal);
+    //         } else if (copyConstraints.length === 4) {
+    //             let splitConstraints1 = [...this.createSplitsBrosConstraints(copyConstraints[0])];
+    //             let splitConstraints2 = [...this.createSplitsBrosConstraints(copyConstraints[1])];
+    //             let splitConstraints3 = [...this.createSplitsBrosConstraints(copyConstraints[2])];
+    //             let splitConstraints4 = [...this.createSplitsBrosConstraints(copyConstraints[3])];
+    //             let num1 = this.state.num;
+    //             let num2 = num1 + copyConstraints.length + 1;
+    //             let num3 = num2 + copyConstraints.length + 1;
+    //             let num4 = num3 + copyConstraints.length + 1;
+    //             this.addSplitConstraintsToDB(copyConstraints[0], splitConstraints1, num1);
+    //             this.addSplitConstraintsToDB(copyConstraints[1], splitConstraints2, num2);
+    //             this.addSplitConstraintsToDB(copyConstraints[2], splitConstraints3, num3);
+    //             this.addSplitConstraintsToDB(copyConstraints[3], splitConstraints4, num4);
+    //             let splitConstraintsForReal = [...this.createSplitsBrosConstraints(realConstraint)];
+    //             let numForReal = num4 + copyConstraints.length + 1;
+    //             realConstraint.copyConstraint = false;
+    //             this.addSplitConstraintsToDB(realConstraint, splitConstraintsForReal, numForReal);
+    //         }
+    //     } else {
+    //         let constraint = {};
+    //         let num = this.state.num;
+    //         copyConstraints[0].num = num;
+    //         num += 1;
+    //         this.setState({ num: num });
+    //         axios.post('http://localhost:4000/data/addConstraint', copyConstraints[0])
+    //             .then(res => {
+    //                 constraint = { ...res.data };
+    //                 realConstraint.constraintCopyBros = [...realConstraint.constraintCopyBros, res.data._id];
+    //                 this.setState({
+    //                     constraints: [...this.state.constraints, constraint]
+    //                 });
+    //                 if (copyConstraints.length === 1) {
+    //                     let constraint = {};
+    //                     let num = this.state.num;
+    //                     realConstraint.num = num;
+    //                     realConstraint.copyConstraint = false;
+    //                     num += 1;
+    //                     this.setState({ num: num });
+    //                     axios.post('http://localhost:4000/data/addConstraint', realConstraint)
+    //                         .then(res => {
+    //                             constraint = { ...res.data };
+    //                             //console.log(constraint);
+    //                             this.setState({
+    //                                 constraints: [...this.state.constraints, constraint]
+    //                             });
+    //                         });
+    //                 }
+    //                 if (copyConstraints.length > 1) {
+    //                     let constraint = {};
+    //                     let num = this.state.num;
+    //                     copyConstraints[1].num = num;
+    //                     num += 1;
+    //                     this.setState({ num: num });
+    //                     axios.post('http://localhost:4000/data/addConstraint', copyConstraints[1])
+    //                         .then(res => {
+    //                             constraint = { ...res.data };
+    //                             realConstraint.constraintCopyBros = [...realConstraint.constraintCopyBros, res.data._id];
+    //                             this.setState({
+    //                                 constraints: [...this.state.constraints, constraint]
+    //                             });
+    //                             if (copyConstraints.length === 2) {
+    //                                 let constraint = {};
+    //                                 let num = this.state.num;
+    //                                 realConstraint.num = num;
+    //                                 realConstraint.copyConstraint = false;
+    //                                 num += 1;
+    //                                 this.setState({ num: num });
+    //                                 axios.post('http://localhost:4000/data/addConstraint', realConstraint)
+    //                                     .then(res => {
+    //                                         constraint = { ...res.data };
+    //                                         this.setState({
+    //                                             constraints: [...this.state.constraints, constraint]
+    //                                         });
+    //                                     });
+    //                             }
+    //                             if (copyConstraints.length > 2) {
+    //                                 let constraint = {};
+    //                                 let num = this.state.num;
+    //                                 copyConstraints[2].num = num;
+    //                                 num += 1;
+    //                                 this.setState({ num: num });
+    //                                 axios.post('http://localhost:4000/data/addConstraint', copyConstraints[2])
+    //                                     .then(res => {
+    //                                         constraint = { ...res.data };
+    //                                         realConstraint.constraintCopyBros = [...realConstraint.constraintCopyBros, res.data._id];
+    //                                         this.setState({
+    //                                             constraints: [...this.state.constraints, constraint]
+    //                                         });
+    //                                         if (copyConstraints.length === 3) {
 
-                                                let constraint = {};
-                                                let num = this.state.num;
-                                                realConstraint.num = num;
-                                                realConstraint.copyConstraint = false;
-                                                num += 1;
-                                                this.setState({ num: num });
-                                                axios.post('http://localhost:4000/data/addConstraint', realConstraint)
-                                                    .then(res => {
-                                                        constraint = { ...res.data };
-                                                        this.setState({
-                                                            constraints: [...this.state.constraints, constraint]
-                                                        });
-                                                    });
-                                            }
-                                            if (copyConstraints.length > 3) {
-                                                let constraint = {};
-                                                let num = this.state.num;
-                                                copyConstraints[2].num = num;
-                                                num += 1;
-                                                this.setState({ num: num });
-                                                axios.post('http://localhost:4000/data/addConstraint', copyConstraints[2])
-                                                    .then(res => {
-                                                        constraint = { ...res.data };
-                                                        realConstraint.constraintCopyBros = [...realConstraint.constraintCopyBros, res.data._id];
-                                                        this.setState({
-                                                            constraints: [...this.state.constraints, constraint]
-                                                        });
-                                                        if (copyConstraints.length === 4) {
-                                                            let constraint = {};
-                                                            let num = this.state.num;
-                                                            realConstraint.num = num;
-                                                            realConstraint.copyConstraint = false;
-                                                            num += 1;
-                                                            this.setState({ num: num });
-                                                            axios.post('http://localhost:4000/data/addConstraint', realConstraint)
-                                                                .then(res => {
-                                                                    constraint = { ...res.data };
-                                                                    this.setState({
-                                                                        constraints: [...this.state.constraints, constraint]
-                                                                    });
-                                                                });
-                                                        }
-                                                    });
-                                            }
-                                        });
-                                }
-                            });
-                    }
-                });
-        }
-    }
+    //                                             let constraint = {};
+    //                                             let num = this.state.num;
+    //                                             realConstraint.num = num;
+    //                                             realConstraint.copyConstraint = false;
+    //                                             num += 1;
+    //                                             this.setState({ num: num });
+    //                                             axios.post('http://localhost:4000/data/addConstraint', realConstraint)
+    //                                                 .then(res => {
+    //                                                     constraint = { ...res.data };
+    //                                                     this.setState({
+    //                                                         constraints: [...this.state.constraints, constraint]
+    //                                                     });
+    //                                                 });
+    //                                         }
+    //                                         if (copyConstraints.length > 3) {
+    //                                             let constraint = {};
+    //                                             let num = this.state.num;
+    //                                             copyConstraints[2].num = num;
+    //                                             num += 1;
+    //                                             this.setState({ num: num });
+    //                                             axios.post('http://localhost:4000/data/addConstraint', copyConstraints[2])
+    //                                                 .then(res => {
+    //                                                     constraint = { ...res.data };
+    //                                                     realConstraint.constraintCopyBros = [...realConstraint.constraintCopyBros, res.data._id];
+    //                                                     this.setState({
+    //                                                         constraints: [...this.state.constraints, constraint]
+    //                                                     });
+    //                                                     if (copyConstraints.length === 4) {
+    //                                                         let constraint = {};
+    //                                                         let num = this.state.num;
+    //                                                         realConstraint.num = num;
+    //                                                         realConstraint.copyConstraint = false;
+    //                                                         num += 1;
+    //                                                         this.setState({ num: num });
+    //                                                         axios.post('http://localhost:4000/data/addConstraint', realConstraint)
+    //                                                             .then(res => {
+    //                                                                 constraint = { ...res.data };
+    //                                                                 this.setState({
+    //                                                                     constraints: [...this.state.constraints, constraint]
+    //                                                                 });
+    //                                                             });
+    //                                                     }
+    //                                                 });
+    //                                         }
+    //                                     });
+    //                             }
+    //                         });
+    //                 }
+    //             });
+    //     }
+    // }
 
     addSplitConstraintsToDB(firstConstraint, splitConstraints, num) {
         firstConstraint.hours = firstConstraint.firstLesson.toString();

@@ -14,26 +14,16 @@ B.Sc. in software engineering at Azrieli College of Engineering Jerusalem.
 
 * Install [Node.js](https://nodejs.org/en/) on your computer
 
-After installing Node.js open the command lind and write the fowling commands  
+After installing Node.js open the command line and write the fowling commands: 
  
 * Clone this repository
 ```bash
     git clone https://github.com/ranSharon/timetable-platform-for-hanisui-high-school.git
 ```
- 
-* Open the repository
-```bash
-    cd timetable-platform-for-hanisui-high-school  
-```
-
-* Open 'project' folder
-```bash
-    cd project  
-```
 
 * Open 'client' folder
 ```bash
-    cd client  
+    cd timetable-platform-for-hanisui-high-school/project/client  
 ```
 
 * Install with npm 
@@ -41,14 +31,9 @@ After installing Node.js open the command lind and write the fowling commands
     npm install  
 ```
 
-* Go back to 'project' folder
-```bash
-    cd..  
-```
- 
 * Open 'server' folder
 ```bash
-     cd server  
+     cd ../server  
 ```
   
 * Install with npm 

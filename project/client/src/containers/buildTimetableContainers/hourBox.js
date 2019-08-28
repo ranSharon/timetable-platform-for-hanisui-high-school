@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-
 import { DropTarget } from 'react-dnd';
 import DragConstraintBox from './dragConstraintBox';
 

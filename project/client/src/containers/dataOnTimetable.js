@@ -87,7 +87,7 @@ class DataOnTimetable extends Component {
                     </div>
                     <select className="custom-select" id="inputGroupSelect02" value={this.state.classNumber} onChange={(e) => this.handleClassNumberChange(e)} >
                         <option value="">כיתה...</option>
-                        {classNumbers.map((classNumber, index) =>
+                        {classNumbers.sort().map((classNumber, index) =>
                             <option
                                 key={index}
                                 value={classNumber}
@@ -132,7 +132,7 @@ class DataOnTimetable extends Component {
                     </div>
                     <select className="custom-select" id="inputGroupSelect02" value={this.state.teacher1} onChange={(e) => this.handleTeacherChangeSecondQuery(e)} >
                         <option value="">מורה...</option>
-                        {teachers.map((teacher, index) =>
+                        {teachers.sort().map((teacher, index) =>
                             <option
                                 key={index}
                                 value={teacher}
@@ -182,7 +182,7 @@ class DataOnTimetable extends Component {
                     </div>
                     <select className="custom-select" id="inputGroupSelect02" value={this.state.teacher2} onChange={(e) => this.handleTeacherChangeThirdQuery(e)} >
                         <option value="">מורה...</option>
-                        {teachers.map((teacher, index) =>
+                        {teachers.sort().map((teacher, index) =>
                             <option
                                 key={index}
                                 value={teacher}
@@ -259,7 +259,7 @@ class DataOnTimetable extends Component {
                     </div>
                     <select className="custom-select" id="inputGroupSelect02" value={this.state.teacher3} onChange={(e) => this.handleTeacherChangeFourthQuery(e)} >
                         <option value="">מורה...</option>
-                        {teachers.map((teacher, index) =>
+                        {teachers.sort().map((teacher, index) =>
                             <option
                                 key={index}
                                 value={teacher}
@@ -602,30 +602,30 @@ class DataOnTimetable extends Component {
             <h3 className="text-right">מידע על מערכת השעות שנבנתה</h3>
 
             <div className="w-100 text-right p-0 card mb-3">
-                <h6 className="text-center">איזה מורים מלמדים כיתה מסויימת</h6>
+                <h6 className="text-center">אילו מורים מלמדים כיתה מסויימת</h6>
                 <div className="w-100 h-100">
                     {this.firstQuery()}
                 </div>
             </div>
             <div
                 className="w-100 text-right p-0 card mb-3">
-                <h6 className="text-center">באיזה שעות וימים מלמד מורה מסוים</h6>
+                <h6 className="text-center">באילו שעות וימים מורה מסוים מלמד</h6>
                 <div className="w-100 h-100">
                     {this.secondQuery()}
                 </div>
             </div>
             <div className="w-100 text-right p-0 card mb-3">
-                <h6 className="text-center">איזה מורים מלמדים ביום מסויים</h6>
+                <h6 className="text-center">אילו מורים מלמדים ביום מסויים</h6>
                 {this.fifthQuery()}
             </div>
             <div className="w-100 text-right p-0 card mb-3">
-                <h6 className="text-center">באיזה שעות מורה שמלמד ביום מסוים פנוי</h6>
+                <h6 className="text-center">באילו שעות מורה שמלמד ביום מסוים פנוי</h6>
                 <div className="w-100 h-100">
                     {this.thirdQuery()}
                 </div>
             </div>
             <div className="w-100 text-right p-0 card mb-3">
-                <h6 className="text-center">איזה מקצועות מלמד מורה מסוים</h6>
+                <h6 className="text-center">אילו מקצועות מורה מסוים מלמד</h6>
                 <div className="w-100 h-100">
                     {this.fourthQuery()}
                 </div>

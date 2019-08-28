@@ -185,16 +185,17 @@ class ClassRooms extends Component {
     }
 
     HandleAddRoomFeature() {
+        console.log(this.state.roomFeature);
         let roomFeatures = [...this.state.roomFeatures];
         if (this.checkIfFeatureTaken()) {
             this.setState({
-                alertMessageForFeatures: 'מאפיין זה כבר הוגדר,',
+                alertMessageForFeatures: 'מאפיין זה כבר הוגדר',
                 alertMessageForFeaturesStatus: false
             })
         }
         else if (this.state.roomFeature === '') {
             this.setState({
-                alertMessageForFeatures: 'לא הוזן מאפיין בשדה הגרת המאפיין',
+                alertMessageForFeatures: 'לא הוזן מאפיין בשדה הגדרת המאפיין',
                 alertMessageForFeaturesStatus: false
             })
         }
@@ -248,9 +249,17 @@ class ClassRooms extends Component {
                         break;
                     }
                 }
+                let roomFeaturesChecked = [...this.state.roomFeaturesChecked]
+                for (let i = 0; i <= roomFeaturesChecked.length - 1; i++) {
+                    if (roomFeaturesChecked[i].roomFeature === response.data.roomFeature) {
+                        roomFeaturesChecked = [...roomFeaturesChecked.slice(0, i).concat(roomFeaturesChecked.slice(i + 1, roomFeaturesChecked.length))];
+                        break;
+                    }
+                }
                 this.resetInputs();
                 this.setState({
                     roomFeatures: [...roomFeatures],
+                    roomFeaturesChecked: [...roomFeaturesChecked],
                     alertMessage: '',
                     alertMessageForFeatures: ''
                 });
@@ -321,7 +330,7 @@ class ClassRooms extends Component {
 
     getClassRoom(classRoomId) {
         window.scrollTo(0, 0);
-        console.log(this.state.roomFeaturesChecked);
+        // console.log(this.state.roomFeaturesChecked);
         classRoomToEditId = classRoomId;
         axios.get('http://localhost:4000/data/getClassRoom/' + classRoomId)
             .then(response => {
@@ -380,7 +389,7 @@ class ClassRooms extends Component {
         }
         return (
             <RoomFeatures
-                // roomFeature={this.state.roomFeature}
+                roomFeature={this.state.roomFeature}
                 roomFeatures={this.state.roomFeatures}
                 roomFeatureChange={this.HandleRoomFeatureChange}
                 addRoomFeature={this.HandleAddRoomFeature}

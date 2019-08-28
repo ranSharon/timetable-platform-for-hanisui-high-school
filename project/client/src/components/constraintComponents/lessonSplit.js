@@ -91,7 +91,7 @@ const lessonSplit = (props) => {
                         </div>
                         <div className="input-group mt-3 mb-3">
                             <div className="input-group-append">
-                                <label className="input-group-text" htmlFor="inputGroupSelect02">שעות שיעור ראשון</label>
+                                <label className="input-group-text" htmlFor="inputGroupSelect02">שעות שיעור שני</label>
                             </div>
                             <select className="custom-select" id="inputGroupSelect02" value={props.secondlesson} onChange={(e) => props.onSecondLessonSelected(e)}>
                                 <option value="0">שעות ...</option>

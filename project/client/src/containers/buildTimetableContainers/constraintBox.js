@@ -66,7 +66,7 @@ class ConstraintBox extends Component {
         height = height * numOfLesson;
         height = height + 'px';
         const opacity = this.props.isDragging ? 0 : 1;
-        let fontSize = "100%";
+        // let fontSize = "100%";
         // if (height === "50px") {
         //     fontSize = "40px"
         // }

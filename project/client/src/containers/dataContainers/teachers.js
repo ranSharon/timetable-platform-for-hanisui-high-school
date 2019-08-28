@@ -343,7 +343,7 @@ class Teachers extends Component {
             message += 'לא הוזן שם למורה$';
         }
         if (!juniorHighSchool && !highSchool) {
-            message += 'יש לבחור  האם המורה מלמד בחטיבה ו/או בתיכון.';
+            message += 'יש לבחור  האם המורה מלמד בחטיבה ו/או בתיכון$';
         }
         if (isNaN(maxTeachHours)) {
             message += 'יש להזין מספר בשדה שעות ההוראה$';
@@ -681,7 +681,7 @@ class Teachers extends Component {
                         <DataTable
                             subjects={this.state.subjects}
                             chosenSubjects={this.state.subjectsForTeacher}
-                            table="subjetsTochose"
+                            table="subjetsToChoose"
                             onChose={this.handleChose}>
                         </DataTable>
                     </div>

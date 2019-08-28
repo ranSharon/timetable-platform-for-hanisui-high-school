@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-class SubjectToChoseTableRow extends Component {
+class SubjectToChooseTableRow extends Component {
     state = {
         style: { cursor: "pointer" },
         rowBackgroundColor: ''
@@ -83,6 +83,6 @@ class SubjectToChoseTableRow extends Component {
     }
 }
 
-export default SubjectToChoseTableRow;
+export default SubjectToChooseTableRow;
 
 
