@@ -22,6 +22,7 @@ class Teachers extends Component {
             grades: [],
             subjectsForTeacher: [],
             id: 0,
+            currentTeachHours: 0,
 
             // props for page
             subjects: [],
@@ -41,6 +42,7 @@ class Teachers extends Component {
             messageStatus: false,
             buttonType: 'אישור',
             disableButtons: false,
+            prevName: '',
 
             teacherSortImg: down,
             gradeSortImg: down
@@ -224,12 +226,19 @@ class Teachers extends Component {
         let grades = [...this.setCorrecthGrades()];
         let subjectsForTeacher = [...this.setCorrectSubjectsForTeacher()]
 
+        let currentTeachHours = 0;
+        if(this.state.buttonType === 'סיים עריכה'){
+            if(this.state.prevName === this.state.name){
+                currentTeachHours = this.state.currentTeachHours;
+            }
+        }
+
         const newTeacher = {
             name: this.state.name,
             juniorHighSchool: this.state.juniorHighSchool,
             highSchool: this.state.highSchool,
             maxTeachHours: this.state.maxTeachHours,
-            currentTeachHours: 0,
+            currentTeachHours: currentTeachHours,
             dayOff: this.state.dayOff,
             grades: [...grades],
             subjectsForTeacher: [...subjectsForTeacher]
@@ -441,6 +450,8 @@ class Teachers extends Component {
                     subjects: subjects,
                     checked: checked,
                     name: response.data.name,
+                    prevName: response.data.name,
+                    currentTeachHours: response.data.currentTeachHours,
                     juniorHighSchool: response.data.juniorHighSchool,
                     highSchool: response.data.highSchool,
                     maxTeachHours: response.data.maxTeachHours,

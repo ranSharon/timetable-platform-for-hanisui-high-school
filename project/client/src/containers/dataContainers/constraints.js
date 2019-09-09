@@ -1321,15 +1321,29 @@ class Constraints extends Component {
         for (let i = 0; i <= fatherConstraint.groupingTeachers.length - 1; i++) {
             axios.post('http://localhost:4000/data/updateTeacherByName/', { name: fatherConstraint.groupingTeachers[i], hours: newCurrentTeachHours })
                 .then(res => {
-                    let teachers = [...this.state.allTeachers];
-                    for (let i = 0; i <= teachers.length - 1; i++) {
-                        if (teachers[i]._id === res.data._id) {
-                            teachers[i] = { ...res.data };
+                    // console.log(res);
+                    if(Object.getOwnPropertyNames(res.data).length > 0){
+                        let teachers = [...this.state.allTeachers];
+                        for (let i = 0; i <= teachers.length - 1; i++) {
+                            if (teachers[i]._id === res.data._id) {
+                                teachers[i] = { ...res.data };
+                            }
                         }
+                        this.setState({
+                            allTeachers: [...teachers]
+                        });
                     }
-                    this.setState({
-                        allTeachers: [...teachers]
-                    });
+                    // let teachers = [...this.state.allTeachers];
+                    // for (let i = 0; i <= teachers.length - 1; i++) {
+                    //     if (teachers[i]._id === res.data._id) {
+                    //         teachers[i] = { ...res.data };
+                    //     }
+                    // }
+                    // this.setState({
+                    //     allTeachers: [...teachers]
+                    // });
+                }).catch(function (error) {
+                    console.log(error);
                 });
         }
 

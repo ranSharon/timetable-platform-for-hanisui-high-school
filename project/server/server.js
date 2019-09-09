@@ -368,16 +368,17 @@ dataRoutes.route('/updateTeacherByName').post(function (req, res) {
     let name = req.body.name;
     Teacher.findOne({ name: name }, function (err, teacher) {
         if (!teacher)
-            res.status(404).send("data is not found");
+            // res.status(404).send("data is not found");
+            res.send({});
         else {
             teacher.currentTeachHours += hours;
-        }
-        teacher.save().then(teacher => {
-            res.json(teacher);
-        })
-            .catch(err => {
-                res.status(400).send("Update not possible");
-            });
+            teacher.save().then(teacher => {
+                res.json(teacher);
+            })
+                .catch(err => {
+                    res.status(400).send("Update not possible");
+                });
+        } 
     });
 });
 

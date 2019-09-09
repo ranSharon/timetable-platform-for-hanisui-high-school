@@ -337,7 +337,10 @@ class BuildTimetable extends Component {
                     currGrade = grades[i][0] + grades[i][1];
                 }
                 // console.log(grade !== currGrade && grade !== '');
-                if ((grade !== currGrade && grade !== '') || i === grades.length - 1) {
+                if (grade !== currGrade || i === grades.length - 1) {
+                    if(i === grades.length - 1){
+                        numOfClassesInGrade++;
+                    }
                     for (let j = 0; j <= stateGreades.length - 1; j++) {
                         if (stateGreades[j].grade === grade) {
                             stateGreades[j].numOfClasses = numOfClassesInGrade.toString();
@@ -1058,19 +1061,27 @@ class BuildTimetable extends Component {
     }
 
     createTimeCol() {
-        let maxEndTime = 0;
-        let minStartTime = 100;
-        let days = [...this.state.days];
-        for (let i = 0; i <= days.length - 1; i++) {
-            if (maxEndTime < parseInt(days[i].endTime)) {
-                maxEndTime = parseInt(days[i].endTime);
-            }
-            if (minStartTime > parseInt(days[i].startTime)) {
-                minStartTime = parseInt(days[i].startTime);
-            }
-        }
+        // let maxEndTime = 0;
+        // let minStartTime = 100;
+        // let days = [...this.state.days];
+        // for (let i = 0; i <= days.length - 1; i++) {
+        //     if (maxEndTime < parseInt(days[i].endTime)) {
+        //         maxEndTime = parseInt(days[i].endTime);
+        //     }
+        //     if (minStartTime > parseInt(days[i].startTime)) {
+        //         minStartTime = parseInt(days[i].startTime);
+        //     }
+        // }
+        // let TimeCol = [];
+        // for (let i = minStartTime; i < maxEndTime; i++) {
+        //     let time = i + ':00-' + (i + 1) + ':00';
+        //     TimeCol = [...TimeCol,
+        //     <div key={i} className="row border-top border-dark text-center" style={{ "height": "50px" }}>{time}</div>
+        //     ];
+        // }
+
         let TimeCol = [];
-        for (let i = minStartTime; i < maxEndTime; i++) {
+        for (let i = 7; i < 20; i++) {
             let time = i + ':00-' + (i + 1) + ':00';
             TimeCol = [...TimeCol,
             <div key={i} className="row border-top border-dark text-center" style={{ "height": "50px" }}>{time}</div>
