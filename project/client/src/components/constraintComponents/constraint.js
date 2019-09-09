@@ -17,7 +17,7 @@ const constraint = (props) => {
             return text.substr(0, text.length - 1);
         }
         return (
-            <div className="row mt-0" style={{ "textAlign": "center" }}>
+            <div className="row mt-0 mx-1" style={{ "textAlign": "center" }}>
                 <div className="col-2 border border-dark p-0">
                     <div className="border border-dark ">שעות לימוד</div>
                     <div>{props.hours}</div>
@@ -48,7 +48,7 @@ const constraint = (props) => {
         );
     } else {
         return (
-            <div className="row mt-0" style={{ "textAlign": "center" }}>
+            <div className="row mt-0 mx-1" style={{ "textAlign": "center" }}>
                 <Hours
                     hours={props.hours}
                     onHoursSelected={props.onHoursSelected}>

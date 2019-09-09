@@ -4,6 +4,12 @@ import { DragSource } from 'react-dnd';
 const constraintSource = {
     endDrag(props, monitor, component) {
         // return props.endDrag();
+        if (!monitor.didDrop()) {
+            console.log('!didDrop')
+            console.log('cant be added');
+            props.endDrag(false);
+            return;
+        }
     },
     beginDrag(props, monitor, component) {
         if (props.inTable) { // darg function not called when DragConstraintBox not in table
@@ -31,7 +37,7 @@ class DragConstraintBox extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            border: 'border border-primary'
+            border: 'border border-dark'
         }
     }
 
@@ -84,6 +90,15 @@ class DragConstraintBox extends Component {
         return text.substr(0, text.length - 1);
     }
 
+    handleClick() {
+        this.props.click(this.props.inTable, this.props.data, this.props.classRoom)
+        if (this.state.border === 'border border-dark') {
+            this.setState({ border: 'border border-primary' });
+        } else if (this.state.border === 'border border-primary') {
+            this.setState({ border: 'border border-dark' });
+        }
+    }
+
     render() {
         // if (!this.props.temp) {
         // let height = 50;
@@ -100,16 +115,18 @@ class DragConstraintBox extends Component {
         // }
         let boxStyle = {
             "cursor": "pointer",
-            "width": "162px",
+            "width": "100%",
             "height": height,
             "opacity": opacity,
-            "fontSize": '11px'
+            "fontSize": '11px',
         };
+
         return this.props.connectDragSource(
             <div
-                className={"m-auto card text-center border border-dark"}
+                className={"m-auto card text-center " + this.props.border}
                 style={boxStyle}
-                onClick={() => this.props.click(this.props.inTable, this.props.data, this.props.classRoom)}
+                // onClick={() => this.props.click(this.props.inTable, this.props.data, this.props.classRoom)}
+                onClick={() => this.handleClick()}
             >
                 {this.props.data.subject + ', '}
                 {this.showTeachers() + ', '}

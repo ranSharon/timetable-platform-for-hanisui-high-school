@@ -6,7 +6,6 @@ import ConstraintBox from './buildTimetableContainers/constraintBox';
 import DragConstraintBox from './buildTimetableContainers/dragConstraintBox';
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
-
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 
@@ -15,6 +14,7 @@ let classroomClashMessage = [];
 
 class BuildTimetable extends Component {
     mounted = false;
+    timeoutID;
 
     constructor(props) {
         super(props);
@@ -40,6 +40,10 @@ class BuildTimetable extends Component {
             grades: [],
             teachers: [],
 
+            daysFetched: false,
+            gradesFetched: false,
+            constraintsFetched: false,
+
             inTable: false,
             row: -1,
             col: -1,
@@ -56,7 +60,9 @@ class BuildTimetable extends Component {
             showTeacherClashMessage: false,
             showClassroomClashMessage: false,
             showTeacherClashButtonType: 'הצג התנגשויות עבור מורה',
-            showClassroomClashButtonType: 'הצג התנגשויות עבור חדר לימוד'
+            showClassroomClashButtonType: 'הצג התנגשויות עבור חדר לימוד',
+            saveSucceed: false,
+            waitingToSave: false
         }
 
         this.handleConstraintClick = this.handleConstraintClick.bind(this);
@@ -69,123 +75,285 @@ class BuildTimetable extends Component {
     }
 
     componentDidMount() {
+        // this.mounted = true;
+        // axios.get('http://localhost:4000/data/getConstraints')
+        //     .then(response => {
+        //         if (this.mounted) {
+        //             this.setState({ constraints: [...response.data.sort(this.compareTeacher)] }, function () {
+        //                 axios.get('http://localhost:4000/data/getDays')
+        //                     .then(response => {
+        //                         if (this.mounted) {
+        //                             this.setState({ days: [...response.data] }, function () {
+        //                                 axios.get('http://localhost:4000/data/getGrades')
+        //                                     .then(response => {
+        //                                         if (this.mounted) {
+        //                                             this.setState({ grades: [...response.data.sort(this.compareGrade)] }, function () {
+        //                                                 this.initTimeTable();
+        //                                             });
+        //                                         }
+        //                                         console.log('grades:')
+        //                                         console.log(this.state.grades);
+        //                                     })
+        //                                     .catch(function (error) {
+        //                                         console.log(error);
+        //                                     });
+        //                             });
+        //                         }
+        //                         console.log('days:')
+        //                         console.log(this.state.days);
+        //                     })
+        //                     .catch(function (error) {
+        //                         console.log(error);
+        //                     });
+        //             });
+        //         }
+        //         console.log('constraints:')
+        //         console.log(this.state.constraints);
+        //     })
+        //     .catch(function (error) {
+        //         console.log(error);
+        //     });
+
         this.mounted = true;
         axios.get('http://localhost:4000/data/getConstraints')
             .then(response => {
                 if (this.mounted) {
-                    this.setState({ constraints: [...response.data.sort(this.compareTeacher)] }, function () {
-                        axios.get('http://localhost:4000/data/getDays')
-                            .then(response => {
-                                if (this.mounted) {
-                                    this.setState({ days: [...response.data] }, function () {
-                                        axios.get('http://localhost:4000/data/getGrades')
-                                            .then(response => {
-                                                if (this.mounted) {
-                                                    this.setState({ grades: [...response.data.sort(this.compareGrade)] }, function () {
-                                                        this.initTimeTable();
-                                                    });
-                                                }
-                                                console.log('grades:')
-                                                console.log(this.state.grades);
-                                            })
-                                            .catch(function (error) {
-                                                console.log(error);
-                                            });
-                                    });
-                                }
-                                console.log('days:')
-                                console.log(this.state.days);
-                            })
-                            .catch(function (error) {
-                                console.log(error);
-                            });
+                    this.setState({ constraints: [...response.data.sort(this.compareTeacher)], constraintsFetched: true }, function () {
+                        this.initTimeTable();
                     });
                 }
-                console.log('constraints:')
-                console.log(this.state.constraints);
+                // console.log('constraints:')
+                // console.log(this.state.constraints);
             })
             .catch(function (error) {
                 console.log(error);
             });
+
+        this.mounted = true;
+        axios.get('http://localhost:4000/data/getGrades')
+            .then(response => {
+                if (this.mounted) {
+                    this.setState({ grades: [...response.data.sort(this.compareGrade)], gradesFetched: true }, function () {
+                        console.log('grades:')
+                        console.log(this.state.grades);
+                        this.initTimeTable();
+                    });
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
+        this.mounted = true;
+        axios.get('http://localhost:4000/data/getDays')
+            .then(response => {
+                if (this.mounted) {
+                    this.setState({ days: [...response.data], daysFetched: true }, function () {
+                        this.initTimeTable();
+                    });
+                }
+                // console.log('days:')
+                // console.log(this.state.days);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
+
+
+        this.mounted = true;
         axios.get('http://localhost:4000/data/getClassRooms')
             .then(response => {
                 if (this.mounted) {
                     this.setState({ classRooms: [...response.data.sort(this.compareClassroom)], classRoomsView: [...response.data] });
                 }
-                console.log('classRooms:')
-                console.log(this.state.classRooms);
+                // console.log('classRooms:')
+                // console.log(this.state.classRooms);
             })
             .catch(function (error) {
                 console.log(error);
             });
+        this.mounted = true;
         axios.get('http://localhost:4000/data/getTeachers')
             .then(response => {
                 if (this.mounted) {
                     this.setState({ teachers: [...response.data] });
                 }
-                console.log('teachers:')
-                console.log(this.state.teachers);
+                // console.log('teachers:')
+                // console.log(this.state.teachers);
             })
             .catch(function (error) {
                 console.log(error);
             });
     }
+
     componentWillUnmount() {
         this.mounted = false;
+        clearTimeout(this.timeoutID);
+    }
+
+    componentDidUpdate() {
+        // console.log(this.state.inTable);
+        // console.log(this.state.currentConstraint);
     }
 
     initTimeTable() {
+        if (!this.state.daysFetched || !this.state.gradesFetched || !this.state.constraintsFetched) {
+            return;
+        }
+        this.mounted = true;
         axios.get('http://localhost:4000/data/getTimeTable')
             .then(response => {
-                // if (response.data.length > 0) {
-                // this.setState({ timeTable: [...response.data] }, function () {
-                //     this.updateTimeTable();
-                //     console.log('timeTable');
-                //     console.log(this.state.timeTable);
-                // });
-                // }
-                // else {
-                let grades = [...this.state.grades];
-                let days = [...this.state.days];
-                let timeTable = [...this.state.timeTable];
-                for (let i = 0; i <= grades.length - 1; i++) {
-                    for (let j = 1; j <= grades[i].numOfClasses; j++) {
-                        let tableViewForClass = { classNumber: grades[i].grade + j, days: [], constaraintsToAdd: [...this.setConstaraintsToAdd(grades[i].grade + j)] };
-                        for (let k = 0; k <= days.length - 1; k++) {
-                            let day = { day: days[k].day, hours: [] };
-                            let startTime = parseInt(days[k].startTime);
-                            let endTime = parseInt(days[k].endTime);
-                            for (let l = startTime + 1; l <= endTime; l++) {
-                                let hour = { hour: l, constraints: [] };
-                                day.hours = [...day.hours, hour];
+                if (this.mounted) {
+                    // console.log(response.data);
+                    let timeTableEmpty = true;
+                    if (response.data.length > 0) {
+                        outerLoop:
+                        for (let i = 0; i <= response.data.length - 1; i++) {
+                            for (let j = 0; j <= response.data[i].days.length - 1; j++) {
+                                for (let k = 0; k <= response.data[i].days[j].hours.length - 1; k++) {
+                                    // console.log(response.data[i].days[j].hours[k]);
+                                    // for (let l = 0; l <= response.data[i].days[j].hours[k].length - 1; l++) {
+                                    if (response.data[i].days[j].hours[k].constraints.length > 0) {
+                                        timeTableEmpty = false;
+                                        break outerLoop;
+                                    }
+                                    // }
+                                }
                             }
-                            tableViewForClass.days = [...tableViewForClass.days, day];
                         }
-                        timeTable = [...timeTable, tableViewForClass];
                     }
-                }
-                if (response.data.length > 0) {
-                    this.setState({ timeTable: [...response.data] }, function () {
-                        this.updateTimeTable();
-                        console.log('timeTable');
-                        console.log(this.state.timeTable);
-                    });
-                }
-                else {
-                    this.setState({ timeTable: timeTable }, function () {
-                        if (response.data.length > 0){
-                            this.setState({ timeTable: [...response.data] }, function () {
-                            });
+                    // console.log(timeTableEmpty);
+                    if (!timeTableEmpty && response.data.length > 0) {
+                        this.setState({ timeTable: [...response.data] }, function () {
+                            this.updateTimeTable();
+                            console.log('timeTable');
+                            console.log(this.state.timeTable);
+                            this.setGrades();
+                        });
+                    } else {
+                        let grades = [...this.state.grades];
+                        let days = [...this.state.days];
+                        let timeTable = [...this.state.timeTable];
+                        for (let i = 0; i <= grades.length - 1; i++) {
+                            for (let j = 1; j <= grades[i].numOfClasses; j++) {
+                                let tableViewForClass = { classNumber: grades[i].grade + j, days: [], constaraintsToAdd: [...this.setConstaraintsToAdd(grades[i].grade + j)] };
+                                for (let k = 0; k <= days.length - 1; k++) {
+                                    let day = { day: days[k].day, hours: [] };
+                                    let startTime = parseInt(days[k].startTime);
+                                    let endTime = parseInt(days[k].endTime);
+                                    for (let l = startTime + 1; l <= endTime; l++) {
+                                        let hour = { hour: l, constraints: [] };
+                                        day.hours = [...day.hours, hour];
+                                    }
+                                    tableViewForClass.days = [...tableViewForClass.days, day];
+                                }
+                                timeTable = [...timeTable, tableViewForClass];
+                            }
                         }
-                        console.log('timeTable');
-                        console.log(this.state.timeTable);
-                    });
+                        this.setState({ timeTable: timeTable }, function () {
+                            console.log('timeTable');
+                            console.log(this.state.timeTable);
+                            this.setGrades();
+                        });
+                    }
+
                 }
-                // }
             })
             .catch(function (error) {
                 console.log(error);
             });
+    }
+
+    setGrades() {
+        const timeTable = [...this.state.timeTable];
+
+        let timeTableEmpty = true;
+        if (timeTable.length > 0) {
+            outerLoop:
+            for (let i = 0; i <= timeTable.length - 1; i++) {
+                for (let j = 0; j <= timeTable[i].days.length - 1; j++) {
+                    for (let k = 0; k <= timeTable[i].days[j].hours.length - 1; k++) {
+                        // console.log(response.data[i].days[j].hours[k]);
+                        // for (let l = 0; l <= response.data[i].days[j].hours[k].length - 1; l++) {
+                        if (timeTable[i].days[j].hours[k].constraints.length > 0) {
+                            timeTableEmpty = false;
+                            break outerLoop;
+                        }
+                        // }
+                    }
+                }
+            }
+        }
+
+        console.log(timeTableEmpty);
+        let grades = [];
+        let stateGreades = [];
+
+        if (!timeTableEmpty) {
+            // [TODO] check if num of clasess change (if not => return)
+
+            timeTable.forEach(table => {
+                grades.push(table.classNumber);
+            });
+            grades = [...grades.sort()];
+            console.log(grades);
+
+            // creating
+            let gradeObj = {};
+            let grade = '';
+            let currGrade = '';
+
+            for (let i = 0; i <= grades.length - 1; i++) {
+                if (grades[i].length === 2) {
+                    currGrade = grades[i][0];
+                    gradeObj['grade'] = grades[i][0];
+                } else if (grades[i].length === 3) {
+                    currGrade = grades[i][0] + grades[i][1];
+                    gradeObj['grade'] = grades[i][0] + grades[i][1];
+                }
+                gradeObj['numOfClasses'] = '';
+
+                if (grade !== currGrade) {
+                    console.log(gradeObj);
+                    stateGreades.push(gradeObj);
+                    grade = currGrade;
+                    gradeObj = {};
+                }
+            }
+            console.log(stateGreades);
+
+            // update grades array state for correct sitution
+            grade = grades[0];
+            currGrade = '';
+            let numOfClassesInGrade = 0;
+            for (let i = 0; i <= grades.length - 1; i++) {
+                // console.log(grade);
+                // console.log(currGrade);
+                // console.log(numOfClassesInGrade);
+                if (grades[i].length === 2) {
+                    currGrade = grades[i][0];
+                } else if (grades[i].length === 3) {
+                    currGrade = grades[i][0] + grades[i][1];
+                }
+                // console.log(grade !== currGrade && grade !== '');
+                if ((grade !== currGrade && grade !== '') || i === grades.length - 1) {
+                    for (let j = 0; j <= stateGreades.length - 1; j++) {
+                        if (stateGreades[j].grade === grade) {
+                            stateGreades[j].numOfClasses = numOfClassesInGrade.toString();
+                        }
+                    }
+                    numOfClassesInGrade = 1;
+                    grade = currGrade;
+                } else {
+                    numOfClassesInGrade++;
+                }
+            }
+            this.setState({ grades: [...stateGreades] }, () => {
+                console.log(this.state.grades);
+            });
+        }
+
     }
 
     updateTimeTable() {
@@ -329,26 +497,95 @@ class BuildTimetable extends Component {
     }
 
     setNavbar() {
-        let grades = [...this.state.grades];
+        if (!this.state.daysFetched || !this.state.gradesFetched || !this.state.constraintsFetched || this.state.timeTable.length === 0) {
+            return null;
+        }
+        const timeTable = [...this.state.timeTable];
+
+        let timeTableEmpty = true;
+        if (timeTable.length > 0) {
+            outerLoop:
+            for (let i = 0; i <= timeTable.length - 1; i++) {
+                for (let j = 0; j <= timeTable[i].days.length - 1; j++) {
+                    for (let k = 0; k <= timeTable[i].days[j].hours.length - 1; k++) {
+                        // console.log(response.data[i].days[j].hours[k]);
+                        // for (let l = 0; l <= response.data[i].days[j].hours[k].length - 1; l++) {
+                        if (timeTable[i].days[j].hours[k].constraints.length > 0) {
+                            timeTableEmpty = false;
+                            break outerLoop;
+                        }
+                        // }
+                    }
+                }
+            }
+        }
+        let grades = [];
         let navBar = [];
         let key = 0;
-        for (let i = 0; i <= grades.length - 1; i++) {
-            for (let j = 1; j <= parseInt(grades[i].numOfClasses); j++) {
+
+
+        if (!timeTableEmpty) {
+            timeTable.forEach(table => {
+                grades.push(table.classNumber);
+
+            });
+            grades = [...grades.sort()];
+
+            // countinu setting nav bar
+            for (let i = 0; i <= grades.length - 1; i++) {
                 navBar = [...navBar,
                 <li key={key} className="navbar-item w-aotu">
                     <div
                         className="nav-link"
-                        value={grades[i].grade + j}
-                        onClick={() => { this.handleClassClick(grades[i].grade + j) }}
+                        value={grades[i]}
+                        onClick={() => { this.handleClassClick(grades[i]) }}
                         style={{ "cursor": "pointer" }}>
-                        {grades[i].grade + j}
+                        {grades[i]}
                     </div>
                 </li>
                 ];
                 key++;
             }
+        } else {
+            grades = [...this.state.grades];
+            for (let i = 0; i <= grades.length - 1; i++) {
+                for (let j = 1; j <= parseInt(grades[i].numOfClasses); j++) {
+                    navBar = [...navBar,
+                    <li key={key} className="navbar-item w-aotu">
+                        <div
+                            className="nav-link"
+                            value={grades[i].grade + j}
+                            onClick={() => { this.handleClassClick(grades[i].grade + j) }}
+                            style={{ "cursor": "pointer" }}>
+                            {grades[i].grade + j}
+                        </div>
+                    </li>
+                    ];
+                    key++;
+                }
+            }
         }
-
+        // grades = [...grades.sort()];
+        // console.log(grades);
+        // let navBar = [];
+        // let key = 0;
+        // for (let i = 0; i <= grades.length - 1; i++) {
+        //     for (let j = 1; j <= parseInt(grades[i].numOfClasses); j++) {
+        //         navBar = [...navBar,
+        //         <li key={key} className="navbar-item w-aotu">
+        //             <div
+        //                 className="nav-link"
+        //                 value={grades[i].grade + j}
+        //                 onClick={() => { this.handleClassClick(grades[i].grade + j) }}
+        //                 style={{ "cursor": "pointer" }}>
+        //                 {grades[i].grade + j}
+        //             </div>
+        //         </li>
+        //         ];
+        //         key++;
+        //     }
+        // }
+        // console.log(this.state.timeTable);
         return navBar;
     }
 
@@ -414,12 +651,17 @@ class BuildTimetable extends Component {
             }
         }
 
+        if (this.objectEmpty(dayView)) {
+            return null;
+        }
+
         let hoursBoxes = [];
         let prvConstraints = ''; // if lesson is more then an hour i want to check it and not showing all lesson hours boxes 
         let show = true; // // if a box while br shown
         let validToAdd = true; // if box is green or red
         let currentConstraintEmpty = true; // if no constriant is chosee in this component then box lavan
         let data = {};
+        let border = 'border border-dark';
 
         // let first = true // when edeting we use this flag  
         // let dummy = false;
@@ -427,6 +669,12 @@ class BuildTimetable extends Component {
             if (i === 0 && col === 0) {
                 // console.log('start:')
             }
+            // if (i === 0) {
+            //     for (let j = 8; j < dayView.hours[i]; j++) {
+            //         emptySpace += <div key={j} style={{ "height": "50px", "width": "162px", "backgroundColor": "black" }}></div>;
+            //         console.log(emptySpace);
+            //     }
+            // }
             if (dayView.hours[i].constraints.length > 0) {
                 validToAdd = false;
                 if (prvConstraints === JSON.stringify(dayView.hours[i].constraints[0])) {
@@ -465,6 +713,12 @@ class BuildTimetable extends Component {
                 data.constraints = [...data.constraints, this.state.currentConstraint];
             }
 
+            if (JSON.stringify(data.constraints[0]) === JSON.stringify(this.state.currentConstraint)) {
+                // console.log(data.constraints[0]);
+                // console.log(this.state.currentConstraint);
+                border = 'border border-primary';
+            }
+
             hoursBoxes = [...hoursBoxes,
             <HourBox
                 key={i} // must have for react
@@ -479,6 +733,7 @@ class BuildTimetable extends Component {
                 row={i} // num of row of box in table
                 col={col} // num of col of box in table
                 click={this.handleDragConstraintClick}
+                border={border}
 
                 drop={this.addConstraintToHour} // event for droping lesson in this box
                 hover={this.handleHourClick} // change color or box when hover and also valid to add
@@ -489,11 +744,38 @@ class BuildTimetable extends Component {
             </HourBox>
             ];
             show = true;
+            border = 'border border-dark';
             if (dayView.hours[i].constraints.length !== 0) {
                 prvConstraints = JSON.stringify(dayView.hours[i].constraints[0]);
             }
         }
         return hoursBoxes;
+    }
+
+    createEmptyBoxs(day) {
+        if (this.objectEmpty(this.state.tableViewForClass)) {
+            return null;
+        }
+        let dayView = {};
+        let days = [...this.state.tableViewForClass.days];
+        for (let i = 0; i <= days.length - 1; i++) {
+            if (days[i].day === day) {
+                dayView = { ...days[i] };
+                break;
+            }
+        }
+
+        if (this.objectEmpty(dayView)) {
+            return null;
+        }
+
+        let emptyBoxes = [];
+
+        for (let j = 8; j < dayView.hours[0].hour; j++) {
+            emptyBoxes = [...emptyBoxes, <div key={j} style={{ "height": "50px", "width": "162px" }}></div>];
+        }
+
+        return emptyBoxes;
     }
 
     objectEmpty(obj) {
@@ -508,6 +790,7 @@ class BuildTimetable extends Component {
         let canBeAdded = true;
         let lessonHours = parseInt(constraint.hours);
         let grade = '';
+        console.log(this.state.grades)
         let currentClass = this.state.currentClass;
         if (currentClass.length === 2) {
             grade = currentClass[0];
@@ -647,7 +930,7 @@ class BuildTimetable extends Component {
                                             if (timeTable[i].days[j].hours[k].constraints.length > 0) {
                                                 for (let o = 0; o <= timeTable[i].days[j].hours[k].constraints[0].groupingTeachers.length - 1; o++) {
                                                     if (timeTable[i].days[j].hours[k].constraints[0].groupingTeachers[o] === teachers[t]) {
-                                                        message = 'המורה ' + teachers[t] + ' כבר מלמד ביום: ' + day + ', בשעה ' + (hour - 1) + ':00-' + + hour + ':00, בכיתה ' + timeTable[i].classNumber;
+                                                        message = 'המורה ' + teachers[t] + ' כבר מלמד ביום ' + day + ', בשעה ' + (hour - 1) + ':00-' + + hour + ':00, בכיתה ' + timeTable[i].classNumber;
                                                         teacherClashMessage = [...teacherClashMessage, message];
                                                         return false;
                                                     }
@@ -740,27 +1023,33 @@ class BuildTimetable extends Component {
 
     createTimeTableView() {
         return (
-            <div className="row m-0">
+            <div className="row justify-content-center m-0">
                 <div className="col col-1 border border-dark text-center" value='שעות'>שעות
                 {this.createTimeCol()}
                 </div>
                 <div className="col-11 row">
-                    <div className="col-2 border border-dark text-center" ><div style={{ "backgroundColor": this.state.backgroundColorSunday, "marginRight": "-15px", "marginLeft": "-15px" }} value='ראשון'>ראשון</div>
+                    <div className="col-2 border border-dark text-center" ><div className="border-bottom border-dark" style={{ "backgroundColor": this.state.backgroundColorSunday, "marginRight": "-15px", "marginLeft": "-15px" }} value='ראשון'>ראשון</div>
+                        {this.createEmptyBoxs('ראשון')}
                         {this.createBoxesForDay('ראשון', 0)}
                     </div>
-                    <div className="col-2 border border-dark text-center" ><div style={{ "backgroundColor": this.state.backgroundColorMonday, "marginRight": "-15px", "marginLeft": "-15px" }} value='שני'>שני</div>
+                    <div className="col-2 border border-dark text-center" ><div className="border-bottom border-dark" style={{ "backgroundColor": this.state.backgroundColorMonday, "marginRight": "-15px", "marginLeft": "-15px" }} value='שני'>שני</div>
+                        {this.createEmptyBoxs('שני')}
                         {this.createBoxesForDay('שני', 1)}
                     </div>
-                    <div className="col-2 border border-dark text-center" ><div style={{ "backgroundColor": this.state.backgroundColorTuesday, "marginRight": "-15px", "marginLeft": "-15px" }} value='שלישי'>שלישי</div>
+                    <div className="col-2 border border-dark text-center" ><div className="border-bottom border-dark" style={{ "backgroundColor": this.state.backgroundColorTuesday, "marginRight": "-15px", "marginLeft": "-15px" }} value='שלישי'>שלישי</div>
+                        {this.createEmptyBoxs('שלישי')}
                         {this.createBoxesForDay('שלישי', 2)}
                     </div>
-                    <div className="col-2 border border-dark text-center" ><div style={{ "backgroundColor": this.state.backgroundColorWednesday, "marginRight": "-15px", "marginLeft": "-15px" }} value='רביעי'>רביעי</div>
+                    <div className="col-2 border border-dark text-center" ><div className="border-bottom border-dark" style={{ "backgroundColor": this.state.backgroundColorWednesday, "marginRight": "-15px", "marginLeft": "-15px" }} value='רביעי'>רביעי</div>
+                        {this.createEmptyBoxs('רביעי')}
                         {this.createBoxesForDay('רביעי', 3)}
                     </div>
-                    <div className="col-2 border border-dark text-center" ><div style={{ "backgroundColor": this.state.backgroundColorThursday, "marginRight": "-15px", "marginLeft": "-15px" }} value='חמישי'>חמישי</div>
+                    <div className="col-2 border border-dark text-center" ><div className="border-bottom border-dark" style={{ "backgroundColor": this.state.backgroundColorThursday, "marginRight": "-15px", "marginLeft": "-15px" }} value='חמישי'>חמישי</div>
+                        {this.createEmptyBoxs('חמישי')}
                         {this.createBoxesForDay('חמישי', 4)}
                     </div>
-                    <div className="col-2 border border-dark text-center" ><div style={{ "backgroundColor": this.state.backgroundColorFriday, "marginRight": "-15px", "marginLeft": "-15px" }} value='שישי'>שישי</div>
+                    <div className="col-2 border border-dark text-center" ><div className="border-bottom border-dark" style={{ "backgroundColor": this.state.backgroundColorFriday, "marginRight": "-15px", "marginLeft": "-15px" }} value='שישי'>שישי</div>
+                        {this.createEmptyBoxs('שישי')}
                         {this.createBoxesForDay('שישי', 5)}
                     </div>
                 </div>
@@ -810,6 +1099,7 @@ class BuildTimetable extends Component {
     handleClassRoomClick(classRoomData) {
         classroomClashMessage = [];
         if (this.state.inTable) {
+            teacherClashMessage = [];
             this.setState({
                 inTable: false,
                 currentConstraint: {}
@@ -859,6 +1149,7 @@ class BuildTimetable extends Component {
             this.setState({
                 inTable: false,
                 currentClassRoom: {}
+                // showTeacherClashMessage: false
             })
         }
         if (JSON.stringify(constraintData) === JSON.stringify(this.state.currentConstraint)) {
@@ -904,7 +1195,7 @@ class BuildTimetable extends Component {
                 showTeacherClashMessage: false,
                 showClassroomClashMessage: false,
                 showTeacherClashButtonType: 'הצג התנגשויות עבור מורה',
-                showClassroomClashButtonType: 'הצג התנגשויות עבור חדר לימוד'
+                showClassroomClashButtonType: 'הצג התנגשויות עבור חדר לימוד',
             }, function () {
                 this.setDayOff()
             });
@@ -917,7 +1208,7 @@ class BuildTimetable extends Component {
                 showTeacherClashMessage: false,
                 showClassroomClashMessage: false,
                 showTeacherClashButtonType: 'הצג התנגשויות עבור מורה',
-                showClassroomClashButtonType: 'הצג התנגשויות עבור חדר לימוד'
+                showClassroomClashButtonType: 'הצג התנגשויות עבור חדר לימוד',
             }, function () {
                 this.setDayOff()
             });
@@ -994,6 +1285,7 @@ class BuildTimetable extends Component {
     }
 
     handleConstraintEndDrag(didDrop) {
+        // console.log('handleConstraintEndDrag');
         if (!this.state.inTable) {
             return;
         }
@@ -1034,7 +1326,6 @@ class BuildTimetable extends Component {
                 break;
 
         }
-
 
         for (let i = 0; i <= tableViewForClass.days.length - 1; i++) {
             if (tableViewForClass.days[i].day === day) {
@@ -1162,8 +1453,12 @@ class BuildTimetable extends Component {
         this.setState({ classRoomsView: [...classRoomsView], currentClassRoom: { ...classRoomsView[0] } });
     }
 
+    // calls when lesson begin drop to hour box
     addConstraintToHour(hourData, day, row, col) {
+        console.log(hourData);
         let currentHourBox = { ...hourData };
+
+        // case of droping lesson on the same hour box it were begin drag from
         for (let i = 0; i <= currentHourBox.constraints.length - 1; i++) {
             if (currentHourBox.constraints[i]._id === this.state.currentConstraint._id) {
                 currentHourBox.constraints = [...currentHourBox.constraints.slice(0, i).concat(currentHourBox.constraints.slice(i + 1, currentHourBox.constraints.length))];
@@ -1174,6 +1469,8 @@ class BuildTimetable extends Component {
         this.setState({ currentHourBox: { ...currentHourBox }, currentDay: day, showDeleteButton: false }, function () {
             let currentConstraint = { ...this.state.currentConstraint };
             let classConstraints = [...this.state.classConstraints];
+
+            // removing lesson that being drop from lessons that should be added to current class
             for (let i = 0; i <= classConstraints.length - 1; i++) {
                 if (currentConstraint._id === classConstraints[i]._id) {
                     classConstraints = [...classConstraints.slice(0, i).concat(classConstraints.slice(i + 1, classConstraints.length))];
@@ -1185,6 +1482,7 @@ class BuildTimetable extends Component {
                 return;
             }
 
+            // console.log(this.state.currentClassRoom.classRoomName);
             let currentHourBox = { ...this.state.currentHourBox };
             let classRoom = this.state.currentClassRoom.classRoomName;
             currentConstraint.classRoom = classRoom;
@@ -1192,7 +1490,6 @@ class BuildTimetable extends Component {
             this.setState({
                 inTable: false,
                 currentHourBox: { ...currentHourBox },
-                // currentConstraint: currentConstraint,
                 currentConstraint: { ...currentConstraint },
                 currentClassRoom: {},
                 classConstraints: classConstraints,
@@ -1204,13 +1501,17 @@ class BuildTimetable extends Component {
                 showClassroomClashButtonType: 'הצג התנגשויות עבור חדר לימוד'
             },
                 function () {
+                    // console.log(this.state.currentConstraint.subjectMix);
                     if (this.state.currentConstraint.subjectMix) {
                         let grade = '';
+                        let nunOfClasses = 0;
                         let currentClass = this.state.currentClass;
                         if (currentClass.length === 2) {
                             grade = currentClass[0];
+                            nunOfClasses = parseInt(currentClass[1]);
                         } else if (currentClass.length === 3) {
                             grade = currentClass[0] + currentClass[1];
+                            nunOfClasses = parseInt(currentClass[2]);
                         }
                         let numOfClasses = 0;
                         let grades = [...this.state.grades];
@@ -1314,6 +1615,9 @@ class BuildTimetable extends Component {
     }
 
     crateConstraintBoxAndClassRoomBox() {
+        if (this.state.inTable) {
+            return null;
+        }
         if (this.objectEmpty(this.state.currentConstraint)) {
             return <h6>אנא בחר שיעור מתוך רשימת השיעורים עבור כיתה זו</h6>;
         } else if (this.objectEmpty(this.state.currentClassRoom)) {
@@ -1334,7 +1638,7 @@ class BuildTimetable extends Component {
             return (
                 <div>
                     <h6>יש כעת אפשרות לגרור את השיעור לטובת שיבוץ בטבלה</h6>
-                    <div>
+                    <div style={{ "marginRight": "16.6666666667%", "marginLeft": "16.6666666667%" }}>
                         <DragConstraintBox
                             data={this.state.currentConstraint}
                             currentConstraint={this.state.currentConstraint}
@@ -1343,6 +1647,7 @@ class BuildTimetable extends Component {
                             endDrag={this.handleConstraintEndDrag}
                             classRoom={this.state.currentClassRoom.classRoomName}
                             inTable={false}
+                            border={'border border-primary'}
                         >
                         </DragConstraintBox>
                     </div>
@@ -1357,21 +1662,66 @@ class BuildTimetable extends Component {
     addTimeTable() {
         let timeTable = [...this.state.timeTable];
         let classTimeTable = {};
-        axios.post('http://localhost:4000/data/dropTimeTable')
-            .then(response => {
-                for (let i = 0; i <= timeTable.length - 1; i++) {
-                    classTimeTable = { ...timeTable[i] };
-                    // console.log(classTimeTable);
-                    axios.post('http://localhost:4000/data/addTimeTable', classTimeTable)
-                        .then(res => {
-                            // classRoom = { ...res.data };
-                            // console.log(res.data);
-                        });
-                }
-            })
-            .catch(function (error) {
-                console.log(error);
-            })
+        this.mounted = true;
+        this.setState({ waitingToSave: true, saveSucceed: false }, () => {
+            axios.post('http://localhost:4000/data/dropTimeTable')
+                .then(response => {
+                    let tablesSaved = 0;
+                    if (this.mounted) {
+                        if (timeTable.length === 0) {
+                            this.setState({ waitingToSave: false, saveSucceed: true }, () => {
+                                // console.log('hi');
+                                clearTimeout(this.timeoutID);
+                                this.timeoutID = setTimeout(() => { this.setState({ saveSucceed: false }) }, 1500);
+                                return;
+                                // console.log(classTimeTable);
+                            });
+                        }
+                    }
+                    for (let i = 0; i <= timeTable.length - 1; i++) {
+                        classTimeTable = { ...timeTable[i] };
+                        axios.post('http://localhost:4000/data/addTimeTable', classTimeTable)
+                            .then(res => {
+                                tablesSaved++;
+                                console.log(tablesSaved);
+                                if (this.mounted) {
+                                    if (tablesSaved === timeTable.length) {
+                                        this.setState({ waitingToSave: false, saveSucceed: true }, () => {
+                                            // console.log('hi');
+                                            clearTimeout(this.timeoutID);
+                                            this.timeoutID = setTimeout(() => { this.setState({ saveSucceed: false }) }, 1500);
+                                            // console.log(classTimeTable);
+                                        });
+                                    }
+                                }
+
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                            });
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                })
+        })
+        // axios.post('http://localhost:4000/data/dropTimeTable')
+        //     .then(response => {
+        //         for (let i = 0; i <= timeTable.length - 1; i++) {
+        //             classTimeTable = { ...timeTable[i] };
+        //             // console.log(classTimeTable);
+        //             axios.post('http://localhost:4000/data/addTimeTable', classTimeTable)
+        //                 .then(res => {
+
+        //                 })
+        //                 .catch(function (error) {
+        //                     console.log(error);
+        //                 });
+        //         }
+        //     })
+        //     .catch(function (error) {
+        //         console.log(error);
+        //     })
     }
 
     deleteConstraintFromTable() {
@@ -1380,7 +1730,9 @@ class BuildTimetable extends Component {
                 <button type="button" className="btn btn-secondary" onClick={() => this.removeConstraint()}>הסר שיעור</button>
             );
         } else {
-            return null;
+            return (
+                <button type="button" className="btn btn-secondary" onClick={() => this.removeConstraint()} disabled>הסר שיעור</button>
+            );
         }
 
     }
@@ -1435,11 +1787,11 @@ class BuildTimetable extends Component {
 
     teacherClashMessage() {
         if (!this.state.showTeacherClashMessage) {
-            return;
+            return null;
         }
         teacherClashMessage = teacherClashMessage.filter((item, index) => teacherClashMessage.indexOf(item) === index);
         if (teacherClashMessage.length === 0) {
-            return null
+            return null;
         }
 
         let content = [];
@@ -1459,7 +1811,7 @@ class BuildTimetable extends Component {
 
     classroomClashMessage() {
         if (!this.state.showClassroomClashMessage) {
-            return;
+            return null;
         }
         classroomClashMessage = classroomClashMessage.filter((item, index) => classroomClashMessage.indexOf(item) === index);
         if (classroomClashMessage.length === 0) {
@@ -1544,7 +1896,7 @@ class BuildTimetable extends Component {
     handleRemoveAllClick() {
         confirmAlert({
             title: 'אנא אשר',
-            message: 'האם לאפס כל הטבלאות?',
+            message: 'האם לאפס את כל הטבלאות?',
             buttons: [
                 {
                     label: 'כן',
@@ -1631,6 +1983,32 @@ class BuildTimetable extends Component {
         }
     }
 
+    saveSuccessMessage() {
+        if (!this.state.saveSucceed) {
+            return null;
+        }
+        return (
+            <div className="alert alert-success mr-2 pt-2 d-inline">
+                השינויים נשמרו בהצלחה
+            </div>
+        );
+    }
+
+    saveTimeTablesButton() {
+        if (!this.state.waitingToSave) {
+            return (
+                <button type="button" className="btn btn-secondary ml-2" onClick={() => this.addTimeTable()}>שמור שינויים</button>
+            );
+        }
+        return (
+            <button className="btn btn-secondary ml-2" type="button" disabled>
+                אנא המתן...
+                <span className="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span>
+            </button>
+        );
+
+    }
+
     render() {
         return (
             <div>
@@ -1645,8 +2023,9 @@ class BuildTimetable extends Component {
                 {this.createTimeTableView()}
                 <div className="row">
                     <div className="text-right my-2 col-6">
-                        <button type="button" className="btn btn-secondary ml-2" onClick={() => this.addTimeTable()}>שמור שינויים</button>
+                        {this.saveTimeTablesButton()}
                         {this.deleteConstraintFromTable()}
+                        {this.saveSuccessMessage()}
                     </div>
                     <div className="text-left my-2 col-6">
                         <button type="button" className="btn btn-secondary ml-2" onClick={() => this.handleRemoveCurrentClick()}>אפס טבלה נוכחית</button>
@@ -1657,7 +2036,7 @@ class BuildTimetable extends Component {
                     {this.teacherClashMessage()}
                     {this.classroomClashMessage()}
                 </div>
-                <div className="row w-100 mt-2">
+                <div className="row mt-2">
                     <div className="col-5">
                         <div
                             className="d-inline-block w-100 text-center p-0 card"
@@ -1685,7 +2064,6 @@ class BuildTimetable extends Component {
             </div>
         );
     }
-
 }
 
 export default DragDropContext(HTML5Backend)(BuildTimetable);

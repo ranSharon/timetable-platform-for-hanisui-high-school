@@ -97,7 +97,7 @@ class HourBox extends Component {
     handleConstraintClick() {
         console.log('click');
     }
-    
+
     handleConstraintDrag() {
         console.log('drag');
         // this.props.drag(true, this.props.data.constraints[0], this.props.data.constraints[0].classRoom);
@@ -136,30 +136,31 @@ class HourBox extends Component {
         //         </div>
         //     );
         // } else
-            if (this.props.data.constraints.length > 0 && this.props.show) {
-                // if (this.props.show) {
-                // console.log(this.props.data.constraints);
-                return (
-                    <div className="w-100 h-100">
-                        <DragConstraintBox
-                            data={this.props.data.constraints[0]}
-                            currentConstraint={this.props.data.constraints[0]}
-                            click={this.props.click}
-                            
-                            drag={this.props.drag}
-                            endDrag={this.props.endDrag}
-                            classRoom={this.props.data.constraints[0].classRoom}
-                            inTable={true}
-                            row={this.props.row}
-                            col={this.props.col}
-                            
-                        >
-                        </DragConstraintBox>
-                    </div>
-                );
-            } else {
-                return null;
-            }
+        if (this.props.data.constraints.length > 0 && this.props.show) {
+            // if (this.props.show) {
+            // console.log(this.props.data.constraints);
+            return (
+                <div className="w-100 h-100">
+                    <DragConstraintBox
+                        data={this.props.data.constraints[0]}
+                        currentConstraint={this.props.data.constraints[0]}
+                        click={this.props.click}
+                        border={this.props.border}
+
+                        drag={this.props.drag}
+                        endDrag={this.props.endDrag}
+                        classRoom={this.props.data.constraints[0].classRoom}
+                        inTable={true}
+                        row={this.props.row}
+                        col={this.props.col}
+
+                    >
+                    </DragConstraintBox>
+                </div>
+            );
+        } else {
+            return null;
+        }
     }
 
     render() {
@@ -191,19 +192,13 @@ class HourBox extends Component {
 
         return this.props.connectDropTarget(
             <div
-                className={"row text-center " + border}
-                // style={{ "height": height + "px", "width": "162px", "backgroundColor": backgroundColor }}
-                style={{ "height": "50px", "width": "162px", "backgroundColor": backgroundColor }}
-                // onClick={() => this.hourBoxCliced()}
-                >
-                {/* {'[' + this.props.col + ', ' + this.props.row + ']'} */}
-                {/* {JSON.stringify(this.props.data.constraints.length)} */}
+                className={"row text-center  " + border}
+                style={{ "height": "50px",  "marginRight": "-15px", "marginLeft": "-15px", "backgroundColor": backgroundColor }}
+            >
                 {this.sohwHourData()}
             </div>
         );
     }
 }
 
-// export default HourBox;
-// export default DropTarget('constraint', {}, collect)(HourBox);
 export default DropTarget('constraint', hourTarget, collect)(HourBox);

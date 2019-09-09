@@ -138,7 +138,7 @@ const lessonSplit = (props) => {
     }
 
     return (
-        <div className="card mt-3" style={{ "textAlign": "right" }}>
+        <div className="card mt-3 px-1" style={{ "textAlign": "right" }}>
             <h6 className="mt-3">האם השיעור מפוצל למספר שיעורים במהלך השבוע</h6>
             <div className="row">
                 <div className="col-2">
