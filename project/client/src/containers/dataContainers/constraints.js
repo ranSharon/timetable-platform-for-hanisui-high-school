@@ -1333,15 +1333,6 @@ class Constraints extends Component {
                             allTeachers: [...teachers]
                         });
                     }
-                    // let teachers = [...this.state.allTeachers];
-                    // for (let i = 0; i <= teachers.length - 1; i++) {
-                    //     if (teachers[i]._id === res.data._id) {
-                    //         teachers[i] = { ...res.data };
-                    //     }
-                    // }
-                    // this.setState({
-                    //     allTeachers: [...teachers]
-                    // });
                 }).catch(function (error) {
                     console.log(error);
                 });

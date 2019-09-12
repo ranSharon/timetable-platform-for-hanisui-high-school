@@ -38,9 +38,9 @@ const teacherTableRow = (props) => {
             <td >{props.maxTeachHours}</td>
             <td >{props.currentTeachHours}</td>
             <td className="text-left">
-                <button className='mb-1' onClick={() => props.onEdit(props.id)} disabled={props.disableButtons}>ערוך</button>
+                <button type="button" className="btn btn-secondary btn-sm mb-1" onClick={() => props.onEdit(props.id)} disabled={props.disableButtons}>ערוך</button>
                 <div style={{ display: "inline" }}>  </div>
-                <button onClick={() => props.onDelete(props.id)} disabled={props.disableButtons}>מחק</button>
+                <button type="button" className="btn btn-secondary btn-sm mb-1" onClick={() => props.onDelete(props.id)} disabled={props.disableButtons}>מחק</button>
             </td>
         </tr>
     )

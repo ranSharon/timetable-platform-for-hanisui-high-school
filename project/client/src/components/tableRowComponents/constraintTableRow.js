@@ -28,9 +28,9 @@ const constraintsTableRow = (props) => {
         } else {
             return (
                 <td className="border-top border-dark text-left">
-                    <button onClick={() => props.onEdit(props.constraint._id)}>ערוך</button>
+                    <button type="button" className="btn btn-secondary btn-sm mb-1" onClick={() => props.onEdit(props.constraint._id)}>ערוך</button>
                     <div style={{ display: "inline" }}>  </div>
-                    <button onClick={() => props.onDelete(props.constraint._id)}>מחק</button>
+                    <button type="button" className="btn btn-secondary btn-sm mb-1" onClick={() => props.onDelete(props.constraint._id)}>מחק</button>
                 </td>
             );
         }
