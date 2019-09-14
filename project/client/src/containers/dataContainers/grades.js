@@ -7,6 +7,8 @@ let gradeToEditId = '';
 let greadeToEdit = '';
 
 class Grades extends Component {
+    mounted = false;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -17,21 +19,31 @@ class Grades extends Component {
             buttonType: 'אישור',
             alertMessage: '',
             messageStatus: false,
-            disableButtons: false
+            disableButtons: false,
+            waitingToSave: false,
+            gradesFetched: false
         };
         this.getGrade = this.getGrade.bind(this);
         this.deleteGrade = this.deleteGrade.bind(this);
     }
 
     componentDidMount() {
+        this.mounted = true;
         axios.get('http://localhost:4000/data/getGrades')
             .then(response => {
-                this.setState({ grades: [...response.data] });
-                //console.log(response.data);
+                if (this.mounted) {
+                    this.setState({ grades: [...response.data], gradesFetched: true });
+                    //console.log(response.data);
+                }
             })
             .catch(function (error) {
                 console.log(error);
             })
+    }
+
+    componentWillUnmount() {
+        this.mounted = false;
+        clearTimeout(this.timeoutID);
     }
 
     onChangeGeade(e) {
@@ -56,34 +68,45 @@ class Grades extends Component {
 
         if (this.state.buttonType === 'אישור') {
             let grade = {};
-            axios.post('http://localhost:4000/data/addGrade', newGrade)
-                .then(res => {
-                    grade = { ...res.data };
-                    this.setState({
-                        grades: [...this.state.grades, grade]
-                    });
-                    this.resetInputs();
-                });
-        } else if (this.state.buttonType === 'סיים עריכה') {
-            axios.post('http://localhost:4000/data/updateGrade/' + gradeToEditId, newGrade)
-                .then(res => {
-                    let grades = [...this.state.grades];
-                    for (let i = 0; i <= grades.length - 1; i++) {
-                        if (grades[i]._id === res.data._id) {
-                            grades[i] = { ...res.data };
+            this.setState({ waitingToSave: true }, () => {
+                axios.post('http://localhost:4000/data/addGrade', newGrade)
+                    .then(res => {
+                        if (this.mounted) {
+                            grade = { ...res.data };
+                            this.setState({
+                                grades: [...this.state.grades, grade],
+                                waitingToSave: false
+                            });
+                            this.resetInputs();
                         }
-                    }
-                    this.setState({
-                        grades: [...grades],
-                        buttonType: 'אישור',
-                        disableButtons: false
                     });
-                    this.resetInputs();
-                });
+            });
+        } else if (this.state.buttonType === 'סיים עריכה') {
+            this.setState({ waitingToSave: true }, () => {
+                axios.post('http://localhost:4000/data/updateGrade/' + gradeToEditId, newGrade)
+                    .then(res => {
+                        if (this.mounted) {
+                            let grades = [...this.state.grades];
+                            for (let i = 0; i <= grades.length - 1; i++) {
+                                if (grades[i]._id === res.data._id) {
+                                    grades[i] = { ...res.data };
+                                }
+                            }
+                            this.setState({
+                                grades: [...grades],
+                                buttonType: 'אישור',
+                                disableButtons: false,
+                                waitingToSave: false
+                            });
+                            this.resetInputs();
+                        }
+                    });
+            });
         }
     }
 
     checkIfInputValid() {
+        clearTimeout(this.timeoutID);
         let grade = this.state.grade;
         let numOfClasses = this.state.numOfClasses;
         let message = 'ישנה בעיה עם לפחות אחד מן השדות:$';
@@ -132,6 +155,7 @@ class Grades extends Component {
     }
 
     resetInputs() {
+        clearTimeout(this.timeoutID);
         let grade = '';
         let numOfClasses = '';
         let alertMessage = this.state.alertMessage;
@@ -141,25 +165,30 @@ class Grades extends Component {
             numOfClasses: numOfClasses,
             alertMessage: alertMessage,
             messageStatus: true
+        }, () => {
+            this.timeoutID = setTimeout(() => { this.setState({ alertMessage: '' }) }, 1500);
         });
     }
 
     getGrade(gradeId) {
         window.scrollTo(0, 0);
+        clearTimeout(this.timeoutID);
         gradeToEditId = gradeId;
         axios.get('http://localhost:4000/data/getGrade/' + gradeId)
             .then(response => {
-                let alertMessage = 'עריכת שכבה: ' + response.data.grade;
-                greadeToEdit = response.data.grade;
-                this.setState({
-                    grade: response.data.grade,
-                    numOfClasses: response.data.numOfClasses,
-                    alertMessage: alertMessage,
-                    messageStatus: true,
-                    buttonType: 'סיים עריכה',
-                    disableButtons: true
-                })
-                this.alertMessage();
+                if (this.mounted) {
+                    let alertMessage = 'עריכת שכבה: ' + response.data.grade;
+                    greadeToEdit = response.data.grade;
+                    this.setState({
+                        grade: response.data.grade,
+                        numOfClasses: response.data.numOfClasses,
+                        alertMessage: alertMessage,
+                        messageStatus: true,
+                        buttonType: 'סיים עריכה',
+                        disableButtons: true
+                    })
+                    this.alertMessage();
+                }
             })
             .catch(function (error) {
                 console.log(error);
@@ -169,18 +198,34 @@ class Grades extends Component {
     deleteGrade(gradeId) {
         axios.post('http://localhost:4000/data/deleteGrade/' + gradeId)
             .then(response => {
-                let grades = [...this.state.grades];
-                for (let i = 0; i <= grades.length - 1; i++) {
-                    if (grades[i]._id === gradeId) {
-                        grades = [...grades.slice(0, i).concat(grades.slice(i + 1, grades.length))];
-                        break;
+                if (this.mounted) {
+                    let grades = [...this.state.grades];
+                    for (let i = 0; i <= grades.length - 1; i++) {
+                        if (grades[i]._id === gradeId) {
+                            grades = [...grades.slice(0, i).concat(grades.slice(i + 1, grades.length))];
+                            break;
+                        }
                     }
+                    this.setState({ grades: [...grades] });
                 }
-                this.setState({ grades: [...grades] });
             })
             .catch(function (error) {
                 console.log(error);
             })
+    }
+
+    saveButton() {
+        if (!this.state.waitingToSave) {
+            return (
+                <button type="button" className="btn btn-secondary" onClick={() => this.setGrades()}>{this.state.buttonType}</button>
+            );
+        }
+        return (
+            <button className="btn btn-secondary ml-2" type="button" disabled>
+                אנא המתן...
+                <span className="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span>
+            </button>
+        );
     }
 
     render() {
@@ -213,15 +258,30 @@ class Grades extends Component {
                         <option value="4">4</option>
                     </select>
                 </div>
-                <button type="button" className="btn btn-secondary" onClick={() => this.setGrades()}>{this.state.buttonType}</button>
+                {/* <button type="button" className="btn btn-secondary" onClick={() => this.setGrades()}>{this.state.buttonType}</button> */}
+                {this.saveButton()}
                 {this.alertMessage()}
-                <DataTable
+                {this.state.gradesFetched ?
+                    (<DataTable
+                        grades={this.state.grades}
+                        table="grades"
+                        onEdit={this.getGrade}
+                        onDelete={this.deleteGrade}
+                        disableButtons={this.state.disableButtons}>
+                    </DataTable>) :
+                    (<div className="text-center mt-5">
+                        <div className="spinner-border" style={{ "width": "3rem", "height": "3rem" }} role="status">
+                            <span className="sr-only">Loading...</span>
+                        </div>
+                    </div>)
+                }
+                {/* <DataTable
                     grades={this.state.grades}
                     table="grades"
                     onEdit={this.getGrade}
                     onDelete={this.deleteGrade}
                     disableButtons={this.state.disableButtons}>
-                </DataTable>
+                </DataTable> */}
             </div>
         );
     }

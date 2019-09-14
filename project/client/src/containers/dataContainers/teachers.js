@@ -10,6 +10,8 @@ let teacherToEditId = '';
 let teacherToEdit = '';
 
 class Teachers extends Component {
+    mounted = false;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -43,6 +45,8 @@ class Teachers extends Component {
             buttonType: 'אישור',
             disableButtons: false,
             prevName: '',
+            waitingToSave: false,
+            teachersFetched: false,
 
             teacherSortImg: down,
             gradeSortImg: down
@@ -56,22 +60,32 @@ class Teachers extends Component {
     }
 
     componentDidMount() {
+        this.mounted = true;
         axios.get('http://localhost:4000/data/getSubjects')
             .then(response => {
-                this.onlySubjectsAndGrades(response.data);
+                if (this.mounted) {
+                    this.onlySubjectsAndGrades(response.data);
+                }
             })
             .catch(function (error) {
                 console.log(error);
             });
         axios.get('http://localhost:4000/data/getTeachers')
             .then(response => {
-                this.setState({ teachers: [...response.data] }, function(){
-                    console.log(this.state.teachers);
-                });
+                if (this.mounted) {
+                    this.setState({ teachers: [...response.data], teachersFetched: true }, () => {
+                        console.log(this.state.teachers);
+                    });
+                }
             })
             .catch(function (error) {
                 console.log(error);
             });
+    }
+
+    componentWillUnmount() {
+        this.mounted = false;
+        clearTimeout(this.timeoutID);
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -227,8 +241,8 @@ class Teachers extends Component {
         let subjectsForTeacher = [...this.setCorrectSubjectsForTeacher()]
 
         let currentTeachHours = 0;
-        if(this.state.buttonType === 'סיים עריכה'){
-            if(this.state.prevName === this.state.name){
+        if (this.state.buttonType === 'סיים עריכה') {
+            if (this.state.prevName === this.state.name) {
                 currentTeachHours = this.state.currentTeachHours;
             }
         }
@@ -246,30 +260,40 @@ class Teachers extends Component {
 
         if (this.state.buttonType === 'אישור') {
             let teacher = {};
-            axios.post('http://localhost:4000/data/addTeacher', newTeacher)
-                .then(res => {
-                    teacher = { ...res.data.teacher };
-                    this.setState({
-                        teachers: [...this.state.teachers, teacher]
-                    });
-                    this.resetInputs();
-                });
-        } else if (this.state.buttonType === 'סיים עריכה') {
-            axios.post('http://localhost:4000/data/updateTeacher/' + teacherToEditId, newTeacher)
-                .then(res => {
-                    let teachers = [...this.state.teachers];
-                    for (let i = 0; i <= teachers.length - 1; i++) {
-                        if (teachers[i]._id === res.data._id) {
-                            teachers[i] = { ...res.data };
+            this.setState({ waitingToSave: true }, () => {
+                axios.post('http://localhost:4000/data/addTeacher', newTeacher)
+                    .then(res => {
+                        if (this.mounted) {
+                            teacher = { ...res.data.teacher };
+                            this.setState({
+                                teachers: [...this.state.teachers, teacher],
+                                waitingToSave: false
+                            });
+                            this.resetInputs();
                         }
-                    }
-                    this.setState({
-                        teachers: [...teachers],
-                        buttonType: 'אישור',
-                        disableButtons: false
                     });
-                    this.resetInputs();
-                });
+            });
+        } else if (this.state.buttonType === 'סיים עריכה') {
+            this.setState({ waitingToSave: true }, () => {
+                axios.post('http://localhost:4000/data/updateTeacher/' + teacherToEditId, newTeacher)
+                    .then(res => {
+                        if (this.mounted) {
+                            let teachers = [...this.state.teachers];
+                            for (let i = 0; i <= teachers.length - 1; i++) {
+                                if (teachers[i]._id === res.data._id) {
+                                    teachers[i] = { ...res.data };
+                                }
+                            }
+                            this.setState({
+                                teachers: [...teachers],
+                                buttonType: 'אישור',
+                                disableButtons: false,
+                                waitingToSave: false
+                            });
+                            this.resetInputs();
+                        }
+                    });
+            });
         }
     }
 
@@ -283,8 +307,8 @@ class Teachers extends Component {
                 if (allSubject[j].subjectName === subjectsForTeacher[i]) {
                     for (let k = 0; k <= grades.length - 1; k++) {
                         for (let l = 0; l <= allSubject[j].grades.length - 1; l++) {
-                            if(grades[k] === allSubject[j].grades[l]){
-                                correcthGrades = [...correcthGrades,grades[k]];
+                            if (grades[k] === allSubject[j].grades[l]) {
+                                correcthGrades = [...correcthGrades, grades[k]];
                             }
                         }
                     }
@@ -297,7 +321,7 @@ class Teachers extends Component {
 
     }
 
-    setCorrectSubjectsForTeacher(){
+    setCorrectSubjectsForTeacher() {
         let CorrectSubjectsForTeacher = [];
         let subjectsForTeacher = [...this.state.subjectsForTeacher];
         let subjectsForTeacherToRemove = [];
@@ -307,15 +331,15 @@ class Teachers extends Component {
             for (let j = 0; j <= allSubject.length - 1; j++) {
                 if (allSubject[j].subjectName === subjectsForTeacher[i]) {
                     continue outerLoop;
-                } else if ( j === allSubject.length -1 ){
-                    subjectsForTeacherToRemove = [...subjectsForTeacherToRemove,subjectsForTeacher[i]];
+                } else if (j === allSubject.length - 1) {
+                    subjectsForTeacherToRemove = [...subjectsForTeacherToRemove, subjectsForTeacher[i]];
                 }
             }
         }
 
         CorrectSubjectsForTeacher = subjectsForTeacher.filter(x => !subjectsForTeacherToRemove.includes(x));
         return CorrectSubjectsForTeacher;
-        
+
     }
 
     teacherNameIsTaken() {
@@ -339,6 +363,7 @@ class Teachers extends Component {
     }
 
     checkIfInputValid() {
+        clearTimeout(this.timeoutID);
         let name = this.state.name;
         let juniorHighSchool = this.state.juniorHighSchool;
         let highSchool = this.state.highSchool;
@@ -386,6 +411,7 @@ class Teachers extends Component {
     }
 
     resetInputs() {
+        clearTimeout(this.timeoutID);
         let checked = { ...this.state.checked };
         let grades = [...this.state.grades];
         let subjectsForTeacher = [...this.state.subjectsForTeacher]
@@ -420,48 +446,53 @@ class Teachers extends Component {
             dayOff: dayOff,
             alertMessage: alertMessage,
             messageStatus: true
+        }, () => {
+            this.timeoutID = setTimeout(() => { this.setState({ alertMessage: '' }) }, 1500);
         });
     }
 
     getTeacher(teacherId) {
         window.scrollTo(0, 0);
+        clearTimeout(this.timeoutID);
         teacherToEditId = teacherId;
         axios.get('http://localhost:4000/data/getTeacher/' + teacherId)
             .then(response => {
-                let checked = {
-                    'ז': false,
-                    'ח': false,
-                    'ט': false,
-                    'י': false,
-                    'יא': false,
-                    'יב': false
-                }
-                let grades = [...response.data.grades];
-                grades.forEach(grade => {
-                    checked[grade] = true;
-                })
+                if (this.mounted) {
+                    let checked = {
+                        'ז': false,
+                        'ח': false,
+                        'ט': false,
+                        'י': false,
+                        'יא': false,
+                        'יב': false
+                    }
+                    let grades = [...response.data.grades];
+                    grades.forEach(grade => {
+                        checked[grade] = true;
+                    })
 
-                let subjects = [...this.setSubjectForEdting(grades)];
-                let alertMessage = 'עריכת פרטי המורה: ' + response.data.name;
-                teacherToEdit = response.data.name;
-                this.setState({
-                    grades: [...response.data.grades],
-                    subjectsForTeacher: [...response.data.subjectsForTeacher],
-                    subjects: subjects,
-                    checked: checked,
-                    name: response.data.name,
-                    prevName: response.data.name,
-                    currentTeachHours: response.data.currentTeachHours,
-                    juniorHighSchool: response.data.juniorHighSchool,
-                    highSchool: response.data.highSchool,
-                    maxTeachHours: response.data.maxTeachHours,
-                    dayOff: response.data.dayOff,
-                    alertMessage: alertMessage,
-                    messageStatus: true,
-                    buttonType: 'סיים עריכה',
-                    disableButtons: true
-                })
-                this.alertMessage();
+                    let subjects = [...this.setSubjectForEdting(grades)];
+                    let alertMessage = 'עריכת פרטי המורה: ' + response.data.name;
+                    teacherToEdit = response.data.name;
+                    this.setState({
+                        grades: [...response.data.grades],
+                        subjectsForTeacher: [...response.data.subjectsForTeacher],
+                        subjects: subjects,
+                        checked: checked,
+                        name: response.data.name,
+                        prevName: response.data.name,
+                        currentTeachHours: response.data.currentTeachHours,
+                        juniorHighSchool: response.data.juniorHighSchool,
+                        highSchool: response.data.highSchool,
+                        maxTeachHours: response.data.maxTeachHours,
+                        dayOff: response.data.dayOff,
+                        alertMessage: alertMessage,
+                        messageStatus: true,
+                        buttonType: 'סיים עריכה',
+                        disableButtons: true
+                    })
+                    this.alertMessage();
+                }
             })
             .catch(function (error) {
                 console.log(error);
@@ -490,14 +521,16 @@ class Teachers extends Component {
     deleteTeacher(teacherId) {
         axios.post('http://localhost:4000/data/deleteTeacher/' + teacherId)
             .then(response => {
-                let teachers = [...this.state.teachers];
-                for (let i = 0; i <= teachers.length - 1; i++) {
-                    if (teachers[i]._id === teacherId) {
-                        teachers = [...teachers.slice(0, i).concat(teachers.slice(i + 1, teachers.length))];
-                        break;
+                if (this.mounted) {
+                    let teachers = [...this.state.teachers];
+                    for (let i = 0; i <= teachers.length - 1; i++) {
+                        if (teachers[i]._id === teacherId) {
+                            teachers = [...teachers.slice(0, i).concat(teachers.slice(i + 1, teachers.length))];
+                            break;
+                        }
                     }
+                    this.setState({ teachers: [...teachers] });
                 }
-                this.setState({ teachers: [...teachers] });
             })
             .catch(function (error) {
                 console.log(error);
@@ -618,6 +651,20 @@ class Teachers extends Component {
         return comparison;
     }
 
+    saveButton() {
+        if (!this.state.waitingToSave) {
+            return (
+                <button type="button" className="btn btn-secondary" onClick={() => this.setTeachers()}>{this.state.buttonType}</button>
+            );
+        }
+        return (
+            <button className="btn btn-secondary ml-2" type="button" disabled>
+                אנא המתן...
+                <span className="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span>
+            </button>
+        );
+    }
+
     render() {
         return (
             <div>
@@ -697,9 +744,28 @@ class Teachers extends Component {
                         </DataTable>
                     </div>
                 </div>
-                <button type="button" className="btn btn-secondary" onClick={() => this.setTeachers()}>{this.state.buttonType}</button>
+                {/* <button type="button" className="btn btn-secondary" onClick={() => this.setTeachers()}>{this.state.buttonType}</button> */}
+                {this.saveButton()}
                 {this.alertMessage()}
-                <DataTable
+                {this.state.teachersFetched ?
+                    (<DataTable
+                        teachers={this.state.teachers}
+                        table="teachers"
+                        onEdit={this.getTeacher}
+                        onDelete={this.deleteTeacher}
+                        disableButtons={this.state.disableButtons}
+                        sortByTeacher={this.sortByTeacher}
+                        teacherSortImg={this.state.teacherSortImg}
+                        sortByGrade={this.sortByGrade}
+                        gradeSortImg={this.state.gradeSortImg}>
+                    </DataTable>) :
+                    (<div className="text-center mt-5">
+                        <div className="spinner-border" style={{ "width": "3rem", "height": "3rem" }} role="status">
+                            <span className="sr-only">Loading...</span>
+                        </div>
+                    </div>)
+                }
+                {/* <DataTable
                     teachers={this.state.teachers}
                     table="teachers"
                     onEdit={this.getTeacher}
@@ -709,7 +775,7 @@ class Teachers extends Component {
                     teacherSortImg={this.state.teacherSortImg}
                     sortByGrade={this.sortByGrade}
                     gradeSortImg={this.state.gradeSortImg}>
-                </DataTable>
+                </DataTable> */}
             </div >
         );
     }

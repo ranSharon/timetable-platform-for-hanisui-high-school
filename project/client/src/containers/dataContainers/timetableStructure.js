@@ -8,6 +8,8 @@ let dayToEdit = '';
 
 
 class TimetableStructure extends Component {
+    mounted = false;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -19,20 +21,30 @@ class TimetableStructure extends Component {
             buttonType: 'אישור',
             alertMessage: '',
             messageStatus: false,
-            disableButtons: false
+            disableButtons: false,
+            waitingToSave: false,
+            daysFetched: false
         };
         this.getDay = this.getDay.bind(this);
         this.deleteDay = this.deleteDay.bind(this);
     }
 
     componentDidMount() {
+        this.mounted = true;
         axios.get('http://localhost:4000/data/getDays')
             .then(response => {
-                this.setState({ days: [...response.data] });
+                if (this.mounted) {
+                    this.setState({ days: [...response.data], daysFetched: true, });
+                }
             })
             .catch(function (error) {
                 console.log(error);
             });
+    }
+
+    componentWillUnmount() {
+        this.mounted = false;
+        clearTimeout(this.timeoutID);
     }
 
     onChangeDay(e) {
@@ -61,34 +73,46 @@ class TimetableStructure extends Component {
         };
         if (this.state.buttonType === 'אישור') {
             let day = {};
-            axios.post('http://localhost:4000/data/addDay', newDay)
-                .then(res => {
-                    day = { ...res.data };
-                    this.setState({
-                        days: [...this.state.days, day]
-                    });
-                    this.resetInputs();
-                });
-        } else if (this.state.buttonType === 'סיים עריכה') {
-            axios.post('http://localhost:4000/data/updateDay/' + dayToEditId, newDay)
-                .then(res => {
-                    let days = [...this.state.days];
-                    for (let i = 0; i <= days.length - 1; i++) {
-                        if (days[i]._id === res.data._id) {
-                            days[i] = { ...res.data };
+            this.setState({ waitingToSave: true }, () => {
+                axios.post('http://localhost:4000/data/addDay', newDay)
+                    .then(res => {
+                        if (this.mounted) {
+                            day = { ...res.data };
+                            this.setState({
+                                days: [...this.state.days, day],
+                                waitingToSave: false
+                            });
+                            this.resetInputs();
                         }
-                    }
-                    this.setState({
-                        days: [...days],
-                        buttonType: 'אישור',
-                        disableButtons: false
                     });
-                    this.resetInputs();
-                });
+            });
+
+        } else if (this.state.buttonType === 'סיים עריכה') {
+            this.setState({ waitingToSave: true }, () => {
+                axios.post('http://localhost:4000/data/updateDay/' + dayToEditId, newDay)
+                    .then(res => {
+                        if (this.mounted) {
+                            let days = [...this.state.days];
+                            for (let i = 0; i <= days.length - 1; i++) {
+                                if (days[i]._id === res.data._id) {
+                                    days[i] = { ...res.data };
+                                }
+                            }
+                            this.setState({
+                                days: [...days],
+                                buttonType: 'אישור',
+                                disableButtons: false,
+                                waitingToSave: false
+                            });
+                            this.resetInputs();
+                        }
+                    });
+            });
         }
     }
 
     checkIfInputValid() {
+        clearTimeout(this.timeoutID);
         let day = this.state.day;
         let startTime = this.state.startTime;
         let endTime = this.state.endTime;
@@ -121,6 +145,7 @@ class TimetableStructure extends Component {
     }
 
     resetInputs() {
+        clearTimeout(this.timeoutID);
         let day = '';
         let startTime = '';
         let endTime = '';
@@ -132,6 +157,8 @@ class TimetableStructure extends Component {
             endTime: endTime,
             alertMessage: alertMessage,
             messageStatus: true
+        }, () => {
+            this.timeoutID = setTimeout(() => { this.setState({ alertMessage: '' }) }, 1500);
         });
     }
 
@@ -157,21 +184,24 @@ class TimetableStructure extends Component {
 
     getDay(dayId) {
         window.scrollTo(0, 0);
+        clearTimeout(this.timeoutID);
         dayToEditId = dayId;
         axios.get('http://localhost:4000/data/getDay/' + dayId)
             .then(response => {
-                let alertMessage = 'עריכת יום: ' + response.data.day;
-                dayToEdit = response.data.day;
-                this.setState({
-                    day: response.data.day,
-                    startTime: response.data.startTime,
-                    endTime: response.data.endTime,
-                    alertMessage: alertMessage,
-                    messageStatus: true,
-                    buttonType: 'סיים עריכה',
-                    disableButtons: true
-                })
-                this.alertMessage();
+                if (this.mounted) {
+                    let alertMessage = 'עריכת יום: ' + response.data.day;
+                    dayToEdit = response.data.day;
+                    this.setState({
+                        day: response.data.day,
+                        startTime: response.data.startTime,
+                        endTime: response.data.endTime,
+                        alertMessage: alertMessage,
+                        messageStatus: true,
+                        buttonType: 'סיים עריכה',
+                        disableButtons: true
+                    })
+                    this.alertMessage();
+                }
             })
             .catch(function (error) {
                 console.log(error);
@@ -181,21 +211,38 @@ class TimetableStructure extends Component {
     deleteDay(dayId) {
         axios.post('http://localhost:4000/data/deleteDay/' + dayId)
             .then(response => {
-                let days = [...this.state.days];
-                for (let i = 0; i <= days.length - 1; i++) {
-                    if (days[i]._id === dayId) {
-                        days = [...days.slice(0, i).concat(days.slice(i + 1, days.length))];
-                        break;
+                if (this.mounted) {
+                    let days = [...this.state.days];
+                    for (let i = 0; i <= days.length - 1; i++) {
+                        if (days[i]._id === dayId) {
+                            days = [...days.slice(0, i).concat(days.slice(i + 1, days.length))];
+                            break;
+                        }
                     }
+                    this.setState({ days: [...days] });
                 }
-                this.setState({ days: [...days] });
             })
             .catch(function (error) {
                 console.log(error);
             })
     }
 
+    saveButton() {
+        if (!this.state.waitingToSave) {
+            return (
+                <button type="button" className="btn btn-secondary" onClick={() => this.setDays()}>{this.state.buttonType}</button>
+            );
+        }
+        return (
+            <button className="btn btn-secondary ml-2" type="button" disabled>
+                אנא המתן...
+                <span className="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span>
+            </button>
+        );
+    }
+
     render() {
+
         return (
             <div>
                 <h4 style={{ "textAlign": "right" }}>הגדרת נתונים ושיעורים/ שלד המערכת</h4>
@@ -243,15 +290,31 @@ class TimetableStructure extends Component {
                         <option value="20">20:00</option>
                     </select>
                 </div>
-                <button type="button" className="btn btn-secondary" onClick={() => this.setDays()}>{this.state.buttonType}</button>
+                {/* <button type="button" className="btn btn-secondary" onClick={() => this.setDays()}>{this.state.buttonType}</button> */}
+                {this.saveButton()}
                 {this.alertMessage()}
-                <DataTable
+                {this.state.daysFetched ?
+                    (<DataTable
+                        days={this.state.days}
+                        table="week"
+                        onEdit={this.getDay}
+                        onDelete={this.deleteDay}
+                        disableButtons={this.state.disableButtons}>
+                    </DataTable>) :
+                    (<div className="text-center mt-5">
+                        <div className="spinner-border" style={{ "width": "3rem", "height": "3rem" }} role="status">
+                            <span className="sr-only">Loading...</span>
+                        </div>
+                    </div>)
+                }
+                {/* <DataTable
+                    isLoading={this.state.daysFetched}
                     days={this.state.days}
                     table="week"
                     onEdit={this.getDay}
                     onDelete={this.deleteDay}
                     disableButtons={this.state.disableButtons}>
-                </DataTable>
+                </DataTable> */}
             </div>
         );
     }

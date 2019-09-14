@@ -282,7 +282,7 @@ class DataTable extends Component {
                     <table className="table table-striped" style={{ marginTop: 20 }} >
                         <thead >
                             <tr className="text-center">
-                                {/* <th className="border-bottom-0">מספר</th> */}
+                                <th className="border-bottom-0">מספר</th>
                                 <th className="border-bottom-0">שעות</th>
                                 <th
                                     className="border-bottom-0"

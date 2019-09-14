@@ -62,7 +62,8 @@ class BuildTimetable extends Component {
             showTeacherClashButtonType: 'הצג התנגשויות עבור מורה',
             showClassroomClashButtonType: 'הצג התנגשויות עבור חדר לימוד',
             saveSucceed: false,
-            waitingToSave: false
+            waitingToSave: false,
+            isLoading: true,
         }
 
         this.handleConstraintClick = this.handleConstraintClick.bind(this);
@@ -75,7 +76,6 @@ class BuildTimetable extends Component {
     }
 
     componentDidMount() {
-        // this.mounted = true;
         // axios.get('http://localhost:4000/data/getConstraints')
         //     .then(response => {
         //         if (this.mounted) {
@@ -129,7 +129,6 @@ class BuildTimetable extends Component {
                 console.log(error);
             });
 
-        this.mounted = true;
         axios.get('http://localhost:4000/data/getGrades')
             .then(response => {
                 if (this.mounted) {
@@ -144,7 +143,6 @@ class BuildTimetable extends Component {
                 console.log(error);
             });
 
-        this.mounted = true;
         axios.get('http://localhost:4000/data/getDays')
             .then(response => {
                 if (this.mounted) {
@@ -159,9 +157,6 @@ class BuildTimetable extends Component {
                 console.log(error);
             });
 
-
-
-        this.mounted = true;
         axios.get('http://localhost:4000/data/getClassRooms')
             .then(response => {
                 if (this.mounted) {
@@ -173,7 +168,6 @@ class BuildTimetable extends Component {
             .catch(function (error) {
                 console.log(error);
             });
-        this.mounted = true;
         axios.get('http://localhost:4000/data/getTeachers')
             .then(response => {
                 if (this.mounted) {
@@ -201,7 +195,6 @@ class BuildTimetable extends Component {
         if (!this.state.daysFetched || !this.state.gradesFetched || !this.state.constraintsFetched) {
             return;
         }
-        this.mounted = true;
         axios.get('http://localhost:4000/data/getTimeTable')
             .then(response => {
                 if (this.mounted) {
@@ -338,7 +331,7 @@ class BuildTimetable extends Component {
                 }
                 // console.log(grade !== currGrade && grade !== '');
                 if (grade !== currGrade || i === grades.length - 1) {
-                    if(i === grades.length - 1){
+                    if (i === grades.length - 1) {
                         numOfClassesInGrade++;
                     }
                     for (let j = 0; j <= stateGreades.length - 1; j++) {
@@ -352,7 +345,7 @@ class BuildTimetable extends Component {
                     numOfClassesInGrade++;
                 }
             }
-            this.setState({ grades: [...stateGreades] }, () => {
+            this.setState({ grades: [...stateGreades], isLoading: false }, () => {
                 console.log(this.state.grades);
             });
         }
@@ -1673,11 +1666,9 @@ class BuildTimetable extends Component {
     addTimeTable() {
         let timeTable = [...this.state.timeTable];
         let classTimeTable = {};
-        this.mounted = true;
         this.setState({ waitingToSave: true, saveSucceed: false }, () => {
             axios.post('http://localhost:4000/data/dropTimeTable')
                 .then(response => {
-                    let tablesSaved = 0;
                     if (this.mounted) {
                         if (timeTable.length === 0) {
                             this.setState({ waitingToSave: false, saveSucceed: true }, () => {
@@ -1689,23 +1680,25 @@ class BuildTimetable extends Component {
                             });
                         }
                     }
+                    let tablesSaved = 0;
                     for (let i = 0; i <= timeTable.length - 1; i++) {
                         classTimeTable = { ...timeTable[i] };
                         axios.post('http://localhost:4000/data/addTimeTable', classTimeTable)
                             .then(res => {
-                                tablesSaved++;
-                                console.log(tablesSaved);
                                 if (this.mounted) {
-                                    if (tablesSaved === timeTable.length) {
-                                        this.setState({ waitingToSave: false, saveSucceed: true }, () => {
-                                            // console.log('hi');
-                                            clearTimeout(this.timeoutID);
-                                            this.timeoutID = setTimeout(() => { this.setState({ saveSucceed: false }) }, 1500);
-                                            // console.log(classTimeTable);
-                                        });
+                                    tablesSaved++;
+                                    console.log(tablesSaved);
+                                    if (this.mounted) {
+                                        if (tablesSaved === timeTable.length) {
+                                            this.setState({ waitingToSave: false, saveSucceed: true }, () => {
+                                                // console.log('hi');
+                                                clearTimeout(this.timeoutID);
+                                                this.timeoutID = setTimeout(() => { this.setState({ saveSucceed: false }) }, 1500);
+                                                // console.log(classTimeTable);
+                                            });
+                                        }
                                     }
                                 }
-
                             })
                             .catch(function (error) {
                                 console.log(error);
@@ -2021,6 +2014,15 @@ class BuildTimetable extends Component {
     }
 
     render() {
+        if (this.state.isLoading) {
+            return (
+                <div className="text-center mt-5">
+                    <div className="spinner-border" style={{"width": "3rem", "height": "3rem"}} role="status">
+                        <span className="sr-only">Loading...</span>
+                    </div>
+                </div>
+            );
+        }
         return (
             <div>
                 <nav className="navbar navbar-expand-lg navbar-light bg-light p-auto ">

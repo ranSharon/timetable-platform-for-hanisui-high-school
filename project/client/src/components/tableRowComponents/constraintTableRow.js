@@ -49,7 +49,7 @@ const constraintsTableRow = (props) => {
     ) {
         return (
             <tr className="text-center">
-                {/* <td>{props.constraint.num}</td> */}
+                <td>{props.constraint.num}</td>
                 <td>{props.constraint.hours}</td>
                 <td>{showTeachers()}</td>
                 <td>{props.constraint.subject}</td>
@@ -63,7 +63,7 @@ const constraintsTableRow = (props) => {
     } else {
         return (
             <tr className="text-center">
-                {/* <td className="border-top border-dark">{props.constraint.num}</td> */}
+                <td className="border-top border-dark">{props.constraint.num}</td>
                 <td className="border-top border-dark">{props.constraint.hours}</td>
                 <td className="border-top border-dark">{showTeachers()}</td>
                 <td className="border-top border-dark">{props.constraint.subject}</td>

@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import axios from 'axios';
 
 class DataOnTimetable extends Component {
+    mounted = false;
+
     constructor(props) {
         super(props)
         this.state = {
@@ -26,7 +28,9 @@ class DataOnTimetable extends Component {
             subjectsForTeacher: [],
 
             day2: '',
-            teachersForDay: []
+            teachersForDay: [],
+
+            timeTableFetched: false
 
             // day3: '',
             // freeClassRoomsForDay: []
@@ -35,16 +39,24 @@ class DataOnTimetable extends Component {
     }
 
     componentDidMount() {
+        this.mounted = true;
         axios.get('http://localhost:4000/data/getTimeTable')
             .then(response => {
-                this.setState({ timeTable: [...response.data] }, function () {
-                    console.log('timeTable');
-                    console.log(this.state.timeTable);
-                });
+                if (this.mounted) {
+                    this.setState({ timeTable: [...response.data], timeTableFetched: true }, () => {
+                        console.log('timeTable');
+                        console.log(this.state.timeTable);
+                    });
+                }
             })
             .catch(function (error) {
                 console.log(error);
             });
+    }
+
+    componentWillUnmount() {
+        this.mounted = false;
+        // clearTimeout(this.timeoutID);
     }
 
     firstQuery() {
@@ -598,6 +610,15 @@ class DataOnTimetable extends Component {
     // }
 
     render() {
+        if (!this.state.timeTableFetched) {
+            return (
+                <div className="text-center mt-5">
+                    <div className="spinner-border" style={{ "width": "3rem", "height": "3rem" }} role="status">
+                        <span className="sr-only">Loading...</span>
+                    </div>
+                </div>
+            );
+        }
         return <div>
             <h3 className="text-right">מידע על מערכת השעות שנבנתה</h3>
 

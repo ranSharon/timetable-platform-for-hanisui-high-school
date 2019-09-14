@@ -10,6 +10,9 @@ let subjectToEdit = '';
 let subjectToEditId = '';
 
 class StudySubjects extends Component {
+    mounted = false;
+    timeoutID;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -37,10 +40,12 @@ class StudySubjects extends Component {
             featuresChecked: [],
             buttonType: 'אישור',
             disableButtons: false,
+            waitingToSave: false,
+            subjectsFetched: false,
+            featuresFetched: false,
 
             subjectSortImg: down,
-            gradeSortImg: down
-            
+            gradeSortImg: down,
         }
         this.handleFeatureCheck = this.handleFeatureCheck.bind(this);
         this.getSubject = this.getSubject.bind(this);
@@ -53,33 +58,49 @@ class StudySubjects extends Component {
     }
 
     componentDidMount() {
+        this.mounted = true;
         axios.get('http://localhost:4000/data/getSubjects')
             .then(response => {
-                console.log(response.data);
-                this.setState({ subjects: [...response.data] });
+                if (this.mounted) {
+                    console.log(response.data);
+                    this.setState({ subjects: [...response.data], subjectsFetched: true });
+                }
             })
             .catch(function (error) {
                 console.log(error);
             })
         axios.get('http://localhost:4000/data/getRoomFeatures')
             .then(response => {
-                let featuresChecked = [];
-                response.data.forEach(feature => {
-                    let featureChecked = { roomFeature: feature.roomFeature, checked: false };
-                    featuresChecked = [...featuresChecked, featureChecked];
-                });
-                let roomFeatures = [];
-                for (let i = 0; i <= response.data.length - 1; i++) {
-                    roomFeatures.push(response.data[i].roomFeature);
+                if (this.mounted) {
+
+                    let featuresChecked = [];
+                    response.data.forEach(feature => {
+                        let featureChecked = { roomFeature: feature.roomFeature, checked: false };
+                        featuresChecked = [...featuresChecked, featureChecked];
+                    });
+                    let roomFeatures = [];
+                    for (let i = 0; i <= response.data.length - 1; i++) {
+                        roomFeatures.push(response.data[i].roomFeature);
+                    }
+                    this.setState({
+                        roomFeatures: [...roomFeatures],
+                        featuresChecked: [...featuresChecked],
+                        featuresFetched: true
+                    });
                 }
-                this.setState({
-                    roomFeatures: [...roomFeatures],
-                    featuresChecked: [...featuresChecked]
-                });
             })
             .catch(function (error) {
                 console.log(error);
             })
+    }
+
+    componentWillUnmount() {
+        this.mounted = false;
+        clearTimeout(this.timeoutID);
+    }
+
+    componentDidUpdate(){
+        console.log(this.state.featuresFetched);
     }
 
     onSubjectNameChange(e) {
@@ -211,37 +232,48 @@ class StudySubjects extends Component {
         };
         if (this.state.buttonType === 'אישור') {
             let subject = {};
-            axios.post('http://localhost:4000/data/addSubject', newSubject)
-                .then(res => {
-                    subject = { ...res.data };
-                    this.setState({
-                        subjects: [...this.state.subjects, subject]
+            this.setState({ waitingToSave: true }, () => {
+                axios.post('http://localhost:4000/data/addSubject', newSubject)
+                    .then(res => {
+                        if (this.mounted) {
+                            subject = { ...res.data };
+                            this.setState({
+                                subjects: [...this.state.subjects, subject],
+                                waitingToSave: false
+                            });
+                            this.resetInputs();
+                        }
                     });
-                    this.resetInputs();
-                });
+            })
         } else if (this.state.buttonType === 'סיים עריכה') {
-            if(!this.state.grouping){
+            if (!this.state.grouping) {
                 newSubject.numOfMix = '';
             }
-            axios.post('http://localhost:4000/data/updateSubject/' + subjectToEditId, newSubject)
-                .then(res => {
-                    let subjects = [...this.state.subjects];
-                    for (let i = 0; i <= subjects.length - 1; i++) {
-                        if (subjects[i]._id === res.data._id) {
-                            subjects[i] = { ...res.data };
+            this.setState({ waitingToSave: true }, () => {
+                axios.post('http://localhost:4000/data/updateSubject/' + subjectToEditId, newSubject)
+                    .then(res => {
+                        if (this.mounted) {
+                            let subjects = [...this.state.subjects];
+                            for (let i = 0; i <= subjects.length - 1; i++) {
+                                if (subjects[i]._id === res.data._id) {
+                                    subjects[i] = { ...res.data };
+                                }
+                            }
+                            this.setState({
+                                subjects: [...subjects],
+                                buttonType: 'אישור',
+                                disableButtons: false,
+                                waitingToSave: false
+                            });
+                            this.resetInputs();
                         }
-                    }
-                    this.setState({
-                        subjects: [...subjects],
-                        buttonType: 'אישור',
-                        disableButtons: false
                     });
-                    this.resetInputs();
-                });
+            });
         }
     }
 
     checkIfInputValid() {
+        clearTimeout(this.timeoutID);
         let subjectName = this.state.subjectName;
         let grades = [...this.state.grades];
         let bagrut = this.state.bagrut;
@@ -300,6 +332,7 @@ class StudySubjects extends Component {
     }
 
     resetInputs() {
+        clearTimeout(this.timeoutID);
         let checked = { ...this.state.checked };
         for (let grade in checked) {
             checked[grade] = false;
@@ -333,8 +366,9 @@ class StudySubjects extends Component {
             alertMessage: alertMessage,
             messageStatus: true,
             featuresChecked: [...featuresChecked]
-        },function(){
-            console.log(this.state.featuresChecked)
+        }, () => {
+            console.log(this.state.featuresChecked);
+            this.timeoutID = setTimeout(() => { this.setState({ alertMessage: '' }) }, 1500);
         });
     }
 
@@ -389,42 +423,45 @@ class StudySubjects extends Component {
 
     getSubject(subjectId) {
         window.scrollTo(0, 0);
+        clearTimeout(this.timeoutID);
         console.log(this.state.featuresChecked);
         subjectToEditId = subjectId;
         axios.get('http://localhost:4000/data/getSubject/' + subjectId)
             .then(response => {
-                let checked = {
-                    'ז': false,
-                    'ח': false,
-                    'ט': false,
-                    'י': false,
-                    'יא': false,
-                    'יב': false
-                }
-                let grades = [...response.data.grades];
-                grades.forEach(grade => {
-                    checked[grade] = true;
-                })
-                this.setFeaturesCheckStatus(response.data.subjectFeatures);
+                if (this.mounted) {
+                    let checked = {
+                        'ז': false,
+                        'ח': false,
+                        'ט': false,
+                        'י': false,
+                        'יא': false,
+                        'יב': false
+                    }
+                    let grades = [...response.data.grades];
+                    grades.forEach(grade => {
+                        checked[grade] = true;
+                    })
+                    this.setFeaturesCheckStatus(response.data.subjectFeatures);
 
-                let alertMessage = 'עריכת פרטי המורה: ' + response.data.subjectName;
-                subjectToEdit = response.data.subjectName;
-                this.setState({
-                    grades: [...response.data.grades],
-                    subjectName: response.data.subjectName,
-                    bagrut: response.data.bagrut,
-                    checked: checked,
-                    gmol: response.data.gmol,
-                    grouping: response.data.grouping,
-                    mix: response.data.mix,
-                    numOfMix: response.data.numOfMix,
-                    alertMessage: alertMessage,
-                    messageStatus: true,
-                    buttonType: 'סיים עריכה',
-                    disableButtons: true,
-                    subjectFeatures: [...response.data.subjectFeatures]
-                })
-                this.alertMessage();
+                    let alertMessage = 'עריכת פרטי המורה: ' + response.data.subjectName;
+                    subjectToEdit = response.data.subjectName;
+                    this.setState({
+                        grades: [...response.data.grades],
+                        subjectName: response.data.subjectName,
+                        bagrut: response.data.bagrut,
+                        checked: checked,
+                        gmol: response.data.gmol,
+                        grouping: response.data.grouping,
+                        mix: response.data.mix,
+                        numOfMix: response.data.numOfMix,
+                        alertMessage: alertMessage,
+                        messageStatus: true,
+                        buttonType: 'סיים עריכה',
+                        disableButtons: true,
+                        subjectFeatures: [...response.data.subjectFeatures]
+                    })
+                    this.alertMessage();
+                }
             })
             .catch(function (error) {
                 console.log(error);
@@ -442,7 +479,7 @@ class StudySubjects extends Component {
                 }
             }
         }
-        this.setState({ featuresChecked: [...featuresChecked] },function(){
+        this.setState({ featuresChecked: [...featuresChecked] }, function () {
             // console.log(this.state.featuresChecked);
         });
     }
@@ -450,14 +487,16 @@ class StudySubjects extends Component {
     deleteSubject(subjectId) {
         axios.post('http://localhost:4000/data/deleteSubject/' + subjectId)
             .then(response => {
-                let subjects = [...this.state.subjects];
-                for (let i = 0; i <= subjects.length - 1; i++) {
-                    if (subjects[i]._id === subjectId) {
-                        subjects = [...subjects.slice(0, i).concat(subjects.slice(i + 1, subjects.length))];
-                        break;
+                if (this.mounted) {
+                    let subjects = [...this.state.subjects];
+                    for (let i = 0; i <= subjects.length - 1; i++) {
+                        if (subjects[i]._id === subjectId) {
+                            subjects = [...subjects.slice(0, i).concat(subjects.slice(i + 1, subjects.length))];
+                            break;
+                        }
                     }
+                    this.setState({ subjects: [...subjects] });
                 }
-                this.setState({ subjects: [...subjects] });
             })
             .catch(function (error) {
                 console.log(error);
@@ -532,6 +571,20 @@ class StudySubjects extends Component {
         return comparison;
     }
 
+    saveButton() {
+        if (!this.state.waitingToSave) {
+            return (
+                <button type="button" className="btn btn-secondary" onClick={() => this.setSubjects()}>{this.state.buttonType}</button>);
+        }
+        return (
+            <button className="btn btn-secondary ml-2" type="button" disabled>
+                אנא המתן...
+                <span className="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span>
+            </button>
+        );
+
+    }
+
     render() {
         return (
             <div>
@@ -591,7 +644,27 @@ class StudySubjects extends Component {
                     {this.mixIsCheked()}
                     <h6 className="pt-2 mb-0" style={{ "textAlign": "right" }}>המקצוע דורש:</h6>
                     {/* {this.state.roomFeatures.map((roomFeature, index) => { */}
-                    {this.state.featuresChecked.map((roomFeature, index) => {
+                    {this.state.featuresFetched ?
+                        (<div>
+                            {this.state.featuresChecked.map((roomFeature, index) => {
+                                return (
+                                    <RoomFeatureCheckBox
+                                        key={index}
+                                        roomFeature={roomFeature.roomFeature}
+                                        roomFeatureCheck={this.handleFeatureCheck}
+                                        // checked={this.getCheckStatus(roomFeature)}>
+                                        checked={roomFeature.checked}>
+                                    </RoomFeatureCheckBox>
+                                )
+                            })}
+                        </div>) :
+                        (<div className="clearfix mt-5">
+                            <div className="spinner-border float-right" role="status">
+                                <span className="sr-only">Loading...</span>
+                            </div>
+                        </div>)
+                    }
+                    {/* {this.state.featuresChecked.map((roomFeature, index) => {
                         return (
                             <RoomFeatureCheckBox
                                 key={index}
@@ -601,12 +674,31 @@ class StudySubjects extends Component {
                                 checked={roomFeature.checked}>
                             </RoomFeatureCheckBox>
                         )
-                    })}
+                    })} */}
                 </div>
                 <div></div>
-                <button type="button" className="btn btn-secondary" onClick={() => this.setSubjects()}>{this.state.buttonType}</button>
+                {/* <button type="button" className="btn btn-secondary" onClick={() => this.setSubjects()}>{this.state.buttonType}</button> */}
+                {this.saveButton()}
                 {this.alertMessage()}
-                <DataTable
+                {this.state.subjectsFetched ?
+                    (<DataTable
+                        subjects={this.state.subjects}
+                        table="subjects"
+                        onEdit={this.getSubject}
+                        onDelete={this.deleteSubject}
+                        disableButtons={this.state.disableButtons}
+                        sortBySubject={this.sortBySubject}
+                        subjectSortImg={this.state.subjectSortImg}
+                        sortByGrade={this.sortByGrade}
+                        gradeSortImg={this.state.gradeSortImg}>
+                    </DataTable>) :
+                    (<div className="text-center mt-5">
+                        <div className="spinner-border" style={{ "width": "3rem", "height": "3rem" }} role="status">
+                            <span className="sr-only">Loading...</span>
+                        </div>
+                    </div>)
+                }
+                {/* <DataTable
                     subjects={this.state.subjects}
                     table="subjects"
                     onEdit={this.getSubject}
@@ -616,7 +708,7 @@ class StudySubjects extends Component {
                     subjectSortImg={this.state.subjectSortImg}
                     sortByGrade={this.sortByGrade}
                     gradeSortImg={this.state.gradeSortImg}>
-                </DataTable>
+                </DataTable> */}
             </div>
         );
     }

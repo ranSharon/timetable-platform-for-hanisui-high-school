@@ -22,7 +22,7 @@ const TimeTable = require('./models/timeTable');
 app.use(cors());
 app.use(bodyParser.json());
 
-mongoose.connect('mongodb+srv://ran:JxzyMt12gkITSNcf@cluster0-hdnsl.mongodb.net/test?retryWrites=true');
+mongoose.connect('mongodb+srv://ran:JxzyMt12gkITSNcf@cluster0-hdnsl.mongodb.net/test?retryWrites=true', {useFindAndModify: false, useNewUrlParser: true});
 const connection = mongoose.connection;
 
 connection.once('open', function () {

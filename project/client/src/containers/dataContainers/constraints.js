@@ -8,6 +8,8 @@ import down from '../../assets/sort-down.png';
 import up from '../../assets/sort-up.png';
 
 class Constraints extends Component {
+    mounted = false;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -67,6 +69,9 @@ class Constraints extends Component {
             teacherButtonType: 'הצג פרטי מורה',
             subjectButtonType: 'הצג פרטי מקצוע',
             mainButtonDisable: false,
+            waitingToSave: false,
+            deleteConstraintClicked: false,
+            constraintsFetched: false, 
 
             teacherSortImg: down,
             gradeSortImg: down,
@@ -98,48 +103,61 @@ class Constraints extends Component {
 
     componentDidMount() {
         console.log('componentDidMount');
+        this.mounted = true;
         axios.get('http://localhost:4000/data/getConstraints')
             .then(response => {
-                let num = 0;
-                if (response.data.length !== 0) {
-                    num = response.data[response.data.length - 1].num + 1;
+                if (this.mounted) {
+                    let num = 0;
+                    if (response.data.length !== 0) {
+                        num = response.data[response.data.length - 1].num + 1;
+                    }
+                    this.setState({ constraints: [...response.data.sort(this.compare)], num: num, constraintsFetched: true });
+                    console.log('constraints:')
+                    console.log(this.state.constraints);
                 }
-                this.setState({ constraints: [...response.data.sort(this.compare)], num: num });
-                console.log('constraints:')
-                console.log(this.state.constraints);
-
             })
             .catch(function (error) {
                 console.log(error);
             });
         axios.get('http://localhost:4000/data/getTeachers')
             .then(response => {
-                this.setState({ allTeachers: [...response.data] });
-                console.log('allTeachers:')
-                console.log(this.state.allTeachers);
-                this.setTeachers();
+                if (this.mounted) {
+                    this.setState({ allTeachers: [...response.data] });
+                    console.log('allTeachers:')
+                    console.log(this.state.allTeachers);
+                    this.setTeachers();
+                }
             })
             .catch(function (error) {
                 console.log(error);
             });
         axios.get('http://localhost:4000/data/getGrades')
             .then(response => {
-                this.setState({ allGrades: [...response.data], alertMessage: '' });
-                console.log('allGrades:')
-                console.log(this.state.allGrades);
+                if (this.mounted) {
+                    this.setState({ allGrades: [...response.data], alertMessage: '' });
+                    console.log('allGrades:')
+                    console.log(this.state.allGrades);
+                }
             })
             .catch(function (error) {
                 console.log(error);
             });
         axios.get('http://localhost:4000/data/getSubjects')
             .then(response => {
-                this.setState({ allSubjects: [...response.data] });
-                console.log('allSubjects:')
-                console.log(this.state.allSubjects);
+                if (this.mounted) {
+                    this.setState({ allSubjects: [...response.data] });
+                    console.log('allSubjects:')
+                    console.log(this.state.allSubjects);
+                }
             })
             .catch(function (error) {
                 console.log(error);
             });
+    }
+
+    componentWillUnmount() {
+        this.mounted = false;
+        clearTimeout(this.timeoutID);
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -272,7 +290,6 @@ class Constraints extends Component {
     }
 
     getGmol(gmol) {
-
         let gmolArray = gmol.split(':');
         let hours = parseInt(gmolArray[0]);
         let minutes = gmolArray[1];
@@ -692,13 +709,18 @@ class Constraints extends Component {
                 newConstraint.num = num;
                 num += 1;
                 this.setState({ num: num });
-                axios.post('http://localhost:4000/data/addConstraint', newConstraint)
-                    .then(res => {
-                        constraint = { ...res.data };
-                        this.setState({
-                            constraints: [...this.state.constraints, constraint]
+                this.setState({ waitingToSave: true }, () => {
+                    axios.post('http://localhost:4000/data/addConstraint', newConstraint)
+                        .then(res => {
+                            if (this.mounted) {
+                                constraint = { ...res.data };
+                                this.setState({
+                                    constraints: [...this.state.constraints, constraint],
+                                    waitingToSave: false
+                                });
+                            }
                         });
-                    });
+                });
             }
 
             let newTeacher = { ...this.state.teacherDetails };
@@ -709,6 +731,24 @@ class Constraints extends Component {
                 for (let i = 0; i <= this.state.groupingTeachers.length - 1; i++) {
                     axios.post('http://localhost:4000/data/updateTeacherByName/', { name: this.state.groupingTeachers[i], hours: newCurrentTeachHours })
                         .then(res => {
+                            if (this.mounted) {
+                                let teachers = [...this.state.allTeachers];
+                                for (let i = 0; i <= teachers.length - 1; i++) {
+                                    if (teachers[i]._id === res.data._id) {
+                                        teachers[i] = { ...res.data };
+                                    }
+                                }
+                                this.setState({
+                                    allTeachers: [...teachers]
+                                });
+                            }
+                        });
+                }
+            } else {
+                const teacherToEditId = this.state.teacherDetails._id;
+                axios.post('http://localhost:4000/data/updateTeacher/' + teacherToEditId, newTeacher)
+                    .then(res => {
+                        if (this.mounted) {
                             let teachers = [...this.state.allTeachers];
                             for (let i = 0; i <= teachers.length - 1; i++) {
                                 if (teachers[i]._id === res.data._id) {
@@ -718,21 +758,7 @@ class Constraints extends Component {
                             this.setState({
                                 allTeachers: [...teachers]
                             });
-                        });
-                }
-            } else {
-                const teacherToEditId = this.state.teacherDetails._id;
-                axios.post('http://localhost:4000/data/updateTeacher/' + teacherToEditId, newTeacher)
-                    .then(res => {
-                        let teachers = [...this.state.allTeachers];
-                        for (let i = 0; i <= teachers.length - 1; i++) {
-                            if (teachers[i]._id === res.data._id) {
-                                teachers[i] = { ...res.data };
-                            }
                         }
-                        this.setState({
-                            allTeachers: [...teachers]
-                        });
                     });
             }
         } else if (this.state.buttonType === 'סיים עריכה') {
@@ -745,6 +771,7 @@ class Constraints extends Component {
     }
 
     checkIfInputValid() {
+        clearTimeout(this.timeoutID);
         let teacher = this.state.teacher; // string init ''
         let subject = this.state.subject; // string init ''
         let grade = this.state.grade; // string init ''
@@ -842,6 +869,7 @@ class Constraints extends Component {
     }
 
     resetInputs() {
+        clearTimeout(this.timeoutID);
         let teacher = ''; // string init ''
         let subject = ''; // string init ''
         let grade = ''; // string init ''
@@ -852,7 +880,10 @@ class Constraints extends Component {
         let firstLesson = 0; // number init 0
         let secondlesson = 0; // number init 0
         let thirdlesson = 0; // number init 0
-        let alertMessage = 'הערך נשמר - אפשר להזין שיעור/שיעורים חדש';
+        let alertMessage = '';
+        if (!this.state.deleteConstraintClicked) {
+            alertMessage = 'הערך נשמר - אפשר להזין שיעור/שיעורים חדש';
+        }
         this.setState({
             teacher: teacher,
             subject: subject,
@@ -878,7 +909,10 @@ class Constraints extends Component {
             subjectAlertMessage: '',
             teacherButtonType: 'הצג פרטי מורה',
             subjectButtonType: 'הצג פרטי מקצוע',
-            messageStatus: true
+            messageStatus: true,
+            deleteConstraintClicked: false
+        }, () => {
+            this.timeoutID = setTimeout(() => { this.setState({ alertMessage: '' }) }, 2000);
         });
     }
 
@@ -1132,26 +1166,43 @@ class Constraints extends Component {
         let constraint = {};
         splitConstraints[0].num = num;
         num += 1;
-        axios.post('http://localhost:4000/data/addConstraint', splitConstraints[0])
-            .then(res => {
-                constraint = { ...res.data };
-                firstConstraint.constraintSplitsBros = [...firstConstraint.constraintSplitsBros, res.data._id];
-                if (this.state.num > num) {
-                    this.setState({
-                        constraints: [...this.state.constraints, constraint]
-                    });
-                } else {
-                    this.setState({
-                        constraints: [...this.state.constraints, constraint],
-                        num: num
-                    });
-                }
-                if (splitConstraints.length === 1) {
-                    let constraint = {};
-                    firstConstraint.num = num;
-                    num += 1;
-                    axios.post('http://localhost:4000/data/addConstraint', firstConstraint)
-                        .then(res => {
+        firstConstraint.constraintSplitsBros = [1];
+        const constraintsToSave = 1 + splitConstraints.length;
+        let constraintsSaved = 0;
+
+        this.setState({ waitingToSave: true }, () => {
+            axios.post('http://localhost:4000/data/addConstraint', splitConstraints[0])
+                .then(res => {
+                    if (this.mounted) {
+                        constraintsSaved++;
+                        constraint = { ...res.data };
+                        // firstConstraint.constraintSplitsBros = [...firstConstraint.constraintSplitsBros, res.data._id];
+                        if (this.state.num > num) {
+                            this.setState({
+                                constraints: [...this.state.constraints, constraint]
+                            });
+                        } else {
+                            this.setState({
+                                constraints: [...this.state.constraints, constraint],
+                                num: num
+                            });
+                        }
+                        if (constraintsToSave === constraintsSaved) {
+                            this.setState({
+                                waitingToSave: false
+                            });
+                        }
+                    }
+                });
+
+            if (splitConstraints.length === 1) {
+                let constraint = {};
+                firstConstraint.num = num;
+                num += 1;
+                axios.post('http://localhost:4000/data/addConstraint', firstConstraint)
+                    .then(res => {
+                        if (this.mounted) {
+                            constraintsSaved++;
                             constraint = { ...res.data };
                             if (this.state.num > num) {
                                 this.setState({
@@ -1163,15 +1214,24 @@ class Constraints extends Component {
                                     num: num
                                 });
                             }
-                        });
-                }
-                if (splitConstraints.length > 1) {
-                    let constraint = {};
-                    splitConstraints[1].num = num;
-                    axios.post('http://localhost:4000/data/addConstraint', splitConstraints[1])
-                        .then(res => {
+                            if (constraintsToSave === constraintsSaved) {
+                                this.setState({
+                                    waitingToSave: false
+                                });
+                            }
+                        }
+                    });
+            }
+
+            if (splitConstraints.length > 1) {
+                let constraint = {};
+                splitConstraints[1].num = num;
+                axios.post('http://localhost:4000/data/addConstraint', splitConstraints[1])
+                    .then(res => {
+                        if (this.mounted) {
+                            constraintsSaved++;
                             constraint = { ...res.data };
-                            firstConstraint.constraintSplitsBros = [...firstConstraint.constraintSplitsBros, res.data._id];
+                            // firstConstraint.constraintSplitsBros = [...firstConstraint.constraintSplitsBros, res.data._id];
                             if (this.state.num > num) {
                                 this.setState({
                                     constraints: [...this.state.constraints, constraint]
@@ -1182,28 +1242,130 @@ class Constraints extends Component {
                                     num: num
                                 });
                             }
-                            if (splitConstraints.length === 2) {
-                                let constraint = {};
-                                num += 1;
-                                firstConstraint.num = num;
-                                axios.post('http://localhost:4000/data/addConstraint', firstConstraint)
-                                    .then(res => {
-                                        constraint = { ...res.data };
-                                        if (this.state.num > num) {
-                                            this.setState({
-                                                constraints: [...this.state.constraints, constraint]
-                                            });
-                                        } else {
-                                            this.setState({
-                                                constraints: [...this.state.constraints, constraint],
-                                                num: num
-                                            });
-                                        }
-                                    });
+                            if (constraintsToSave === constraintsSaved) {
+                                this.setState({
+                                    waitingToSave: false
+                                });
                             }
-                        });
-                }
-            });
+
+                        }
+                    });
+            }
+
+            if (splitConstraints.length === 2) {
+                let constraint = {};
+                num += 1;
+                firstConstraint.num = num;
+                axios.post('http://localhost:4000/data/addConstraint', firstConstraint)
+                    .then(res => {
+                        if (this.mounted) {
+                            constraintsSaved++;
+                            constraint = { ...res.data };
+                            if (this.state.num > num) {
+                                this.setState({
+                                    constraints: [...this.state.constraints, constraint]
+                                });
+                            } else {
+                                this.setState({
+                                    constraints: [...this.state.constraints, constraint],
+                                    num: num
+                                });
+                            }
+                            if (constraintsToSave === constraintsSaved) {
+                                this.setState({
+                                    waitingToSave: false
+                                });
+                            }
+                        }
+                    });
+            }
+        });
+
+
+
+
+
+        // axios.post('http://localhost:4000/data/addConstraint', splitConstraints[0])
+        //     .then(res => {
+        //         if (this.mounted) {
+        //             constraint = { ...res.data };
+        //             firstConstraint.constraintSplitsBros = [...firstConstraint.constraintSplitsBros, res.data._id];
+        //             if (this.state.num > num) {
+        //                 this.setState({
+        //                     constraints: [...this.state.constraints, constraint]
+        //                 });
+        //             } else {
+        //                 this.setState({
+        //                     constraints: [...this.state.constraints, constraint],
+        //                     num: num
+        //                 });
+        //             }
+        //             if (splitConstraints.length === 1) {
+        //                 let constraint = {};
+        //                 firstConstraint.num = num;
+        //                 num += 1;
+        //                 axios.post('http://localhost:4000/data/addConstraint', firstConstraint)
+        //                     .then(res => {
+        //                         if (this.mounted) {
+        //                             constraint = { ...res.data };
+        //                             if (this.state.num > num) {
+        //                                 this.setState({
+        //                                     constraints: [...this.state.constraints, constraint]
+        //                                 });
+        //                             } else {
+        //                                 this.setState({
+        //                                     constraints: [...this.state.constraints, constraint],
+        //                                     num: num
+        //                                 });
+        //                             }
+        //                         }
+        //                     });
+        //             }
+        //             if (splitConstraints.length > 1) {
+        //                 let constraint = {};
+        //                 splitConstraints[1].num = num;
+        //                 axios.post('http://localhost:4000/data/addConstraint', splitConstraints[1])
+        //                     .then(res => {
+        //                         if (this.mounted) {
+        //                             constraint = { ...res.data };
+        //                             firstConstraint.constraintSplitsBros = [...firstConstraint.constraintSplitsBros, res.data._id];
+        //                             if (this.state.num > num) {
+        //                                 this.setState({
+        //                                     constraints: [...this.state.constraints, constraint]
+        //                                 });
+        //                             } else {
+        //                                 this.setState({
+        //                                     constraints: [...this.state.constraints, constraint],
+        //                                     num: num
+        //                                 });
+        //                             }
+        //                             if (splitConstraints.length === 2) {
+        //                                 let constraint = {};
+        //                                 num += 1;
+        //                                 firstConstraint.num = num;
+        //                                 axios.post('http://localhost:4000/data/addConstraint', firstConstraint)
+        //                                     .then(res => {
+        //                                         if (this.mounted) {
+        //                                             constraint = { ...res.data };
+        //                                             if (this.state.num > num) {
+        //                                                 this.setState({
+        //                                                     constraints: [...this.state.constraints, constraint]
+        //                                                 });
+        //                                             } else {
+        //                                                 this.setState({
+        //                                                     constraints: [...this.state.constraints, constraint],
+        //                                                     num: num
+        //                                                 });
+        //                                             }
+        //                                         }
+        //                                     });
+        //                             }
+        //                         }
+        //                     });
+        //             }
+        //         }
+        //     });
+
     }
 
     alertMessage() {
@@ -1321,17 +1483,19 @@ class Constraints extends Component {
         for (let i = 0; i <= fatherConstraint.groupingTeachers.length - 1; i++) {
             axios.post('http://localhost:4000/data/updateTeacherByName/', { name: fatherConstraint.groupingTeachers[i], hours: newCurrentTeachHours })
                 .then(res => {
-                    // console.log(res);
-                    if(Object.getOwnPropertyNames(res.data).length > 0){
-                        let teachers = [...this.state.allTeachers];
-                        for (let i = 0; i <= teachers.length - 1; i++) {
-                            if (teachers[i]._id === res.data._id) {
-                                teachers[i] = { ...res.data };
+                    if (this.mounted) {
+                        // console.log(res);
+                        if (Object.getOwnPropertyNames(res.data).length > 0) {
+                            let teachers = [...this.state.allTeachers];
+                            for (let i = 0; i <= teachers.length - 1; i++) {
+                                if (teachers[i]._id === res.data._id) {
+                                    teachers[i] = { ...res.data };
+                                }
                             }
+                            this.setState({
+                                allTeachers: [...teachers]
+                            });
                         }
-                        this.setState({
-                            allTeachers: [...teachers]
-                        });
                     }
                 }).catch(function (error) {
                     console.log(error);
@@ -1341,14 +1505,16 @@ class Constraints extends Component {
         for (let i = 0; i <= constraintsIdToDelete.length - 1; i++) {
             axios.post('http://localhost:4000/data/deleteConstraint/' + constraintsIdToDelete[i])
                 .then(response => {
-                    let constraints = [...this.state.constraints];
-                    for (let j = 0; j <= constraints.length - 1; j++) {
-                        if (constraints[j]._id === constraintsIdToDelete[i]) {
-                            constraints = [...constraints.slice(0, j).concat(constraints.slice(j + 1, constraints.length))];
-                            break;
+                    if (this.mounted) {
+                        let constraints = [...this.state.constraints];
+                        for (let j = 0; j <= constraints.length - 1; j++) {
+                            if (constraints[j]._id === constraintsIdToDelete[i]) {
+                                constraints = [...constraints.slice(0, j).concat(constraints.slice(j + 1, constraints.length))];
+                                break;
+                            }
                         }
+                        this.setState({ constraints: [...constraints], deleteConstraintClicked: true });
                     }
-                    this.setState({ constraints: [...constraints] });
                 })
                 .catch(function (error) {
                     console.log(error);
@@ -1358,6 +1524,7 @@ class Constraints extends Component {
 
     getConstraint(constraintId) {
         window.scrollTo(0, 0);
+        clearTimeout(this.timeoutID);
         let fatherConstraint = {};
         let constraints = [...this.state.constraints.sort(this.compare)];
 
@@ -1370,7 +1537,8 @@ class Constraints extends Component {
         // console.log(fatherConstraint);
         this.setState({
             buttonType: 'סיים עריכה',
-            mainButtonDisable: true
+            mainButtonDisable: true,
+            alertMessage: ''
         });
 
         let hours = parseInt(fatherConstraint.hours);
@@ -1426,20 +1594,22 @@ class Constraints extends Component {
                                             for (let i = 0; i <= fatherConstraint.groupingTeachers.length - 1; i++) {
                                                 axios.post('http://localhost:4000/data/updateTeacherByName/', { name: fatherConstraint.groupingTeachers[i], hours: newCurrentTeachHours })
                                                     .then(res => {
-                                                        let teachers = [...this.state.allTeachers];
-                                                        for (let i = 0; i <= teachers.length - 1; i++) {
-                                                            if (teachers[i]._id === res.data._id) {
-                                                                teachers[i] = { ...res.data };
-                                                                // console.log(hours);
+                                                        if (this.mounted) {
+                                                            let teachers = [...this.state.allTeachers];
+                                                            for (let i = 0; i <= teachers.length - 1; i++) {
+                                                                if (teachers[i]._id === res.data._id) {
+                                                                    teachers[i] = { ...res.data };
+                                                                    // console.log(hours);
+                                                                }
                                                             }
+                                                            this.setState({
+                                                                allTeachers: [...teachers],
+                                                                newCurrentTeachHours: (this.state.newCurrentTeachHours + hours)
+                                                            }, function () {
+                                                                // console.log(this.state.newCurrentTeachHours);
+                                                                // console.log(this.state.allTeachers);
+                                                            });
                                                         }
-                                                        this.setState({
-                                                            allTeachers: [...teachers],
-                                                            newCurrentTeachHours: (this.state.newCurrentTeachHours + hours)
-                                                        }, function () {
-                                                            // console.log(this.state.newCurrentTeachHours);
-                                                            // console.log(this.state.allTeachers);
-                                                        });
                                                     });
                                             }
                                             this.deleteConstraint(constraintId);
@@ -1600,6 +1770,25 @@ class Constraints extends Component {
         return comparison;
     }
 
+    saveButton() {
+        if (!this.state.waitingToSave) {
+            return (
+                <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => this.setConstraints()}
+                    disabled={this.state.mainButtonDisable}>
+                    {this.state.buttonType}
+                </button>);
+        }
+        return (
+            <button className="btn btn-secondary ml-2" type="button" disabled>
+                אנא המתן...
+                <span className="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span>
+            </button>
+        );
+    }
+
 
     render() {
         return (
@@ -1643,15 +1832,38 @@ class Constraints extends Component {
                         {this.showSubjectDetails()}
                     </div>
                 </div>
-                <button
+                {/* <button
                     type="button"
                     className="btn btn-secondary"
                     onClick={() => this.setConstraints()}
                     disabled={this.state.mainButtonDisable}>
                     {this.state.buttonType}
-                </button>
+                </button> */}
+                {this.saveButton()}
                 {this.alertMessage()}
-                <DataTable
+                {this.state.constraintsFetched ?
+                    (<DataTable
+                        constraints={this.state.constraints}
+                        table="constraints"
+                        onDelete={this.deleteConstraint}
+                        onEdit={this.getConstraint}
+                        sortByTeacher={this.sortConstraintsByTeacher}
+                        teacherSortImg={this.state.teacherSortImg}
+                        sortByGrade={this.sortConstraintsByGrade}
+                        gradeSortImg={this.state.gradeSortImg}
+                        sortBySubject={this.sortConstraintsBySubject}
+                        subjectSortImg={this.state.subjectSortImg}
+                        sortByClass={this.sortConstraintsByClass}
+                        classSortImg={this.state.classSortImg}
+                    >
+                    </DataTable>) :
+                    (<div className="text-center mt-5">
+                        <div className="spinner-border" style={{ "width": "3rem", "height": "3rem" }} role="status">
+                            <span className="sr-only">Loading...</span>
+                        </div>
+                    </div>)
+                }
+                {/* <DataTable
                     constraints={this.state.constraints}
                     table="constraints"
                     onDelete={this.deleteConstraint}
@@ -1665,7 +1877,7 @@ class Constraints extends Component {
                     sortByClass={this.sortConstraintsByClass}
                     classSortImg={this.state.classSortImg}
                 >
-                </DataTable>
+                </DataTable> */}
             </div>
         );
     }
