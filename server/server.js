@@ -9,28 +9,28 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const dataRoutes = express.Router();
-const keys = require('./config/keys');
+// const keys = require('./config/keys');
 const PORT = process.env.PORT || 4000;
 
-// const Grade = require('./models/grades');
-// const Subject = require('./models/subjects');
-// const ClassRoom = require('./models/classRooms');
-// const Teacher = require('./models/teachers');
-// const Day = require('./models/days');
-// const RoomFeature = require('./models/roomFeature');
-// const Constraint = require('./models/constraint');
-// const TimeTable = require('./models/timeTable');
+const Grade = require('./models/grades');
+const Subject = require('./models/subjects');
+const ClassRoom = require('./models/classRooms');
+const Teacher = require('./models/teachers');
+const Day = require('./models/days');
+const RoomFeature = require('./models/roomFeature');
+const Constraint = require('./models/constraint');
+const TimeTable = require('./models/timeTable');
 
 app.use(cors());
 app.use(bodyParser.json());
 
-// mongoose.connect('mongodb+srv://ran:JxzyMt12gkITSNcf@cluster0-hdnsl.mongodb.net/test?retryWrites=true', {useFindAndModify: false, useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect('mongodb+srv://ran:JxzyMt12gkITSNcf@cluster0-hdnsl.mongodb.net/test?retryWrites=true', {useFindAndModify: false, useNewUrlParser: true, useUnifiedTopology: true});
 // mongoose.connect(keys.mongoURI, {useFindAndModify: false, useNewUrlParser: true, useUnifiedTopology: true});
-// const connection = mongoose.connection;
+const connection = mongoose.connection;
 
-// connection.once('open', function () {
-//     console.log("MongoDB database connection established successfully");
-// });
+connection.once('open', function () {
+    console.log("MongoDB database connection established successfully");
+});
 
 // static files
 app.use(express.static(__dirname));
@@ -499,6 +499,8 @@ app.use(express.static(path.join(__dirname, '../build')));
 //         }
 //     });
 // });
+
+// app.use('/data', dataRoutes);
 
 
 app.listen(PORT, function () {
