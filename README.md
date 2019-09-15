@@ -10,45 +10,12 @@ The main objective of this project is to provide a system that will take into ac
 This repository represents my final project that was developed as part of the studies for
 B.Sc. in software engineering at Azrieli College of Engineering Jerusalem.
 
-## Installation (local)
+## Live demo
 
-* Install [Node.js](https://nodejs.org/en/) on your computer
-
-After installing Node.js open the command line and write the fowling commands: 
- 
-* Clone this repository
-```bash
-    git clone https://github.com/ranSharon/timetable-platform-for-hanisui-high-school.git
-```
-
-* Open 'client' folder
-```bash
-    cd timetable-platform-for-hanisui-high-school/project/client  
-```
-
-* Install with npm 
-```bash
-    npm install  
-```
-
-* Open 'server' folder
-```bash
-     cd ../server  
-```
-  
-* Install with npm 
-```bash
-    npm install  
-```
-
-* Run the application with 
-```bash
-    npm start
- ``` 
- 
-* Open your browser at the address http://localhost:3000
+See live demo at: https://hanisui-timetable.herokuapp.com/
 
 ## Example usage + short description
+
 [Poster](https://github.com/ranSharon/timetable-platform-for-hanisui-high-school/blob/master/docs/%D7%A4%D7%95%D7%A1%D7%98%D7%A8%20%D7%A4%D7%A8%D7%95%D7%99%D7%A7%D7%98.pdf 
 )  
 
