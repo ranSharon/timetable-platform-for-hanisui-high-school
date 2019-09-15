@@ -359,6 +359,11 @@ class BuildTimetable extends Component {
                 console.log(this.state.grades);
             });
         }
+        else{
+            this.setState({ isLoading: false }, () => {
+                console.log(this.state.grades);
+            });
+        }
 
     }
 
