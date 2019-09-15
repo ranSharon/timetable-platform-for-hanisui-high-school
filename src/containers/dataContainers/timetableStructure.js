@@ -9,6 +9,7 @@ let dayToEdit = '';
 
 class TimetableStructure extends Component {
     mounted = false;
+    host = '';
 
     constructor(props) {
         super(props);
@@ -31,8 +32,11 @@ class TimetableStructure extends Component {
 
     componentDidMount() {
         this.mounted = true;
+        if (process.env.NODE_ENV !== 'production') {
+            this.host = 'http://localhost:4000'
+        }
         // axios.get('http://localhost:4000/data/getDays')
-        axios.get('/data/getDays')
+        axios.get(this.host + '/data/getDays')
             .then(response => {
                 if (this.mounted) {
                     this.setState({ days: [...response.data], daysFetched: true, });
@@ -76,7 +80,7 @@ class TimetableStructure extends Component {
             let day = {};
             this.setState({ waitingToSave: true }, () => {
                 // axios.post('http://localhost:4000/data/addDay', newDay)
-                axios.post('/data/addDay', newDay)
+                axios.post(this.host + '/data/addDay', newDay)
                     .then(res => {
                         if (this.mounted) {
                             day = { ...res.data };
@@ -92,7 +96,7 @@ class TimetableStructure extends Component {
         } else if (this.state.buttonType === 'סיים עריכה') {
             this.setState({ waitingToSave: true }, () => {
                 // axios.post('http://localhost:4000/data/updateDay/' + dayToEditId, newDay)
-                axios.post('/data/updateDay/' + dayToEditId, newDay)
+                axios.post(this.host + '/data/updateDay/' + dayToEditId, newDay)
                     .then(res => {
                         if (this.mounted) {
                             let days = [...this.state.days];
@@ -190,7 +194,7 @@ class TimetableStructure extends Component {
         clearTimeout(this.timeoutID);
         dayToEditId = dayId;
         // axios.get('http://localhost:4000/data/getDay/' + dayId)
-        axios.get('/data/getDay/' + dayId)
+        axios.get(this.host + '/data/getDay/' + dayId)
             .then(response => {
                 if (this.mounted) {
                     let alertMessage = 'עריכת יום: ' + response.data.day;
@@ -214,7 +218,7 @@ class TimetableStructure extends Component {
 
     deleteDay(dayId) {
         // axios.post('http://localhost:4000/data/deleteDay/' + dayId)
-        axios.post('/data/deleteDay/' + dayId)
+        axios.post(this.host + '/data/deleteDay/' + dayId)
             .then(response => {
                 if (this.mounted) {
                     let days = [...this.state.days];

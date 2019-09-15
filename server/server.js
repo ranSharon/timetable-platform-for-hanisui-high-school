@@ -36,7 +36,8 @@ connection.once('open', function () {
 app.use(express.static(__dirname));
 app.use(express.static(path.join(__dirname, '../build')));
 
-app.use('/data', dataRoutes);
+
+// app.use('/data', dataRoutes);
 
 dataRoutes.route('/getDays').get(function (req, res) {
     Day.find(function (err, days) {
