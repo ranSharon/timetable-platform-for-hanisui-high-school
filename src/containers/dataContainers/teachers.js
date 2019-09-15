@@ -11,6 +11,7 @@ let teacherToEdit = '';
 
 class Teachers extends Component {
     mounted = false;
+    host = '';
 
     constructor(props) {
         super(props);
@@ -61,7 +62,11 @@ class Teachers extends Component {
 
     componentDidMount() {
         this.mounted = true;
-        axios.get('http://localhost:4000/data/getSubjects')
+        if (process.env.NODE_ENV !== 'production') {
+            this.host = 'http://localhost:4000'
+        }
+        // axios.get('http://localhost:4000/data/getSubjects')
+        axios.get(this.host + '/data/getSubjects')
             .then(response => {
                 if (this.mounted) {
                     this.onlySubjectsAndGrades(response.data);
@@ -70,7 +75,8 @@ class Teachers extends Component {
             .catch(function (error) {
                 console.log(error);
             });
-        axios.get('http://localhost:4000/data/getTeachers')
+        // axios.get('http://localhost:4000/data/getTeachers')
+        axios.get(this.host + '/data/getTeachers')
             .then(response => {
                 if (this.mounted) {
                     this.setState({ teachers: [...response.data], teachersFetched: true }, () => {
@@ -261,7 +267,8 @@ class Teachers extends Component {
         if (this.state.buttonType === 'אישור') {
             let teacher = {};
             this.setState({ waitingToSave: true }, () => {
-                axios.post('http://localhost:4000/data/addTeacher', newTeacher)
+                // axios.post('http://localhost:4000/data/addTeacher', newTeacher)
+                axios.post(this.host + '/data/addTeacher', newTeacher)
                     .then(res => {
                         if (this.mounted) {
                             teacher = { ...res.data.teacher };
@@ -275,7 +282,8 @@ class Teachers extends Component {
             });
         } else if (this.state.buttonType === 'סיים עריכה') {
             this.setState({ waitingToSave: true }, () => {
-                axios.post('http://localhost:4000/data/updateTeacher/' + teacherToEditId, newTeacher)
+                // axios.post('http://localhost:4000/data/updateTeacher/' + teacherToEditId, newTeacher)
+                axios.post(this.host + '/data/updateTeacher/' + teacherToEditId, newTeacher)
                     .then(res => {
                         if (this.mounted) {
                             let teachers = [...this.state.teachers];
@@ -455,7 +463,8 @@ class Teachers extends Component {
         window.scrollTo(0, 0);
         clearTimeout(this.timeoutID);
         teacherToEditId = teacherId;
-        axios.get('http://localhost:4000/data/getTeacher/' + teacherId)
+        // axios.get('http://localhost:4000/data/getTeacher/' + teacherId)
+        axios.get(this.host + '/data/getTeacher/' + teacherId)
             .then(response => {
                 if (this.mounted) {
                     let checked = {
@@ -519,7 +528,8 @@ class Teachers extends Component {
     }
 
     deleteTeacher(teacherId) {
-        axios.post('http://localhost:4000/data/deleteTeacher/' + teacherId)
+        // axios.post('http://localhost:4000/data/deleteTeacher/' + teacherId)
+        axios.post(this.host + '/data/deleteTeacher/' + teacherId)
             .then(response => {
                 if (this.mounted) {
                     let teachers = [...this.state.teachers];

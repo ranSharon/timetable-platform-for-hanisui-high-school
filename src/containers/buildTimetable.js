@@ -14,6 +14,7 @@ let classroomClashMessage = [];
 
 class BuildTimetable extends Component {
     mounted = false;
+    host = '';
     timeoutID;
 
     constructor(props) {
@@ -115,7 +116,11 @@ class BuildTimetable extends Component {
         //     });
 
         this.mounted = true;
-        axios.get('http://localhost:4000/data/getConstraints')
+        if (process.env.NODE_ENV !== 'production') {
+            this.host = 'http://localhost:4000'
+        }
+        // axios.get('http://localhost:4000/data/getConstraints')
+        axios.get(this.host + '/data/getConstraints')
             .then(response => {
                 if (this.mounted) {
                     this.setState({ constraints: [...response.data.sort(this.compareTeacher)], constraintsFetched: true }, function () {
@@ -129,7 +134,8 @@ class BuildTimetable extends Component {
                 console.log(error);
             });
 
-        axios.get('http://localhost:4000/data/getGrades')
+        // axios.get('http://localhost:4000/data/getGrades')
+        axios.get(this.host + '/data/getGrades')
             .then(response => {
                 if (this.mounted) {
                     this.setState({ grades: [...response.data.sort(this.compareGrade)], gradesFetched: true }, function () {
@@ -143,7 +149,8 @@ class BuildTimetable extends Component {
                 console.log(error);
             });
 
-        axios.get('http://localhost:4000/data/getDays')
+        // axios.get('http://localhost:4000/data/getDays')
+        axios.get(this.host + '/data/getDays')
             .then(response => {
                 if (this.mounted) {
                     this.setState({ days: [...response.data], daysFetched: true }, function () {
@@ -157,7 +164,8 @@ class BuildTimetable extends Component {
                 console.log(error);
             });
 
-        axios.get('http://localhost:4000/data/getClassRooms')
+        // axios.get('http://localhost:4000/data/getClassRooms')
+        axios.get(this.host + '/data/getClassRooms')
             .then(response => {
                 if (this.mounted) {
                     this.setState({ classRooms: [...response.data.sort(this.compareClassroom)], classRoomsView: [...response.data] });
@@ -168,7 +176,8 @@ class BuildTimetable extends Component {
             .catch(function (error) {
                 console.log(error);
             });
-        axios.get('http://localhost:4000/data/getTeachers')
+        // axios.get('http://localhost:4000/data/getTeachers')
+        axios.get(this.host + '/data/getTeachers')
             .then(response => {
                 if (this.mounted) {
                     this.setState({ teachers: [...response.data] });
@@ -195,7 +204,8 @@ class BuildTimetable extends Component {
         if (!this.state.daysFetched || !this.state.gradesFetched || !this.state.constraintsFetched) {
             return;
         }
-        axios.get('http://localhost:4000/data/getTimeTable')
+        // axios.get('http://localhost:4000/data/getTimeTable')
+        axios.get(this.host + '/data/getTimeTable')
             .then(response => {
                 if (this.mounted) {
                     // console.log(response.data);
@@ -1667,7 +1677,8 @@ class BuildTimetable extends Component {
         let timeTable = [...this.state.timeTable];
         let classTimeTable = {};
         this.setState({ waitingToSave: true, saveSucceed: false }, () => {
-            axios.post('http://localhost:4000/data/dropTimeTable')
+            // axios.post('http://localhost:4000/data/dropTimeTable')
+            axios.post(this.host + '/data/dropTimeTable')
                 .then(response => {
                     if (this.mounted) {
                         if (timeTable.length === 0) {
@@ -1683,7 +1694,8 @@ class BuildTimetable extends Component {
                     let tablesSaved = 0;
                     for (let i = 0; i <= timeTable.length - 1; i++) {
                         classTimeTable = { ...timeTable[i] };
-                        axios.post('http://localhost:4000/data/addTimeTable', classTimeTable)
+                        // axios.post('http://localhost:4000/data/addTimeTable', classTimeTable)
+                        axios.post(this.host + '/data/addTimeTable', classTimeTable)
                             .then(res => {
                                 if (this.mounted) {
                                     tablesSaved++;
@@ -2017,7 +2029,7 @@ class BuildTimetable extends Component {
         if (this.state.isLoading) {
             return (
                 <div className="text-center mt-5">
-                    <div className="spinner-border" style={{"width": "3rem", "height": "3rem"}} role="status">
+                    <div className="spinner-border" style={{ "width": "3rem", "height": "3rem" }} role="status">
                         <span className="sr-only">Loading...</span>
                     </div>
                 </div>

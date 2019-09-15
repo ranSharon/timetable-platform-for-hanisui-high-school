@@ -9,6 +9,7 @@ import up from '../../assets/sort-up.png';
 
 class Constraints extends Component {
     mounted = false;
+    host = '';
 
     constructor(props) {
         super(props);
@@ -71,7 +72,7 @@ class Constraints extends Component {
             mainButtonDisable: false,
             waitingToSave: false,
             deleteConstraintClicked: false,
-            constraintsFetched: false, 
+            constraintsFetched: false,
 
             teacherSortImg: down,
             gradeSortImg: down,
@@ -102,9 +103,12 @@ class Constraints extends Component {
     }
 
     componentDidMount() {
-        console.log('componentDidMount');
         this.mounted = true;
-        axios.get('http://localhost:4000/data/getConstraints')
+        if (process.env.NODE_ENV !== 'production') {
+            this.host = 'http://localhost:4000'
+        }
+        // axios.get('http://localhost:4000/data/getConstraints')
+        axios.get(this.host + '/data/getConstraints')
             .then(response => {
                 if (this.mounted) {
                     let num = 0;
@@ -119,7 +123,8 @@ class Constraints extends Component {
             .catch(function (error) {
                 console.log(error);
             });
-        axios.get('http://localhost:4000/data/getTeachers')
+        // axios.get('http://localhost:4000/data/getTeachers')
+        axios.get(this.host + '/data/getTeachers')
             .then(response => {
                 if (this.mounted) {
                     this.setState({ allTeachers: [...response.data] });
@@ -131,7 +136,8 @@ class Constraints extends Component {
             .catch(function (error) {
                 console.log(error);
             });
-        axios.get('http://localhost:4000/data/getGrades')
+        // axios.get('http://localhost:4000/data/getGrades')
+        axios.get(this.host + '/data/getGrades')
             .then(response => {
                 if (this.mounted) {
                     this.setState({ allGrades: [...response.data], alertMessage: '' });
@@ -142,7 +148,8 @@ class Constraints extends Component {
             .catch(function (error) {
                 console.log(error);
             });
-        axios.get('http://localhost:4000/data/getSubjects')
+        // axios.get('http://localhost:4000/data/getSubjects')
+        axios.get(this.host + '/data/getSubjects')
             .then(response => {
                 if (this.mounted) {
                     this.setState({ allSubjects: [...response.data] });
@@ -710,7 +717,8 @@ class Constraints extends Component {
                 num += 1;
                 this.setState({ num: num });
                 this.setState({ waitingToSave: true }, () => {
-                    axios.post('http://localhost:4000/data/addConstraint', newConstraint)
+                    // axios.post('http://localhost:4000/data/addConstraint', newConstraint)
+                    axios.post(this.host + '/data/addConstraint', newConstraint)
                         .then(res => {
                             if (this.mounted) {
                                 constraint = { ...res.data };
@@ -729,7 +737,8 @@ class Constraints extends Component {
             // console.log(this.state.newCurrentTeachHours);
             if (this.state.groupingTeachers.length > 0) {
                 for (let i = 0; i <= this.state.groupingTeachers.length - 1; i++) {
-                    axios.post('http://localhost:4000/data/updateTeacherByName/', { name: this.state.groupingTeachers[i], hours: newCurrentTeachHours })
+                    // axios.post('http://localhost:4000/data/updateTeacherByName/', { name: this.state.groupingTeachers[i], hours: newCurrentTeachHours })
+                    axios.post(this.host + '/data/updateTeacherByName/', { name: this.state.groupingTeachers[i], hours: newCurrentTeachHours })
                         .then(res => {
                             if (this.mounted) {
                                 let teachers = [...this.state.allTeachers];
@@ -746,7 +755,8 @@ class Constraints extends Component {
                 }
             } else {
                 const teacherToEditId = this.state.teacherDetails._id;
-                axios.post('http://localhost:4000/data/updateTeacher/' + teacherToEditId, newTeacher)
+                // axios.post('http://localhost:4000/data/updateTeacher/' + teacherToEditId, newTeacher)
+                axios.post(this.host + '/data/updateTeacher/' + teacherToEditId, newTeacher)
                     .then(res => {
                         if (this.mounted) {
                             let teachers = [...this.state.allTeachers];
@@ -1171,7 +1181,8 @@ class Constraints extends Component {
         let constraintsSaved = 0;
 
         this.setState({ waitingToSave: true }, () => {
-            axios.post('http://localhost:4000/data/addConstraint', splitConstraints[0])
+            // axios.post('http://localhost:4000/data/addConstraint', splitConstraints[0])
+            axios.post(this.host + '/data/addConstraint', splitConstraints[0])
                 .then(res => {
                     if (this.mounted) {
                         constraintsSaved++;
@@ -1199,7 +1210,8 @@ class Constraints extends Component {
                 let constraint = {};
                 firstConstraint.num = num;
                 num += 1;
-                axios.post('http://localhost:4000/data/addConstraint', firstConstraint)
+                // axios.post('http://localhost:4000/data/addConstraint', firstConstraint)
+                axios.post(this.host + '/data/addConstraint', firstConstraint)
                     .then(res => {
                         if (this.mounted) {
                             constraintsSaved++;
@@ -1226,7 +1238,8 @@ class Constraints extends Component {
             if (splitConstraints.length > 1) {
                 let constraint = {};
                 splitConstraints[1].num = num;
-                axios.post('http://localhost:4000/data/addConstraint', splitConstraints[1])
+                // axios.post('http://localhost:4000/data/addConstraint', splitConstraints[1])
+                axios.post(this.host + '/data/addConstraint', splitConstraints[1])
                     .then(res => {
                         if (this.mounted) {
                             constraintsSaved++;
@@ -1256,7 +1269,8 @@ class Constraints extends Component {
                 let constraint = {};
                 num += 1;
                 firstConstraint.num = num;
-                axios.post('http://localhost:4000/data/addConstraint', firstConstraint)
+                // axios.post('http://localhost:4000/data/addConstraint', firstConstraint)
+                axios.post(this.host + '/data/addConstraint', firstConstraint)
                     .then(res => {
                         if (this.mounted) {
                             constraintsSaved++;
@@ -1481,7 +1495,8 @@ class Constraints extends Component {
             newCurrentTeachHours = (fatherConstraint.firstLesson + fatherConstraint.secondlesson + fatherConstraint.thirdlesson + gmol) * (-1);
         }
         for (let i = 0; i <= fatherConstraint.groupingTeachers.length - 1; i++) {
-            axios.post('http://localhost:4000/data/updateTeacherByName/', { name: fatherConstraint.groupingTeachers[i], hours: newCurrentTeachHours })
+            // axios.post('http://localhost:4000/data/updateTeacherByName/', { name: fatherConstraint.groupingTeachers[i], hours: newCurrentTeachHours })
+            axios.post(this.host + '/data/updateTeacherByName/', { name: fatherConstraint.groupingTeachers[i], hours: newCurrentTeachHours })
                 .then(res => {
                     if (this.mounted) {
                         // console.log(res);
@@ -1503,7 +1518,8 @@ class Constraints extends Component {
         }
 
         for (let i = 0; i <= constraintsIdToDelete.length - 1; i++) {
-            axios.post('http://localhost:4000/data/deleteConstraint/' + constraintsIdToDelete[i])
+            // axios.post('http://localhost:4000/data/deleteConstraint/' + constraintsIdToDelete[i])
+            axios.post(this.host + '/data/deleteConstraint/' + constraintsIdToDelete[i])
                 .then(response => {
                     if (this.mounted) {
                         let constraints = [...this.state.constraints];
@@ -1592,7 +1608,8 @@ class Constraints extends Component {
                                                 this.setTeacherAlertMessage(teacherDetails);
                                             });
                                             for (let i = 0; i <= fatherConstraint.groupingTeachers.length - 1; i++) {
-                                                axios.post('http://localhost:4000/data/updateTeacherByName/', { name: fatherConstraint.groupingTeachers[i], hours: newCurrentTeachHours })
+                                                // axios.post('http://localhost:4000/data/updateTeacherByName/', { name: fatherConstraint.groupingTeachers[i], hours: newCurrentTeachHours })
+                                                axios.post(this.host + '/data/updateTeacherByName/', { name: fatherConstraint.groupingTeachers[i], hours: newCurrentTeachHours })
                                                     .then(res => {
                                                         if (this.mounted) {
                                                             let teachers = [...this.state.allTeachers];

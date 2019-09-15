@@ -3,6 +3,7 @@ import axios from 'axios';
 
 class DataOnTimetable extends Component {
     mounted = false;
+    host = '';
 
     constructor(props) {
         super(props)
@@ -40,7 +41,11 @@ class DataOnTimetable extends Component {
 
     componentDidMount() {
         this.mounted = true;
-        axios.get('http://localhost:4000/data/getTimeTable')
+        if (process.env.NODE_ENV !== 'production') {
+            this.host = 'http://localhost:4000'
+        }
+        // axios.get('http://localhost:4000/data/getTimeTable')
+        axios.get(this.host+'/data/getTimeTable')
             .then(response => {
                 if (this.mounted) {
                     this.setState({ timeTable: [...response.data], timeTableFetched: true }, () => {
