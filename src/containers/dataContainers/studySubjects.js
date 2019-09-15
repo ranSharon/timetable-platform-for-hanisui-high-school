@@ -135,6 +135,9 @@ class StudySubjects extends Component {
     }
 
     onBagrutCheck() {
+        if (this.state.bagrut) {
+            this.setState({ gmol: '' })
+        }
         this.setState({ bagrut: !this.state.bagrut });
     }
 
@@ -170,6 +173,9 @@ class StudySubjects extends Component {
     }
 
     onMixCheck() {
+        if(this.state.mix){
+            this.setState({numOfMix: '', grouping: false})
+        }
         this.setState({ mix: !this.state.mix });
     }
 
@@ -190,6 +196,9 @@ class StudySubjects extends Component {
     }
 
     onGroupingCheck() {
+        if(this.state.grouping){
+            this.setState({numOfMix: ''})
+        }
         this.setState({ grouping: !this.state.grouping });
     }
 
