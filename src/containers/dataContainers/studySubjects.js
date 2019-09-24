@@ -658,7 +658,7 @@ class StudySubjects extends Component {
                     {this.bagrutIsCheked()}
                     <div className="pt-3" style={{ textAlign: "right" }}>
                         <input type="checkbox" checked={this.state.mix} onChange={() => this.onMixCheck()} />
-                        <div style={{ display: "inline" }}> {'מקצוע שמערבב את כל הכיתות בשכבה'}</div>
+                        <div style={{ display: "inline" }}> {'מקצוע שמערבב את כל כיתות השכבה'}</div>
                     </div>
                     {this.mixIsCheked()}
                     <h6 className="pt-2 mb-0" style={{ "textAlign": "right" }}>המקצוע דורש:</h6>

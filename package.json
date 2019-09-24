@@ -2,34 +2,37 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
-  
   "engines": {
     "npm": "6.9.0",
     "node": "10.16.0"
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "bootstrap": "^4.3.1",
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "is-empty": "^1.2.0",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.7.1",
+    "passport": "^0.4.0",
+    "passport-jwt": "^4.0.0",
     "react": "^16.8.6",
     "react-confirm-alert": "^2.4.1",
     "react-dnd": "^7.4.5",
     "react-dnd-html5-backend": "^7.4.4",
     "react-dom": "^16.8.6",
     "react-router-dom": "^5.0.0",
-    "react-scripts": "2.1.8"
+    "react-scripts": "2.1.8",
+    "validator": "^11.1.0"
   },
   "scripts": {
     "start": "NODE_ENV=production node server/server.js",
-
     "client": "react-scripts start",
     "build": "react-scripts build",
     "test-client": "react-scripts test",
     "eject": "react-scripts eject",
-
     "server": "nodemon server/server.js",
     "test-server": "echo \"Error: no test specified\" && exit 1",
     "dev": "concurrently \"npm run server\" \"npm run client\""

@@ -114,6 +114,7 @@ class DragConstraintBox extends Component {
         //     fontSize = "80%"
         // }
         let boxStyle = {
+            "float": "left",
             "cursor": "pointer",
             "width": "100%",
             "height": height,
@@ -121,9 +122,14 @@ class DragConstraintBox extends Component {
             "fontSize": '11px',
         };
 
+        let shadow = '';
+        if (!this.props.inTable) {
+            shadow = 'shadow-lg bg-white rounded';
+        }
+
         return this.props.connectDragSource(
             <div
-                className={"m-auto card text-center " + this.props.border}
+                className={"m-auto card text-center " + this.props.border + ' ' + shadow}
                 style={boxStyle}
                 // onClick={() => this.props.click(this.props.inTable, this.props.data, this.props.classRoom)}
                 onClick={() => this.handleClick()}

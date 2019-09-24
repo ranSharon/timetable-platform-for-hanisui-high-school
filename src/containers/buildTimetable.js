@@ -197,7 +197,7 @@ class BuildTimetable extends Component {
 
     componentDidUpdate() {
         // console.log(this.state.inTable);
-        // console.log(this.state.currentConstraint);
+        console.log(this.state.currentConstraint);
     }
 
     initTimeTable() {
@@ -359,7 +359,7 @@ class BuildTimetable extends Component {
                 console.log(this.state.grades);
             });
         }
-        else{
+        else {
             this.setState({ isLoading: false }, () => {
                 console.log(this.state.grades);
             });
@@ -543,20 +543,36 @@ class BuildTimetable extends Component {
             grades = [...grades.sort()];
 
             // countinu setting nav bar
-            for (let i = 0; i <= grades.length - 1; i++) {
+            // for (let i = 0; i <= grades.length - 1; i++) {
+            //     navBar = [...navBar,
+            //     <li key={key} className="navbar-item w-aotu">
+            //         <div
+            //             className="nav-link"
+            //             value={grades[i]}
+            //             onClick={() => { this.handleClassClick(grades[i]) }}
+            //             // onClick={() =>  this.handleClassClick(grades[i]) }
+            //             style={{ "cursor": "pointer" }}>
+            //             {grades[i]}
+            //         </div>
+            //     </li>
+            //     ];
+            //     key++;
+            // }
+            grades.forEach((grade) => {
                 navBar = [...navBar,
                 <li key={key} className="navbar-item w-aotu">
                     <div
                         className="nav-link"
-                        value={grades[i]}
-                        onClick={() => { this.handleClassClick(grades[i]) }}
+                        value={grade}
+                        onClick={() => { this.handleClassClick(grade) }}
+                        // onClick={() =>  this.handleClassClick(grades[i]) }
                         style={{ "cursor": "pointer" }}>
-                        {grades[i]}
+                        {grade}
                     </div>
                 </li>
                 ];
                 key++;
-            }
+            })
         } else {
             grades = [...this.state.grades];
             for (let i = 0; i <= grades.length - 1; i++) {
@@ -630,7 +646,6 @@ class BuildTimetable extends Component {
                 });
             })
         });
-
     }
 
     setConstraintsView() {
@@ -1151,10 +1166,10 @@ class BuildTimetable extends Component {
             classConstraintsBoxes = [...classConstraintsBoxes,
             <ConstraintBox
                 key={i}
+                inPotentialCard={false}
                 data={classConstraints[i]}
                 currentConstraint={this.state.currentConstraint}
-                click={this.handleConstraintClick}
-            >
+                click={this.handleConstraintClick}>
             </ConstraintBox>
             ]
         }
@@ -1523,14 +1538,14 @@ class BuildTimetable extends Component {
                     // console.log(this.state.currentConstraint.subjectMix);
                     if (this.state.currentConstraint.subjectMix) {
                         let grade = '';
-                        let nunOfClasses = 0;
+                        // let nunOfClasses = 0;
                         let currentClass = this.state.currentClass;
                         if (currentClass.length === 2) {
                             grade = currentClass[0];
-                            nunOfClasses = parseInt(currentClass[1]);
+                            // nunOfClasses = parseInt(currentClass[1]);
                         } else if (currentClass.length === 3) {
                             grade = currentClass[0] + currentClass[1];
-                            nunOfClasses = parseInt(currentClass[2]);
+                            // nunOfClasses = parseInt(currentClass[2]);
                         }
                         let numOfClasses = 0;
                         let grades = [...this.state.grades];
@@ -1645,6 +1660,7 @@ class BuildTimetable extends Component {
                     <h6>כעת בחר חדר לימוד עבור שיעור זה</h6>
                     <div>
                         <ConstraintBox
+                            inPotentialCard={true}
                             data={this.state.currentConstraint}
                             currentConstraint={this.state.currentConstraint}
                             click={this.handleConstraintClick}
@@ -1657,7 +1673,8 @@ class BuildTimetable extends Component {
             return (
                 <div>
                     <h6>יש כעת אפשרות לגרור את השיעור לטובת שיבוץ בטבלה</h6>
-                    <div style={{ "marginRight": "16.6666666667%", "marginLeft": "16.6666666667%" }}>
+                    {/* <div style={{ "marginRight": "16.6666666667%", "marginLeft": "16.6666666667%" }}> */}
+                    <div className="mx-auto" style={{ "width": "61.11111111%" }}>
                         <DragConstraintBox
                             data={this.state.currentConstraint}
                             currentConstraint={this.state.currentConstraint}
@@ -1670,7 +1687,7 @@ class BuildTimetable extends Component {
                         >
                         </DragConstraintBox>
                     </div>
-                    <div>
+                    <div className='d-inline-block'>
                         <h6>{'חדר הלימוד שנבחר עבור שיעור זה: ' + this.state.currentClassRoom.classRoomName}</h6>
                     </div>
                 </div>
@@ -1697,8 +1714,32 @@ class BuildTimetable extends Component {
                         }
                     }
                     let tablesSaved = 0;
-                    for (let i = 0; i <= timeTable.length - 1; i++) {
-                        classTimeTable = { ...timeTable[i] };
+                    // for (let i = 0; i <= timeTable.length - 1; i++) {
+                    //     classTimeTable = { ...timeTable[i] };
+                    //     // axios.post('http://localhost:4000/data/addTimeTable', classTimeTable)
+                    //     axios.post(this.host + '/data/addTimeTable', classTimeTable)
+                    //         .then(res => {
+                    //             if (this.mounted) {
+                    //                 tablesSaved++;
+                    //                 console.log(tablesSaved);
+                    //                 if (this.mounted) {
+                    //                     if (tablesSaved === timeTable.length) {
+                    //                         this.setState({ waitingToSave: false, saveSucceed: true }, () => {
+                    //                             // console.log('hi');
+                    //                             clearTimeout(this.timeoutID);
+                    //                             this.timeoutID = setTimeout(() => { this.setState({ saveSucceed: false }) }, 1500);
+                    //                             // console.log(classTimeTable);
+                    //                         });
+                    //                     }
+                    //                 }
+                    //             }
+                    //         })
+                    //         .catch(function (error) {
+                    //             console.log(error);
+                    //         });
+                    // }
+                    timeTable.forEach((table) => {
+                        classTimeTable = { ...table };
                         // axios.post('http://localhost:4000/data/addTimeTable', classTimeTable)
                         axios.post(this.host + '/data/addTimeTable', classTimeTable)
                             .then(res => {
@@ -1720,7 +1761,7 @@ class BuildTimetable extends Component {
                             .catch(function (error) {
                                 console.log(error);
                             });
-                    }
+                    });
                 })
                 .catch(function (error) {
                     console.log(error);
@@ -2069,7 +2110,8 @@ class BuildTimetable extends Component {
                 <div className="row mt-2">
                     <div className="col-5">
                         <div
-                            className="d-inline-block w-100 text-center p-0 card"
+                            // className="d-inline-block w-100 text-center p-0 card"
+                            className=" w-100 text-center p-0 card"
                             style={{ "position": "relative", "height": "400px", "overflow": "auto", "display": "block" }}>
                             <h6 className="text-center">שיעורים עבור כיתה זו</h6>
                             {this.createConstraintsBoxes()}

@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react';
+import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 // import Tabs from 'react-bootstrap/Tabs';
@@ -21,16 +21,16 @@ class App extends Component {
     }
   }
 
-  componentDidMount(){
+  componentDidMount() {
     const path = window.location.pathname.substr(1);
     console.log(path);
     this.handleTabClick(path);
   }
 
-  componentDidUpdate(){
+  componentDidUpdate() {
     const path = window.location.pathname.substr(1);
     console.log(path);
-    if(this.state.path !== path){
+    if (this.state.path !== path) {
       console.log(path.substr(1));
       // this.setState({path: path});
       this.handleTabClick(path);

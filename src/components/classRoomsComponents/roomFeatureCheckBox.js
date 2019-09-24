@@ -1,7 +1,7 @@
 import React from 'react';
 
 const roomFeatureCheckBox = (props) => {
-    
+
     // const featureCheck = (e) => {
     //     props.roomFeatureCheck(e.target.value);
     // }
@@ -15,12 +15,12 @@ const roomFeatureCheckBox = (props) => {
                 onChange={() => props.roomFeatureCheck(props.roomFeature)}
                 checked={props.checked}
             />
-            <div style={{ display: "inline" }}>{props.roomFeature}</div>
+            <div style={{ display: "inline" }}> {props.roomFeature}</div>
         </div>
     );
 };
 
-export default roomFeatureCheckBox; 
+export default roomFeatureCheckBox;
 
 // class roomFeatureCheckBox extends Component {
 

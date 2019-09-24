@@ -3,7 +3,12 @@
   <component name="ChangeListManager">
     <list default="true" id="baf4ff64-9769-405f-973a-65e24fa4c775" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/classRoomsComponents/roomFeatureCheckBox.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/classRoomsComponents/roomFeatureCheckBox.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/containers/buildTimetable.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/containers/buildTimetable.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/containers/buildTimetableContainers/constraintBox.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/containers/buildTimetableContainers/constraintBox.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/containers/buildTimetableContainers/dragConstraintBox.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/containers/buildTimetableContainers/dragConstraintBox.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/containers/dataContainers/studySubjects.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/containers/dataContainers/studySubjects.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -23,12 +28,6 @@
         <option value="$PROJECT_DIR$/.idea/modules.xml" />
       </list>
     </option>
-  </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="25" />
-    <option name="y" value="50" />
-    <option name="width" value="2950" />
-    <option name="height" value="1800" />
   </component>
   <component name="ProjectId" id="1QqzmLiSrdXpc76CITtTitZCgZn" />
   <component name="PropertiesComponent">
@@ -77,6 +76,8 @@
       <workItem from="1563742057878" duration="307000" />
       <workItem from="1563903529311" duration="19000" />
       <workItem from="1568513075837" duration="76000" />
+      <workItem from="1568824656697" duration="344000" />
+      <workItem from="1568827124475" duration="1210000" />
     </task>
     <servers />
   </component>
@@ -88,7 +89,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>

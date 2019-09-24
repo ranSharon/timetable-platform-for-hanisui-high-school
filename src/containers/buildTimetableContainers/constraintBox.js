@@ -25,11 +25,11 @@ class ConstraintBox extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (JSON.stringify(this.props.currentConstraint) === JSON.stringify(this.props.data) && this.state.border === '') {
+        if (JSON.stringify(this.props.currentConstraint) === JSON.stringify(this.props.data) && this.state.border === '' && !this.props.inPotentialCard) {
             // border = 'border border-primary';
             this.setState({ border: 'border border-primary' });
         }
-        if (JSON.stringify(this.props.currentConstraint) !== JSON.stringify(this.props.data) && this.state.border === 'border border-primary') {
+        if (JSON.stringify(this.props.currentConstraint) !== JSON.stringify(this.props.data) && this.state.border === 'border border-primary' && !this.props.inPotentialCard) {
             this.setState({ border: '' });
         }
     }
@@ -80,7 +80,7 @@ class ConstraintBox extends Component {
 
         return (
             <div
-                className={"d-inline-block card text-center m-1 " + this.state.border}
+                className={"d-inline-block card text-center m-1" + this.state.border}
                 style={boxStyle}
                 onClick={() => this.ConstraintBoxClicked()}>
                 {this.props.data.subject + ', '}
