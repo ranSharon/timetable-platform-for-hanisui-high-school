@@ -30,9 +30,9 @@ class Grades extends Component {
 
     componentDidMount() {
         this.mounted = true;
-        if (process.env.NODE_ENV !== 'production') {
-            this.host = 'http://localhost:4000'
-        }
+        // if (process.env.NODE_ENV !== 'production') {
+        //     this.host = 'http://localhost:4000'
+        // }
         // axios.get('http://localhost:4000/data/getGrades')
         axios.get(this.host + '/data/getGrades')
             .then(response => {

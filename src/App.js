@@ -1,129 +1,74 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-// import Tabs from 'react-bootstrap/Tabs';
-// import Tab from 'react-bootstrap/Tab';
-// import ReactRouterBootstrap, { LinkContainer } from 'react-router-bootstrap';
-import Data from './containers/data';
-import BuildTimetable from './containers/buildTimetable';
-import DataOnTimetable from './containers/dataOnTimetable';
-import Guide from './containers/guide';
+import NavBar from './containers/navBar';
+import Landing from './components/landing';
+import Login from './components/auth/login';
+import { Provider } from 'react-redux';
+import store from './store';
+import jwt_decode from 'jwt-decode';
+import setAuthToken from './utils/setAuthToken';
+import { setCurrentUser, logoutUser } from './actions/authActions';
+import PrivateRoute from './components/private-route/privateRoute';
+import Dashboard from './components/dashboard';
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+
+// Check for token to keep user logged in
+if (localStorage.jwtToken) {
+  // Set auth token header auth
+  const token = localStorage.jwtToken;
+  setAuthToken(token);
+  // Decode token and get user info and exp
+  const decoded = jwt_decode(token);
+  // Set user and isAuthenticated
+  store.dispatch(setCurrentUser(decoded));
+  // Check for expired token
+  const currentTime = Date.now() / 1000; // to get in milliseconds
+  if (decoded.exp < currentTime) {
+    // Logout user
+    store.dispatch(logoutUser());
+    // Redirect to login
+    window.location.href = "./login";
+  }
+}
+
+console.log(store.getState().auth.isAuthenticated);
+// localStorage.clear();
 
 class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      data: 'text-secondary nav-link',
-      buildTimetable: 'text-secondary nav-link',
-      dataOnTimetable: 'text-secondary nav-link',
-      guide: 'text-secondary nav-link',
-      path: '/'
-    }
-  }
-
-  componentDidMount() {
-    const path = window.location.pathname.substr(1);
-    console.log(path);
-    this.handleTabClick(path);
-  }
-
-  componentDidUpdate() {
-    const path = window.location.pathname.substr(1);
-    console.log(path);
-    if (this.state.path !== path) {
-      console.log(path.substr(1));
-      // this.setState({path: path});
-      this.handleTabClick(path);
-    }
-  }
-
-  handleTabClick = (tab) => {
-    switch (tab) {
-      case 'data':
-        this.setState({
-          path: tab,
-          data: 'text-secondary nav-link active',
-          buildTimetable: 'text-secondary nav-link',
-          dataOnTimetable: 'text-secondary nav-link',
-          guide: 'text-secondary nav-link'
-        });
-        break;
-      case 'buildTimetable':
-        this.setState({
-          path: tab,
-          data: 'text-secondary nav-link',
-          buildTimetable: 'text-secondary nav-link active',
-          dataOnTimetable: 'text-secondary nav-link',
-          guide: 'text-secondary nav-link'
-        });
-        break;
-      case 'dataOnTimetable':
-        this.setState({
-          path: tab,
-          data: 'text-secondary nav-link',
-          buildTimetable: 'text-secondary nav-link',
-          dataOnTimetable: 'text-secondary nav-link active',
-          guide: 'text-secondary nav-link'
-        });
-        break;
-      case 'guide':
-        this.setState({
-          path: tab,
-          data: 'text-secondary nav-link',
-          buildTimetable: 'text-secondary nav-link',
-          dataOnTimetable: 'text-secondary nav-link',
-          guide: 'text-secondary nav-link active'
-        });
-        break;
-      default:
-        this.setState({
-          path: tab,
-          data: 'text-secondary nav-link',
-          buildTimetable: 'text-secondary nav-link',
-          dataOnTimetable: 'text-secondary nav-link',
-          guide: 'text-secondary nav-link'
-        });
-        break;
-    }
-  }
+  // componentDidMount() {
+  //   console.log('componentDidMount');
+  //   localStorage.clear();
+  // }
 
   render() {
+    { console.log(this.props.auth); }
     return (
-      <Router>
-        <div className="container-fluid">
-          {/* <nav className="navbar navbar-expand-lg navbar-light bg-light"> */}
-          {/* <div className="collpase navbar-collapse"> */}
-          {/* <ul className="navbar-nav ml-auto"> */}
-          <ul className="nav nav-tabs">
-            {/* <li className="navbar-item"> */}
-            <li className="nav-item" onClick={() => this.handleTabClick('data')}>
-              <Link to="/data" className={this.state.data}>הגדרת נתונים ושיעורים</Link>
-            </li>
-            {/* <li className="navbar-item"> */}
-            <li className="nav-item" onClick={() => this.handleTabClick('buildTimetable')}>
-              <Link to="/buildTimetable" className={this.state.buildTimetable} onClick={() => { console.log(this) }}>בניית מערכת שעות</Link>
-            </li>
-            {/* <li className="navbar-item"> */}
-            <li className="nav-item" onClick={() => this.handleTabClick('dataOnTimetable')}>
-              <Link to="/dataOnTimetable" className={this.state.dataOnTimetable}>הצגת נתונים על המערכת</Link>
-            </li>
-            {/* <li className="navbar-item"> */}
-            <li className="nav-item" onClick={() => this.handleTabClick('guide')}>
-              <Link to="/guide" className={this.state.guide}>מדריך משתמש</Link>
-            </li>
-          </ul>
-          {/* </div> */}
-          {/* </nav> */}
-          <Route path="/data" component={Data} />
-          <Route path="/buildTimetable" component={BuildTimetable} />
-          <Route path="/dataOnTimetable" component={DataOnTimetable} />
-          <Route path="/guide" component={Guide} />
-        </div>
-      </Router>
-
+      <Provider store={store}>
+        <Router>
+          {this.props.auth.isAuthenticated ?
+            <NavBar />
+            :
+            <Login />}
+          {/* <Switch>
+            <PrivateRoute exact path="/" component={NavBar} />
+          </Switch> */}
+        </Router>
+      </Provider>
     );
   }
 }
 
-export default App;
-// export default DragDropContext(HTML5Backend)(App);
+// export default App;
+
+Dashboard.propTypes = {
+  logoutUser: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired
+};
+
+const mapStateToProps = state => ({
+  auth: state.auth
+});
+
+export default connect(mapStateToProps, { logoutUser })(App);

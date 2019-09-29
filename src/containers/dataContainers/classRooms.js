@@ -52,9 +52,9 @@ class ClassRooms extends Component {
 
     componentDidMount() {
         this.mounted = true;
-        if (process.env.NODE_ENV !== 'production') {
-            this.host = 'http://localhost:4000'
-        }
+        // if (process.env.NODE_ENV !== 'production') {
+        //     this.host = 'http://localhost:4000'
+        // }
         // axios.get('http://localhost:4000/data/getClassRooms')
         axios.get(this.host + '/data/getClassRooms')
             .then(response => {
