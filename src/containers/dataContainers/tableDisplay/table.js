@@ -7,6 +7,7 @@ import SubjectToChooseTableRow from './tableRowContainers/SubjectToChooseTableRo
 import TeacherTableRow from '../../../components/tableRowComponents/teacherTableRow';
 import RoomFeatureTableRow from '../../../components/tableRowComponents/roomFeatureTableRow';
 import ConstraintTableRow from '../../../components/tableRowComponents/constraintTableRow';
+import UsersTableBody from '../../../components/tableRowComponents/UsersTableBody';
 
 class DataTable extends Component {
 
@@ -274,7 +275,7 @@ class DataTable extends Component {
                         </tbody>}
                     </table>
                 </div>
-            )
+            );
         } else if (this.props.table === 'constraints') {
             return (
                 <div>
@@ -320,6 +321,22 @@ class DataTable extends Component {
                         {<tbody >
                             {this.constraintsRows()}
                         </tbody>}
+                    </table>
+                </div>
+            );
+        } else if (this.props.table === 'users') {
+            return (
+                <div>
+                    <h5 className="mt-3 float-right">משתמשים שהוגדרו</h5>
+                    <table className="table table-striped" style={{ marginTop: 20 }} >
+                        <thead>
+                            <tr className="text-center">
+                                <th >שם משתמש</th>
+                                <th >תאריך רישום</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <UsersTableBody />
                     </table>
                 </div>
             );

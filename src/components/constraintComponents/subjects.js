@@ -6,7 +6,7 @@ const subjects = (props) => {
     return (
         <div className="col-3 border border-dark p-0">
             <div className="border border-dark ">מקצוע</div>
-            <select className="custom-select" id="inputGroupSelect02" value={props.subject} onChange={(e) => props.onSubjectSelected(e)} >
+            <select className="custom-select rounded-0" id="inputGroupSelect02" value={props.subject} onChange={(e) => props.onSubjectSelected(e)} >
                 <option value="">מקצוע...</option>
                 {subjects.sort().map((subject, index) =>
                     <option

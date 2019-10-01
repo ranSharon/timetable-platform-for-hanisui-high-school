@@ -1,6 +1,4 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
-
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { loginUser } from "../../actions/authActions";
@@ -10,7 +8,7 @@ class Login extends Component {
     constructor() {
         super();
         this.state = {
-            email: "",
+            name: "",
             password: "",
             errors: {}
         };
@@ -43,7 +41,7 @@ class Login extends Component {
     onSubmit = e => {
         e.preventDefault();
         const userData = {
-            email: this.state.email,
+            name: this.state.name,
             password: this.state.password
         };
         this.props.loginUser(userData); // since we handle the redirect within our component, we don't need to pass in this.props.history as a parameter
@@ -63,6 +61,23 @@ class Login extends Component {
                             </div>
                             <form noValidate onSubmit={this.onSubmit}>
                                 <div className="form-group text-right">
+                                    <label htmlFor="name">שם משתמש</label>
+                                    <input
+                                        onChange={this.onChange}
+                                        value={this.state.name}
+                                        error={errors.name}
+                                        id="name"
+                                        type="text"
+                                        className={classnames("form-control", {
+                                            invalid: errors.name || errors.namenotfound
+                                        })}
+                                        placeholder="שם משתמש" />
+                                    <span className="text-danger">
+                                        {errors.name}
+                                        {errors.namenotfound}
+                                    </span>
+                                </div>
+                                {/* <div className="form-group text-right">
                                     <label htmlFor="email">כתובת אימייל</label>
                                     <input
                                         onChange={this.onChange}
@@ -78,7 +93,7 @@ class Login extends Component {
                                         {errors.email}
                                         {errors.emailnotfound}
                                     </span>
-                                </div>
+                                </div> */}
                                 <div className="form-group text-right">
                                     <label htmlFor="password">סיסמה</label>
                                     <input

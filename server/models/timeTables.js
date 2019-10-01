@@ -7,4 +7,4 @@ const timeTableSchema = new Schema({
     constaraintsToAdd: Array
 });
 
-module.exports = mongoose.model('TimeTable', timeTableSchema);
+module.exports = mongoose.model('TimeTables', timeTableSchema);

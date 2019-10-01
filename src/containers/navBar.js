@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-// import Tabs from 'react-bootstrap/Tabs';
-// import Tab from 'react-bootstrap/Tab';
-// import ReactRouterBootstrap, { LinkContainer } from 'react-router-bootstrap';
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
 import Data from './data';
 import BuildTimetable from './buildTimetable';
 import DataOnTimetable from './dataOnTimetable';
 import Guide from './guide';
+import RegisterPage from './registerPage';
 
 class NavBar extends Component {
   constructor(props) {
@@ -17,7 +17,8 @@ class NavBar extends Component {
       buildTimetable: 'text-secondary nav-link',
       dataOnTimetable: 'text-secondary nav-link',
       guide: 'text-secondary nav-link',
-      path: '/'
+      register: 'text-secondary nav-link',
+      path: 'data'
     }
   }
 
@@ -45,7 +46,8 @@ class NavBar extends Component {
           data: 'text-secondary nav-link active',
           buildTimetable: 'text-secondary nav-link',
           dataOnTimetable: 'text-secondary nav-link',
-          guide: 'text-secondary nav-link'
+          guide: 'text-secondary nav-link',
+          register: 'text-secondary nav-link'
         });
         break;
       case 'buildTimetable':
@@ -54,7 +56,8 @@ class NavBar extends Component {
           data: 'text-secondary nav-link',
           buildTimetable: 'text-secondary nav-link active',
           dataOnTimetable: 'text-secondary nav-link',
-          guide: 'text-secondary nav-link'
+          guide: 'text-secondary nav-link',
+          register: 'text-secondary nav-link'
         });
         break;
       case 'dataOnTimetable':
@@ -63,7 +66,8 @@ class NavBar extends Component {
           data: 'text-secondary nav-link',
           buildTimetable: 'text-secondary nav-link',
           dataOnTimetable: 'text-secondary nav-link active',
-          guide: 'text-secondary nav-link'
+          guide: 'text-secondary nav-link',
+          register: 'text-secondary nav-link'
         });
         break;
       case 'guide':
@@ -72,7 +76,18 @@ class NavBar extends Component {
           data: 'text-secondary nav-link',
           buildTimetable: 'text-secondary nav-link',
           dataOnTimetable: 'text-secondary nav-link',
-          guide: 'text-secondary nav-link active'
+          guide: 'text-secondary nav-link active',
+          register: 'text-secondary nav-link'
+        });
+        break;
+      case 'register':
+        this.setState({
+          path: tab,
+          data: 'text-secondary nav-link',
+          buildTimetable: 'text-secondary nav-link',
+          dataOnTimetable: 'text-secondary nav-link',
+          guide: 'text-secondary nav-link',
+          register: 'text-secondary nav-link active'
         });
         break;
       default:
@@ -81,13 +96,15 @@ class NavBar extends Component {
           data: 'text-secondary nav-link',
           buildTimetable: 'text-secondary nav-link',
           dataOnTimetable: 'text-secondary nav-link',
-          guide: 'text-secondary nav-link'
+          guide: 'text-secondary nav-link',
+          register: 'text-secondary nav-link'
         });
         break;
     }
   }
 
   render() {
+    console.log(this.props.auth.currentUser.name);
     return (
       <Router>
         <div className="container-fluid">
@@ -104,11 +121,20 @@ class NavBar extends Component {
             <li className="nav-item" onClick={() => this.handleTabClick('guide')}>
               <Link to="/guide" className={this.state.guide}>מדריך משתמש</Link>
             </li>
+            {this.props.auth.currentUser.name === 'administrator' ?
+              <li className="nav-item" onClick={() => this.handleTabClick('register')}>
+                <Link to="/register" className={this.state.register}>ניהול ורישום משתמשים</Link>
+              </li> : null
+            }
           </ul>
           <Route path="/data" component={Data} />
           <Route path="/buildTimetable" component={BuildTimetable} />
           <Route path="/dataOnTimetable" component={DataOnTimetable} />
           <Route path="/guide" component={Guide} />
+          {this.props.auth.currentUser.name === 'administrator' ?
+              <Route path="/register" component={RegisterPage} /> 
+              : null
+            }
         </div>
       </Router>
 
@@ -116,5 +142,13 @@ class NavBar extends Component {
   }
 }
 
-export default NavBar;
-// export default DragDropContext(HTML5Backend)(App);
+// export default NavBar;
+NavBar.propTypes = {
+  auth: PropTypes.object.isRequired
+};
+
+const mapStateToProps = state => ({
+  auth: state.auth
+});
+
+export default connect(mapStateToProps, null)(NavBar);

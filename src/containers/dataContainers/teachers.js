@@ -11,7 +11,6 @@ let teacherToEdit = '';
 
 class Teachers extends Component {
     mounted = false;
-    host = '';
 
     constructor(props) {
         super(props);
@@ -66,7 +65,8 @@ class Teachers extends Component {
         //     this.host = 'http://localhost:4000'
         // }
         // axios.get('http://localhost:4000/data/getSubjects')
-        axios.get(this.host + '/data/getSubjects')
+        // axios.get('/data/getSubjects')
+        axios.get('/api/subjects')
             .then(response => {
                 if (this.mounted) {
                     this.onlySubjectsAndGrades(response.data);
@@ -76,7 +76,8 @@ class Teachers extends Component {
                 console.log(error);
             });
         // axios.get('http://localhost:4000/data/getTeachers')
-        axios.get(this.host + '/data/getTeachers')
+        // axios.get( '/data/getTeachers')
+        axios.get( '/api/teachers')
             .then(response => {
                 if (this.mounted) {
                     this.setState({ teachers: [...response.data], teachersFetched: true }, () => {
@@ -268,7 +269,8 @@ class Teachers extends Component {
             let teacher = {};
             this.setState({ waitingToSave: true }, () => {
                 // axios.post('http://localhost:4000/data/addTeacher', newTeacher)
-                axios.post(this.host + '/data/addTeacher', newTeacher)
+                // axios.post('/data/addTeacher', newTeacher)
+                axios.post('/api/teachers', newTeacher)
                     .then(res => {
                         if (this.mounted) {
                             teacher = { ...res.data.teacher };
@@ -283,7 +285,8 @@ class Teachers extends Component {
         } else if (this.state.buttonType === 'סיים עריכה') {
             this.setState({ waitingToSave: true }, () => {
                 // axios.post('http://localhost:4000/data/updateTeacher/' + teacherToEditId, newTeacher)
-                axios.post(this.host + '/data/updateTeacher/' + teacherToEditId, newTeacher)
+                // axios.post('/data/updateTeacher/' + teacherToEditId, newTeacher)
+                axios.put('/api/teachers/' + teacherToEditId, newTeacher)
                     .then(res => {
                         if (this.mounted) {
                             let teachers = [...this.state.teachers];
@@ -464,7 +467,8 @@ class Teachers extends Component {
         clearTimeout(this.timeoutID);
         teacherToEditId = teacherId;
         // axios.get('http://localhost:4000/data/getTeacher/' + teacherId)
-        axios.get(this.host + '/data/getTeacher/' + teacherId)
+        // axios.get('/data/getTeacher/' + teacherId)
+        axios.get('/api/teachers/' + teacherId)
             .then(response => {
                 if (this.mounted) {
                     let checked = {
@@ -529,7 +533,8 @@ class Teachers extends Component {
 
     deleteTeacher(teacherId) {
         // axios.post('http://localhost:4000/data/deleteTeacher/' + teacherId)
-        axios.post(this.host + '/data/deleteTeacher/' + teacherId)
+        // axios.post('/data/deleteTeacher/' + teacherId)
+        axios.delete('/api/teachers/' + teacherId)
             .then(response => {
                 if (this.mounted) {
                     let teachers = [...this.state.teachers];

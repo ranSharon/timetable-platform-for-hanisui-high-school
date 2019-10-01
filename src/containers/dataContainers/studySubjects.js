@@ -11,7 +11,6 @@ let subjectToEditId = '';
 
 class StudySubjects extends Component {
     mounted = false;
-    host = '';
     timeoutID;
 
     constructor(props) {
@@ -64,7 +63,8 @@ class StudySubjects extends Component {
         //     this.host = 'http://localhost:4000'
         // }
         // axios.get('http://localhost:4000/data/getSubjects')
-        axios.get(this.host + '/data/getSubjects')
+        // axios.get('/data/getSubjects')
+        axios.get('/api/subjects')
             .then(response => {
                 if (this.mounted) {
                     console.log(response.data);
@@ -75,7 +75,8 @@ class StudySubjects extends Component {
                 console.log(error);
             })
         // axios.get('http://localhost:4000/data/getRoomFeatures')
-        axios.get(this.host + '/data/getRoomFeatures')
+        // axios.get('/data/getRoomFeatures')
+        axios.get('/api/roomFeatures')
             .then(response => {
                 if (this.mounted) {
 
@@ -249,7 +250,8 @@ class StudySubjects extends Component {
             let subject = {};
             this.setState({ waitingToSave: true }, () => {
                 // axios.post('http://localhost:4000/data/addSubject', newSubject)
-                axios.post(this.host + '/data/addSubject', newSubject)
+                // axios.post('/data/addSubject', newSubject)
+                axios.post('/api/subjects', newSubject)
                     .then(res => {
                         if (this.mounted) {
                             subject = { ...res.data };
@@ -267,7 +269,8 @@ class StudySubjects extends Component {
             }
             this.setState({ waitingToSave: true }, () => {
                 // axios.post('http://localhost:4000/data/updateSubject/' + subjectToEditId, newSubject)
-                axios.post(this.host + '/data/updateSubject/' + subjectToEditId, newSubject)
+                // axios.post('/data/updateSubject/' + subjectToEditId, newSubject)
+                axios.put('/api/subjects/' + subjectToEditId, newSubject)
                     .then(res => {
                         if (this.mounted) {
                             let subjects = [...this.state.subjects];
@@ -444,7 +447,8 @@ class StudySubjects extends Component {
         console.log(this.state.featuresChecked);
         subjectToEditId = subjectId;
         // axios.get('http://localhost:4000/data/getSubject/' + subjectId)
-        axios.get(this.host + '/data/getSubject/' + subjectId)
+        // axios.get('/data/getSubject/' + subjectId)
+        axios.get('/api/subjects/' + subjectId)
             .then(response => {
                 if (this.mounted) {
                     let checked = {
@@ -504,7 +508,8 @@ class StudySubjects extends Component {
 
     deleteSubject(subjectId) {
         // axios.post('http://localhost:4000/data/deleteSubject/' + subjectId)
-        axios.post(this.host + '/data/deleteSubject/' + subjectId)
+        // axios.post('/data/deleteSubject/' + subjectId)
+        axios.delete('/api/subjects/' + subjectId)
             .then(response => {
                 if (this.mounted) {
                     let subjects = [...this.state.subjects];

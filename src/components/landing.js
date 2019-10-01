@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Link, Route, Redirect } from "react-router-dom";
+import { Link, Route } from "react-router-dom";
 import Login from './auth/login';
 import Register from './auth/register';
 

@@ -5,7 +5,7 @@ const teachers = (props) => {
     return (
         <div className="col-3 border border-dark p-0">
             <div className="border border-dark ">מורה</div>
-            <select className="custom-select" id="inputGroupSelect02" value={props.teacher} onChange={(e) => props.onTeacherSelected(e, props.groupNum)} >
+            <select className="custom-select rounded-0" id="inputGroupSelect02" value={props.teacher} onChange={(e) => props.onTeacherSelected(e, props.groupNum)} >
                 <option value="">מורה...</option>
                 {teachers.sort().map((teacher, index) =>
                     <option

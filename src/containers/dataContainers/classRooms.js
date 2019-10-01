@@ -12,7 +12,6 @@ let classRoomToEditId = '';
 
 class ClassRooms extends Component {
     mounted = false;
-    host = '';
 
     constructor(props) {
         super(props);
@@ -56,7 +55,8 @@ class ClassRooms extends Component {
         //     this.host = 'http://localhost:4000'
         // }
         // axios.get('http://localhost:4000/data/getClassRooms')
-        axios.get(this.host + '/data/getClassRooms')
+        // axios.get('/data/getClassRooms')
+        axios.get('/api/classRooms')
             .then(response => {
                 if (this.mounted) {
                     console.log(response.data);
@@ -67,7 +67,8 @@ class ClassRooms extends Component {
                 console.log(error);
             })
         // axios.get('http://localhost:4000/data/getRoomFeatures')
-        axios.get(this.host + '/data/getRoomFeatures')
+        // axios.get('/data/getRoomFeatures')
+        axios.get('/api/roomFeatures')
             .then(response => {
                 if (this.mounted) {
                     let roomFeatures = [];
@@ -124,7 +125,8 @@ class ClassRooms extends Component {
             let classRoom = {};
             this.setState({ waitingToSave: true }, () => {
                 // axios.post('http://localhost:4000/data/addClassRoom', newClassRoom)
-                axios.post(this.host + '/data/addClassRoom', newClassRoom)
+                // axios.post('/data/addClassRoom', newClassRoom)
+                axios.post('/api/classRooms', newClassRoom)
                     .then(res => {
                         if (this.mounted) {
                             classRoom = { ...res.data };
@@ -139,7 +141,8 @@ class ClassRooms extends Component {
         } else if (this.state.buttonType === 'סיים עריכה') {
             this.setState({ waitingToSave: true }, () => {
                 // axios.post('http://localhost:4000/data/updateClassRoom/' + classRoomToEditId, newClassRoom)
-                axios.post(this.host + '/data/updateClassRoom/' + classRoomToEditId, newClassRoom)
+                // axios.post('/data/updateClassRoom/' + classRoomToEditId, newClassRoom)
+                axios.put('/api/classRooms/' + classRoomToEditId, newClassRoom)
                     .then(res => {
                         if (this.mounted) {
                             let classRooms = [...this.state.classRooms];
@@ -246,7 +249,8 @@ class ClassRooms extends Component {
                 roomFeature: this.state.roomFeature
             };
             // axios.post('http://localhost:4000/data/addRoomFeature', newRoomFeature)
-            axios.post(this.host + '/data/addRoomFeature', newRoomFeature)
+            // axios.post('/data/addRoomFeature', newRoomFeature)
+            axios.post('/api/roomFeatures', newRoomFeature)
                 .then(res => {
                     if (this.mounted) {
                         this.setState({
@@ -284,7 +288,8 @@ class ClassRooms extends Component {
 
     handleDeleteRoomFeature(roomFeature) {
         // axios.post('http://localhost:4000/data/deleteRoomFeature/' + roomFeature)
-        axios.post(this.host + '/data/deleteRoomFeature/' + roomFeature)
+        // axios.post('/data/deleteRoomFeature/' + roomFeature)
+        axios.delete('/api/roomFeatures/' + roomFeature)
             .then(response => {
                 if (this.mounted) {
                     let roomFeatures = [...this.state.roomFeatures];
@@ -379,7 +384,8 @@ class ClassRooms extends Component {
         // console.log(this.state.roomFeaturesChecked);
         classRoomToEditId = classRoomId;
         // axios.get('http://localhost:4000/data/getClassRoom/' + classRoomId)
-        axios.get(this.host + '/data/getClassRoom/' + classRoomId)
+        // axios.get('/data/getClassRoom/' + classRoomId)
+        axios.get('/api/classRooms/' + classRoomId)
             .then(response => {
                 if (this.mounted) {
                     let alertMessage = 'עריכת כיתה: ' + response.data.classRoomName;
@@ -404,7 +410,8 @@ class ClassRooms extends Component {
 
     deleteClassRoom(classRoomId) {
         // axios.post('http://localhost:4000/data/deleteClassRoom/' + classRoomId)
-        axios.post(this.host + '/data/deleteClassRoom/' + classRoomId)
+        // axios.post('/data/deleteClassRoom/' + classRoomId)
+        axios.delete('/api/classRooms/' + classRoomId)
             .then(response => {
                 if (this.mounted) {
                     let classRooms = [...this.state.classRooms];

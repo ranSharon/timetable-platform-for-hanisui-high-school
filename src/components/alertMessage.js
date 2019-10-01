@@ -27,7 +27,7 @@ const alertMessage = (props) => {
         //setInterval(()=> null, 3000);
         return (
             <div
-                className="alert alert-success m-1"
+                className="alert alert-success my-2"
                 role="alert"
                 style={{ textAlign: "right" }}>
                 <ul>
@@ -40,7 +40,7 @@ const alertMessage = (props) => {
 
     return (
         <div
-            className="alert alert-danger m-1"
+            className="alert alert-danger my-2"
             role="alert"
             style={{ textAlign: "right" }}>
             <ul>

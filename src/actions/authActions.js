@@ -4,16 +4,32 @@ import jwt_decode from "jwt-decode";
 import {
     GET_ERRORS,
     SET_CURRENT_USER,
-    USER_LOADING
+    USER_LOADING,
+    ADD_NEW_USER,
+    UPDATE_REGISTER_STATUS
 } from "./types";
 
 // Register User
-export const registerUser = (userData, history) => dispatch => {
+export const registerUser = (userData) => dispatch => {
     console.log(userData);
+    dispatch({
+        type: GET_ERRORS,
+        payload: {}
+    });
     axios
-        .post("/register", userData)
-        .then(res => history.push("/login")) // re-direct to login on successful register
-        .catch(err =>{
+        .post("/api/register", userData)
+        .then(res => {
+            dispatch({
+                type: ADD_NEW_USER,
+                payload: res.data
+            });
+            dispatch({
+                type: UPDATE_REGISTER_STATUS,
+                payload: true
+            });
+        }
+        )
+        .catch(err => {
             console.log(err.response.data);
             return dispatch({
                 type: GET_ERRORS,
@@ -26,7 +42,7 @@ export const registerUser = (userData, history) => dispatch => {
 // Login - get user token
 export const loginUser = userData => dispatch => {
     axios
-        .post("/login", userData)
+        .post("/api/login", userData)
         .then(res => {
             // Save to localStorage
             // Set token to localStorage
@@ -39,7 +55,7 @@ export const loginUser = userData => dispatch => {
             // Set current user
             dispatch(setCurrentUser(decoded));
         })
-        .catch(err => 
+        .catch(err =>
             dispatch({
                 type: GET_ERRORS,
                 payload: err.response.data
@@ -59,6 +75,7 @@ export const setUserLoading = () => {
         type: USER_LOADING
     };
 };
+
 // Log user out
 export const logoutUser = () => dispatch => {
     // Remove token from local storage
@@ -67,4 +84,11 @@ export const logoutUser = () => dispatch => {
     setAuthToken(false);
     // Set current user to empty object {} which will set isAuthenticated to false
     dispatch(setCurrentUser({}));
+};
+
+export const upadateRegisterStatus = (status) => {
+    return {
+        type: UPDATE_REGISTER_STATUS,
+        payload: status
+    };
 };

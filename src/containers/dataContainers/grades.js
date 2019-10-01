@@ -8,7 +8,6 @@ let greadeToEdit = '';
 
 class Grades extends Component {
     mounted = false;
-    host = '';
 
     constructor(props) {
         super(props);
@@ -34,7 +33,8 @@ class Grades extends Component {
         //     this.host = 'http://localhost:4000'
         // }
         // axios.get('http://localhost:4000/data/getGrades')
-        axios.get(this.host + '/data/getGrades')
+        // axios.get('/data/getGrades')
+        axios.get('/api/grades')
             .then(response => {
                 if (this.mounted) {
                     this.setState({ grades: [...response.data], gradesFetched: true });
@@ -75,7 +75,8 @@ class Grades extends Component {
             let grade = {};
             this.setState({ waitingToSave: true }, () => {
                 // axios.post('http://localhost:4000/data/addGrade', newGrade)
-                axios.post(this.host + '/data/addGrade', newGrade)
+                // axios.post('/data/addGrade', newGrade)
+                axios.post('/api/grades', newGrade)
                     .then(res => {
                         if (this.mounted) {
                             grade = { ...res.data };
@@ -90,7 +91,8 @@ class Grades extends Component {
         } else if (this.state.buttonType === 'סיים עריכה') {
             this.setState({ waitingToSave: true }, () => {
                 // axios.post('http://localhost:4000/data/updateGrade/' + gradeToEditId, newGrade)
-                axios.post(this.host + '/data/updateGrade/' + gradeToEditId, newGrade)
+                // axios.post('/data/updateGrade/' + gradeToEditId, newGrade)
+                axios.put('/api/grades/' + gradeToEditId, newGrade)
                     .then(res => {
                         if (this.mounted) {
                             let grades = [...this.state.grades];
@@ -182,7 +184,8 @@ class Grades extends Component {
         clearTimeout(this.timeoutID);
         gradeToEditId = gradeId;
         // axios.get('http://localhost:4000/data/getGrade/' + gradeId)
-        axios.get(this.host + '/data/getGrade/' + gradeId)
+        // axios.get('/data/getGrade/' + gradeId)
+        axios.get('/api/grades/' + gradeId)
             .then(response => {
                 if (this.mounted) {
                     let alertMessage = 'עריכת שכבה: ' + response.data.grade;
@@ -205,7 +208,8 @@ class Grades extends Component {
 
     deleteGrade(gradeId) {
         // axios.post('http://localhost:4000/data/deleteGrade/' + gradeId)
-        axios.post(this.host + '/data/deleteGrade/' + gradeId)
+        // axios.post('/data/deleteGrade/' + gradeId)
+        axios.delete('/api/grades/' + gradeId)
             .then(response => {
                 if (this.mounted) {
                     let grades = [...this.state.grades];

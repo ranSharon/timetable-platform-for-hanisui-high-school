@@ -1,29 +1,28 @@
 import React, { Component } from "react";
-import { Link, withRouter } from "react-router-dom";
-
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { registerUser } from "../../actions/authActions";
+import { registerUser, upadateRegisterStatus } from "../../actions/authActions";
 import classnames from "classnames";
+import isEmpty from 'is-empty';
 
 class Register extends Component {
     constructor() {
         super();
         this.state = {
-            name: "",
-            email: "",
-            password: "",
-            password2: "",
+            name: '',
+            email: '',
+            password: '',
+            password2: '',
             errors: {}
         };
     }
 
-    componentDidMount() {
-        // If logged in and user navigates to Register page, should redirect them to dashboard
-        if (this.props.auth.isAuthenticated) {
-            this.props.history.push("/dashboard");
-        }
-    }
+    // componentDidMount() {
+    //     // If logged in and user navigates to Register page, should redirect them to dashboard
+    //     if (this.props.auth.isAuthenticated) {
+    //         this.props.history.push("/dashboard");
+    //     }
+    // }
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.errors) {
@@ -33,40 +32,48 @@ class Register extends Component {
         }
     }
 
+    componentDidUpdate() {
+        if (this.props.auth.registerSuccessfully) {
+            this.props.upadateRegisterStatus(false);
+            this.resetInput();
+        }
+    }
+
     onChange = e => {
-        this.setState({ [e.target.id] : e.target.value });
+        this.setState({ [e.target.id]: e.target.value });
     };
 
     onSubmit = e => {
         e.preventDefault();
         const newUser = {
             name: this.state.name,
-            email: this.state.email,
+            // email: this.state.email,
             password: this.state.password,
             password2: this.state.password2
         };
-        this.props.registerUser(newUser, this.props.history);
+        this.props.registerUser(newUser);
+        // this.resetInput();
     };
 
+    resetInput = () => {
+        this.setState({
+            name: '',
+            password: '',
+            password2: '',
+        })
+    }
+
     render() {
-        {console.log(this.props.errors)}
         const { errors } = this.state;
         return (
             <div className="card w-50 mx-auto mt-5">
                 <div className="card-body">
                     <div>
                         <div >
-                            <Link to="/">
-                                Back to home
-                            </Link>
                             <div className="text-center" style={{ paddingLeft: "11.250px" }}>
                                 <h4>
-                                    <b>הרשמה</b>
+                                    <b>רישום משתמש חדש</b>
                                 </h4>
-                                <div>
-                                    <p>
-                                        Already have an account? <Link to="/login">Log in</Link>                                    </p>
-                                </div>
                             </div>
                             <form noValidate onSubmit={this.onSubmit}>
                                 <div className="form-group text-right">
@@ -83,7 +90,7 @@ class Register extends Component {
                                         placeholder="שם משתמש" />
                                     <span className="text-danger">{errors.name}</span>
                                 </div>
-                                <div className="form-group text-right">
+                                {/* <div className="form-group text-right">
                                     <label htmlFor="email">כתובת אימייל</label>
                                     <input
                                         onChange={this.onChange}
@@ -96,7 +103,7 @@ class Register extends Component {
                                         })}
                                         placeholder="כתובת אימייל" />
                                     <span className="text-danger">{errors.email}</span>
-                                </div>
+                                </div> */}
                                 <div className="form-group text-right">
                                     <label htmlFor="password">סיסמה</label>
                                     <input
@@ -112,7 +119,7 @@ class Register extends Component {
                                     <span className="text-danger">{errors.password}</span>
                                 </div>
                                 <div className="form-group text-right">
-                                    <label htmlFor="password2">אמת סיסמה</label>
+                                    <label htmlFor="password2">אימות סיסמה</label>
                                     <input
                                         onChange={this.onChange}
                                         value={this.state.password2}
@@ -125,7 +132,7 @@ class Register extends Component {
                                         placeholder="סיסמה" />
                                     <span className="text-danger">{errors.password2}</span>
                                 </div>
-                                <button type="submit" className="btn btn-primary">הירשם</button>
+                                <button type="submit" className="btn btn-secondary">רשום משתמש</button>
                             </form>
                         </div>
                     </div>
@@ -142,8 +149,10 @@ Register.propTypes = {
 };
 
 const mapStateToProps = state => ({
+    users: state.users,
     auth: state.auth,
     errors: state.errors
 });
 
-export default connect(mapStateToProps, { registerUser })(withRouter(Register));
+// export default connect(mapStateToProps, { registerUser })(withRouter(Register));
+export default connect(mapStateToProps, { registerUser, upadateRegisterStatus })(Register);

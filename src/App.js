@@ -1,16 +1,13 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import NavBar from './containers/navBar';
-import Landing from './components/landing';
 import Login from './components/auth/login';
 import { Provider } from 'react-redux';
 import store from './store';
 import jwt_decode from 'jwt-decode';
 import setAuthToken from './utils/setAuthToken';
 import { setCurrentUser, logoutUser } from './actions/authActions';
-import PrivateRoute from './components/private-route/privateRoute';
-import Dashboard from './components/dashboard';
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 
@@ -33,20 +30,14 @@ if (localStorage.jwtToken) {
   }
 }
 
-console.log(store.getState().auth.isAuthenticated);
 // localStorage.clear();
-
 class App extends Component {
-  // componentDidMount() {
-  //   console.log('componentDidMount');
-  //   localStorage.clear();
-  // }
 
   render() {
-    { console.log(this.props.auth); }
     return (
       <Provider store={store}>
         <Router>
+          {/* <Landing /> */}
           {this.props.auth.isAuthenticated ?
             <NavBar />
             :
@@ -60,9 +51,7 @@ class App extends Component {
   }
 }
 
-// export default App;
-
-Dashboard.propTypes = {
+App.propTypes = {
   logoutUser: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired
 };

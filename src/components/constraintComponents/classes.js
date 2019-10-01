@@ -27,7 +27,7 @@ const classes = (props) => {
             <div className="col-2 border border-dark p-0">
                 <div className="border border-dark ">כיתה</div>
                 <select
-                    className="custom-select"
+                    className="custom-select rounded-0"
                     id="inputGroupSelect02"
                     value={props.classNumber[0]}
                     onChange={(e) => props.onClassSelected(e)} >

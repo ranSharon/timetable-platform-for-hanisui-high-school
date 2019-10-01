@@ -14,7 +14,6 @@ let classroomClashMessage = [];
 
 class BuildTimetable extends Component {
     mounted = false;
-    host = '';
     timeoutID;
 
     constructor(props) {
@@ -120,7 +119,7 @@ class BuildTimetable extends Component {
         //     this.host = 'http://localhost:4000'
         // }
         // axios.get('http://localhost:4000/data/getConstraints')
-        axios.get(this.host + '/data/getConstraints')
+        axios.get('/api/constraints')
             .then(response => {
                 if (this.mounted) {
                     this.setState({ constraints: [...response.data.sort(this.compareTeacher)], constraintsFetched: true }, function () {
@@ -135,7 +134,7 @@ class BuildTimetable extends Component {
             });
 
         // axios.get('http://localhost:4000/data/getGrades')
-        axios.get(this.host + '/data/getGrades')
+        axios.get('/api/grades')
             .then(response => {
                 if (this.mounted) {
                     this.setState({ grades: [...response.data.sort(this.compareGrade)], gradesFetched: true }, function () {
@@ -150,7 +149,7 @@ class BuildTimetable extends Component {
             });
 
         // axios.get('http://localhost:4000/data/getDays')
-        axios.get(this.host + '/data/getDays')
+        axios.get('/api/days')
             .then(response => {
                 if (this.mounted) {
                     this.setState({ days: [...response.data], daysFetched: true }, function () {
@@ -165,7 +164,7 @@ class BuildTimetable extends Component {
             });
 
         // axios.get('http://localhost:4000/data/getClassRooms')
-        axios.get(this.host + '/data/getClassRooms')
+        axios.get('/api/classRooms')
             .then(response => {
                 if (this.mounted) {
                     this.setState({ classRooms: [...response.data.sort(this.compareClassroom)], classRoomsView: [...response.data] });
@@ -177,7 +176,7 @@ class BuildTimetable extends Component {
                 console.log(error);
             });
         // axios.get('http://localhost:4000/data/getTeachers')
-        axios.get(this.host + '/data/getTeachers')
+        axios.get('/api/teachers')
             .then(response => {
                 if (this.mounted) {
                     this.setState({ teachers: [...response.data] });
@@ -205,7 +204,7 @@ class BuildTimetable extends Component {
             return;
         }
         // axios.get('http://localhost:4000/data/getTimeTable')
-        axios.get(this.host + '/data/getTimeTable')
+        axios.get('/api/timeTables')
             .then(response => {
                 if (this.mounted) {
                     // console.log(response.data);
@@ -1700,7 +1699,8 @@ class BuildTimetable extends Component {
         let classTimeTable = {};
         this.setState({ waitingToSave: true, saveSucceed: false }, () => {
             // axios.post('http://localhost:4000/data/dropTimeTable')
-            axios.post(this.host + '/data/dropTimeTable')
+            axios.delete('/api/timeTables')
+            // axios.delete('/api/timeTablese')
                 .then(response => {
                     if (this.mounted) {
                         if (timeTable.length === 0) {
@@ -1741,7 +1741,7 @@ class BuildTimetable extends Component {
                     timeTable.forEach((table) => {
                         classTimeTable = { ...table };
                         // axios.post('http://localhost:4000/data/addTimeTable', classTimeTable)
-                        axios.post(this.host + '/data/addTimeTable', classTimeTable)
+                        axios.post('/api/timeTables', classTimeTable)
                             .then(res => {
                                 if (this.mounted) {
                                     tablesSaved++;
