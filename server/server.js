@@ -32,18 +32,14 @@ connection.once('open', function () {
 
 // middlewares 
 app.use(cors());
-app.use(
-    bodyParser.urlencoded({
-        extended: false
-    })
-);
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false })); // parse application/x-www-form-urlencoded
+app.use(bodyParser.json()); // parse application/json
 app.use(passport.initialize());
 require("./config/passport")(passport);
 app.use(express.static(__dirname)); // static files
 app.use(express.static(path.join(__dirname, '../build'))); // static files
 
-// api's routes
+// API routes
 app.use('/api', usersRouter);
 app.use('/api', daysRouter);
 app.use('/api', gradesRouter);

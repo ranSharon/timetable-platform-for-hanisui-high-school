@@ -11,13 +11,12 @@ import {
 
 // Register User
 export const registerUser = (userData) => dispatch => {
-    console.log(userData);
     dispatch({
         type: GET_ERRORS,
         payload: {}
     });
     axios
-        .post("/api/register", userData)
+        .post("/api/users/register", userData)
         .then(res => {
             dispatch({
                 type: ADD_NEW_USER,
@@ -42,12 +41,12 @@ export const registerUser = (userData) => dispatch => {
 // Login - get user token
 export const loginUser = userData => dispatch => {
     axios
-        .post("/api/login", userData)
+        .post("/api/users/login", userData)
         .then(res => {
             // Save to localStorage
             // Set token to localStorage
             const { token } = res.data;
-            localStorage.setItem("jwtToken", token);
+            // localStorage.setItem("jwtToken", token);
             // Set token to Auth header
             setAuthToken(token);
             // Decode token to get user data
@@ -62,6 +61,7 @@ export const loginUser = userData => dispatch => {
             })
         );
 };
+
 // Set logged in user
 export const setCurrentUser = decoded => {
     return {
@@ -69,6 +69,7 @@ export const setCurrentUser = decoded => {
         payload: decoded
     };
 };
+
 // User loading
 export const setUserLoading = () => {
     return {

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Subject = require('../models/subjects');
+const passport = require("passport");
 
 router.get('/subjects', function (req, res) {
     Subject.find(function (err, todos) {
@@ -12,7 +13,7 @@ router.get('/subjects', function (req, res) {
     });
 });
 
-router.post('/subjects', function (req, res) {
+router.post('/subjects', passport.authenticate('jwt', { session: false }), function (req, res) {
     let subject = new Subject(req.body);
     subject.save()
         .then(subject => {
@@ -30,7 +31,7 @@ router.get('/subjects/:id', function (req, res) {
     });
 });
 
-router.put('/subjects/:id', function (req, res) {
+router.put('/subjects/:id', passport.authenticate('jwt', { session: false }), function (req, res) {
     Subject.findById(req.params.id, function (err, subject) {
         if (!subject)
             res.status(404).send("data is not found");
@@ -53,7 +54,7 @@ router.put('/subjects/:id', function (req, res) {
     });
 });
 
-router.delete('/subjects/:id',function (req, res) {
+router.delete('/subjects/:id', passport.authenticate('jwt', { session: false }), function (req, res) {
     let id = req.params.id;
     Subject.findByIdAndRemove(id, (err, subject) => {
         if (err) {

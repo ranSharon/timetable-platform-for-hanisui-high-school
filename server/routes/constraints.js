@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Constraint = require('../models/constraints');
+const passport = require("passport");
 
 router.get('/constraints', function (req, res) {
     Constraint.find(function (err, constraints) {
@@ -12,7 +13,7 @@ router.get('/constraints', function (req, res) {
     });
 });
 
-router.post('/constraints', function (req, res) {
+router.post('/constraints', passport.authenticate('jwt', { session: false }), function (req, res) {
     let constraint = new Constraint(req.body);
     constraint.save()
         .then(teacher => {
@@ -23,7 +24,7 @@ router.post('/constraints', function (req, res) {
         });
 });
 
-router.delete('/constraints/:id', function (req, res) {
+router.delete('/constraints/:id', passport.authenticate('jwt', { session: false }), function (req, res) {
     let id = req.params.id;
     Constraint.findByIdAndRemove(id, (err, constraint) => {
         if (err) {
@@ -33,7 +34,7 @@ router.delete('/constraints/:id', function (req, res) {
     })
 });
 
-router.delete('/constraints',function (req, res) {
+router.delete('/constraints', passport.authenticate('jwt', { session: false }), function (req, res) {
     connection.dropCollection('constraints', (err, result) => {
         if (err) {
             return res.json(err);

@@ -1,36 +1,42 @@
 const express = require('express');
 const router = express.Router();
 const Day = require('../models/days');
+const passport = require("passport");
 
 router.get('/days', function (req, res) {
     Day.find(function (err, days) {
         if (err) {
             console.log(err);
+            res.send(err);
         } else {
             res.json(days);
         }
     });
 });
 
-router.post('/days', function (req, res) {
+router.post('/days', passport.authenticate('jwt', { session: false }), function (req, res) {
     let day = new Day(req.body);
     day.save()
         .then(day => {
             res.status(200).json(day);
         })
         .catch(err => {
-            res.status(400).send('adding new todo failed');
+            res.status(400).send('adding new day failed');
         });
 });
 
 router.get('/days/:id', function (req, res) {
     let id = req.params.id;
     Day.findById(id, function (err, day) {
-        res.json(day);
+        if (!day)
+            res.status(404).send("data is not found");
+        else {
+            res.json(day);
+        }
     });
 });
 
-router.put('/days/:id', function (req, res) {
+router.put('/days/:id', passport.authenticate('jwt', { session: false }), function (req, res) {
     Day.findById(req.params.id, function (err, day) {
         if (!day)
             res.status(404).send("data is not found");
@@ -48,7 +54,7 @@ router.put('/days/:id', function (req, res) {
     });
 });
 
-router.delete('/days/:id', function (req, res) {
+router.delete('/days/:id', passport.authenticate('jwt', { session: false }), function (req, res) {
     let id = req.params.id;
     Day.findByIdAndRemove(id, (err, day) => {
         if (err) {

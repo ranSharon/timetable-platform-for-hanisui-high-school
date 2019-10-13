@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { registerUser, upadateRegisterStatus } from "../../actions/authActions";
 import classnames from "classnames";
-import isEmpty from 'is-empty';
 
 class Register extends Component {
     constructor() {

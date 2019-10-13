@@ -2107,7 +2107,7 @@ class BuildTimetable extends Component {
                     {this.teacherClashMessage()}
                     {this.classroomClashMessage()}
                 </div>
-                <div className="row mt-2">
+                <div className="row mt-2 mb-5">
                     <div className="col-5">
                         <div
                             // className="d-inline-block w-100 text-center p-0 card"

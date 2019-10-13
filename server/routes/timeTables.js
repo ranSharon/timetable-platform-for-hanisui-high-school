@@ -2,8 +2,9 @@ const express = require('express');
 const router = express.Router();
 const TimeTable = require('../models/timeTables');
 const mongoose = require('mongoose');
+const passport = require("passport");
 
-router.post('/timeTables',function (req, res) {
+router.post('/timeTables', passport.authenticate('jwt', { session: false }), function (req, res) {
     let timeTable = new TimeTable(req.body);
     timeTable.save()
         .then(timeTable => {
@@ -14,7 +15,7 @@ router.post('/timeTables',function (req, res) {
         });
 });
 
-router.delete('/timeTables',function (req, res) {
+router.delete('/timeTables', passport.authenticate('jwt', { session: false }), function (req, res) {
     mongoose.connection.dropCollection('timetables', (err, result) => {
         if (err) {
             return res.json(err);
@@ -23,7 +24,7 @@ router.delete('/timeTables',function (req, res) {
     });
 });
 
-router.get('/timeTables',function (req, res) {
+router.get('/timeTables', function (req, res) {
     TimeTable.find(function (err, timeTable) {
         if (err) {
             console.log(err);
