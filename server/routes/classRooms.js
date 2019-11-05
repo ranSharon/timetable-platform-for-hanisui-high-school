@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const ClassRoom = require('../models/classRooms');
+const ClassRoom = require('../models/classRoom');
 const passport = require("passport");
 
 router.get('/classRooms', function (req, res) {
@@ -58,9 +58,10 @@ router.delete('/classRooms/:id', passport.authenticate('jwt', { session: false }
     let id = req.params.id;
     ClassRoom.findByIdAndRemove(id, (err, classRoom) => {
         if (err) {
-            return res.json({ 'message': 'Some Error' });
+            res.json({ 'message': 'Some Error' });
+        } else {
+            res.json(classRoom);
         }
-        return res.json(classRoom);
     })
 });
 

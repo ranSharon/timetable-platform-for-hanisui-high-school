@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Register from '../components/auth/register';
+import Register from './auth/register';
 import { connect } from "react-redux";
 import { getAllUsers } from '../actions/usersActions';
 import DataTable from './dataContainers/tableDisplay/table';

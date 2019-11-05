@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const Teacher = require('../models/teachers');
+const Teacher = require('../models/teacher');
 const passport = require("passport");
 
 router.get('/teachers', function (req, res) {
     Teacher.find(function (err, todos) {
         if (err) {
             console.log(err);
+            res.send(err);
         } else {
             res.json(todos);
         }
@@ -27,7 +28,11 @@ router.post('/teachers', passport.authenticate('jwt', { session: false }), funct
 router.get('/teachers/:id', function (req, res) {
     let id = req.params.id;
     Teacher.findById(id, function (err, teacher) {
-        res.json(teacher);
+        if (err) {
+            res.send(err);
+        } else {
+            res.json(teacher);
+        }
     });
 });
 
@@ -76,9 +81,10 @@ router.delete('/teachers/:id', passport.authenticate('jwt', { session: false }),
     let id = req.params.id;
     Teacher.findByIdAndRemove(id, (err, teacher) => {
         if (err) {
-            return res.json({ 'message': 'Some Error' });
+            res.json({ 'message': 'Some Error' });
+        } else {
+            res.json(teacher);
         }
-        return res.json(teacher);
     })
 });
 

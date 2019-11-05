@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Day = require('../models/days');
+const Day = require('../models/day');
 const passport = require("passport");
 
 router.get('/days', function (req, res) {
@@ -58,9 +58,10 @@ router.delete('/days/:id', passport.authenticate('jwt', { session: false }), fun
     let id = req.params.id;
     Day.findByIdAndRemove(id, (err, day) => {
         if (err) {
-            return res.json({ 'message': 'Some Error' });
+            res.json({ 'message': 'Some Error' });
+        } else {
+            res.json(day);
         }
-        return res.json(day);
     })
 });
 

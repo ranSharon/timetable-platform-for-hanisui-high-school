@@ -868,8 +868,10 @@ class Constraints extends Component {
         let subject = this.state.subject; // string init ''
         let grade = this.state.grade; // string init ''
         let classNumber = [...this.state.classNumber]; // arary string init ['']
+        // console.log(this.state.groupingTeachers.sort());
         for (let i = 0; i <= constraints.length - 1; i++) {
-            if (teacher === constraints[i].teacher &&
+            // if (teacher === constraints[i].teacher &&
+            if (this.teacherExist(constraints[i]) &&
                 subject === constraints[i].subject &&
                 grade === constraints[i].grade &&
                 JSON.stringify(classNumber) === JSON.stringify(constraints[i].classNumber) &&
@@ -881,7 +883,19 @@ class Constraints extends Component {
             }
         }
         return false;
+    }
 
+    teacherExist(constraint) {
+        let teacherExist = false;
+        let groupingTeachers = [...this.state.groupingTeachers];
+        let constraintGroupingTeachers = [...constraint.groupingTeachers];
+        let difference = groupingTeachers
+                 .filter(x => !constraintGroupingTeachers.includes(x))
+                 .concat(constraintGroupingTeachers.filter(x => !groupingTeachers.includes(x)));
+        if(difference.length === 0){
+            teacherExist = true;
+        }
+        return teacherExist;
     }
 
     resetInputs() {
@@ -1559,6 +1573,8 @@ class Constraints extends Component {
         for (let index = 0; index <= constraints.length - 1; index++) {
             if (constraints[index]._id === constraintId) {
                 fatherConstraint = { ...constraints[index] };
+                // console.log(fatherConstraint);
+                // console.log(fatherConstraint.groupingTeachers);
                 break;
             }
         }
@@ -1576,6 +1592,7 @@ class Constraints extends Component {
         this.setState({
             beforeEditConstraint: { ...fatherConstraint },
             teacher: fatherConstraint.teacher,
+            // teacher: fatherConstraint.groupingTeachers[groupingTeachers.length -1],
             hours: hours,
             num: fatherConstraint.num
         }, function () {

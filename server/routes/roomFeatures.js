@@ -7,6 +7,7 @@ router.get('/roomFeatures', function (req, res) {
     RoomFeature.find(function (err, roomFeature) {
         if (err) {
             console.log(err);
+            res.send(err);
         } else {
             res.json(roomFeature);
         }
@@ -28,9 +29,10 @@ router.delete('/roomFeatures/:name', passport.authenticate('jwt', { session: fal
     let name = req.params.name;
     RoomFeature.findOneAndDelete({ roomFeature: name }, (err, roomFeature) => {
         if (err) {
-            return res.json({ 'message': 'Some Error' });
+            res.json({ 'message': 'Some Error' });
+        } else {
+            res.json(roomFeature);
         }
-        return res.json(roomFeature);
     })
 });
 

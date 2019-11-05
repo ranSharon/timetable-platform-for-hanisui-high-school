@@ -99,7 +99,7 @@ class DataOnTimetable extends Component {
         return (
             <div className="row w-100 h-100">
                 <div className="col-3 mr-2 input-group mt-3 mb-3">
-                    <div className="input-group-append">
+                    <div style={{"height": "calc(1.5em + .75rem + 2px)"}} className="input-group-append">
                         <label className="input-group-text" htmlFor="inputGroupSelect02">כיתה</label>
                     </div>
                     <select className="custom-select" id="inputGroupSelect02" value={this.state.classNumber} onChange={(e) => this.handleClassNumberChange(e)} >
@@ -124,27 +124,28 @@ class DataOnTimetable extends Component {
 
     secondQuery() {
         let teachers = [];
-        let timeTable = [...this.state.timeTable];
+        let timeTables = [...this.state.timeTable];
 
-        for (let i = 0; i <= timeTable.length - 1; i++) {
-            for (let j = 0; j <= timeTable[i].days.length - 1; j++) {
-                for (let k = 0; k <= timeTable[i].days[j].hours.length - 1; k++) {
-                    for (let l = 0; l <= timeTable[i].days[j].hours[k].constraints.length - 1; l++) {
-                        teachers = [...teachers, timeTable[i].days[j].hours[k].constraints[l].teacher];
+        for (let i = 0; i <= timeTables.length - 1; i++) {
+            for (let j = 0; j <= timeTables[i].days.length - 1; j++) {
+                for (let k = 0; k <= timeTables[i].days[j].hours.length - 1; k++) {
+                    for (let l = 0; l <= timeTables[i].days[j].hours[k].constraints.length - 1; l++) {
+                        for (let m = 0; m <= timeTables[i].days[j].hours[k].constraints[l].groupingTeachers.length - 1; m++) {
+                            teachers = [...teachers, timeTables[i].days[j].hours[k].constraints[l].groupingTeachers[m]];
+                        }
                     }
                 }
             }
         }
+
         // console.log(teachers);
         teachers = teachers.filter((item, index) => teachers.indexOf(item) === index);
         // console.log(teachers);
 
-
-
         return (
             <div className="row w-100 h-100">
                 <div className="col-3 mr-2 input-group mt-3 mb-3">
-                    <div className="input-group-append">
+                    <div style={{"height": "calc(1.5em + .75rem + 2px)"}} className="input-group-append">
                         <label className="input-group-text" htmlFor="inputGroupSelect02">מורה</label>
                     </div>
                     <select className="custom-select" id="inputGroupSelect02" value={this.state.teacher1} onChange={(e) => this.handleTeacherChangeSecondQuery(e)} >
@@ -182,11 +183,14 @@ class DataOnTimetable extends Component {
             for (let j = 0; j <= timeTable[i].days.length - 1; j++) {
                 for (let k = 0; k <= timeTable[i].days[j].hours.length - 1; k++) {
                     for (let l = 0; l <= timeTable[i].days[j].hours[k].constraints.length - 1; l++) {
-                        teachers = [...teachers, timeTable[i].days[j].hours[k].constraints[l].teacher];
+                        for (let m = 0; m <= timeTable[i].days[j].hours[k].constraints[l].groupingTeachers.length - 1; m++) {
+                            teachers = [...teachers, timeTable[i].days[j].hours[k].constraints[l].groupingTeachers[m]];
+                        }
                     }
                 }
             }
         }
+
         // console.log(teachers);
         teachers = teachers.filter((item, index) => teachers.indexOf(item) === index);
         // console.log(teachers);
@@ -194,7 +198,7 @@ class DataOnTimetable extends Component {
         return (
             <div className="row w-100 h-100">
                 <div className="col-3 mr-2 input-group mt-3 mb-3">
-                    <div className="input-group-append">
+                    <div style={{"height": "calc(1.5em + .75rem + 2px)"}} className="input-group-append">
                         <label className="input-group-text" htmlFor="inputGroupSelect02">מורה</label>
                     </div>
                     <select className="custom-select" id="inputGroupSelect02" value={this.state.teacher2} onChange={(e) => this.handleTeacherChangeThirdQuery(e)} >
@@ -210,7 +214,7 @@ class DataOnTimetable extends Component {
                     </select>
                 </div>
                 <div className="col-3 mr-2 input-group mt-3 mb-3">
-                    <div className="input-group-append">
+                    <div style={{"height": "calc(1.5em + .75rem + 2px)"}} className="input-group-append">
                         <label className="input-group-text" htmlFor="inputGroupSelect02">יום</label>
                     </div>
                     <select className="custom-select" id="inputGroupSelect02" value={this.state.day1} onChange={(e) => this.handleDayChangeThirdQuery(e)} >
@@ -234,8 +238,6 @@ class DataOnTimetable extends Component {
                             </div>
                         );
                     })}
-
-
                 </div>
             </div>
         );
@@ -249,11 +251,14 @@ class DataOnTimetable extends Component {
             for (let j = 0; j <= timeTable[i].days.length - 1; j++) {
                 for (let k = 0; k <= timeTable[i].days[j].hours.length - 1; k++) {
                     for (let l = 0; l <= timeTable[i].days[j].hours[k].constraints.length - 1; l++) {
-                        teachers = [...teachers, timeTable[i].days[j].hours[k].constraints[l].teacher];
+                        for(let m = 0; m <= timeTable[i].days[j].hours[k].constraints[l].groupingTeachers.length - 1; m++){
+                            teachers = [...teachers, timeTable[i].days[j].hours[k].constraints[l].groupingTeachers[m]];
+                        }
                     }
                 }
             }
         }
+
         // console.log(teachers);
         teachers = teachers.filter((item, index) => teachers.indexOf(item) === index);
         // console.log(teachers);
@@ -271,7 +276,7 @@ class DataOnTimetable extends Component {
         return (
             <div className="row w-100 h-100">
                 <div className="col-3 mr-2 input-group mt-3 mb-3">
-                    <div className="input-group-append">
+                    <div style={{"height": "calc(1.5em + .75rem + 2px)"}} className="input-group-append">
                         <label className="input-group-text" htmlFor="inputGroupSelect02">מורה</label>
                     </div>
                     <select className="custom-select" id="inputGroupSelect02" value={this.state.teacher3} onChange={(e) => this.handleTeacherChangeFourthQuery(e)} >
@@ -320,7 +325,7 @@ class DataOnTimetable extends Component {
         return (
             <div className="row w-100 h-100">
                 <div className="col-3 mr-2 input-group mt-3 mb-3">
-                    <div className="input-group-append">
+                    <div style={{"height": "calc(1.5em + .75rem + 2px)"}} className="input-group-append">
                         <label className="input-group-text" htmlFor="inputGroupSelect02">מורה</label>
                     </div>
                     <select className="custom-select" id="inputGroupSelect02" value={this.state.day2} onChange={(e) => this.handleDayChangeFifthQuery(e)} >
@@ -406,7 +411,9 @@ class DataOnTimetable extends Component {
                 for (let j = 0; j <= timeTable[i].days.length - 1; j++) {
                     for (let k = 0; k <= timeTable[i].days[j].hours.length - 1; k++) {
                         for (let l = 0; l <= timeTable[i].days[j].hours[k].constraints.length - 1; l++) {
-                            teachersForClassNumber = [...teachersForClassNumber, timeTable[i].days[j].hours[k].constraints[l].teacher];
+                            for(let m = 0; m <= timeTable[i].days[j].hours[k].constraints[l].groupingTeachers.length - 1; m++){
+                                teachersForClassNumber = [...teachersForClassNumber, timeTable[i].days[j].hours[k].constraints[l].groupingTeachers[m]];
+                            }
                         }
                     }
                 }
@@ -432,9 +439,12 @@ class DataOnTimetable extends Component {
             for (let j = 0; j <= timeTable[i].days.length - 1; j++) {
                 for (let k = 0; k <= timeTable[i].days[j].hours.length - 1; k++) {
                     for (let l = 0; l <= timeTable[i].days[j].hours[k].constraints.length - 1; l++) {
-                        if (teacher === timeTable[i].days[j].hours[k].constraints[l].teacher) {
-                            daysAndHoursForTeacher = [...daysAndHoursForTeacher, timeTable[i].days[j].day + ' ' + timeTable[i].days[j].hours[k].hour];
+                        for(let m = 0; m <= timeTable[i].days[j].hours[k].constraints[l].groupingTeachers.length - 1; m++){
+                            if (teacher === timeTable[i].days[j].hours[k].constraints[l].groupingTeachers[m]) {
+                                daysAndHoursForTeacher = [...daysAndHoursForTeacher, timeTable[i].days[j].day + ' ' + timeTable[i].days[j].hours[k].hour];
+                            }
                         }
+                        
                     }
                 }
             }
@@ -456,7 +466,7 @@ class DataOnTimetable extends Component {
     }
 
     handleTeacherChangeThirdQuery(e) {
-        this.setState({ teacher2: e.target.value, day: '' });
+        this.setState({ teacher2: e.target.value, freeHoursForDay: [], day1: '' });
         if (e.target.value === '') {
             this.setState({ daysForTeacher: [] });
             return;
@@ -469,8 +479,10 @@ class DataOnTimetable extends Component {
             for (let j = 0; j <= timeTable[i].days.length - 1; j++) {
                 for (let k = 0; k <= timeTable[i].days[j].hours.length - 1; k++) {
                     for (let l = 0; l <= timeTable[i].days[j].hours[k].constraints.length - 1; l++) {
-                        if (teacher === timeTable[i].days[j].hours[k].constraints[l].teacher) {
-                            daysForTeacher = [...daysForTeacher, timeTable[i].days[j].day];
+                        for (let m = 0; m <= timeTable[i].days[j].hours[k].constraints[l].groupingTeachers.length - 1; m++) {
+                            if (teacher === timeTable[i].days[j].hours[k].constraints[l].groupingTeachers[m]) {
+                                daysForTeacher = [...daysForTeacher, timeTable[i].days[j].day];
+                            }
                         }
                     }
                 }
@@ -502,8 +514,10 @@ class DataOnTimetable extends Component {
                     for (let k = 0; k <= timeTable[i].days[j].hours.length - 1; k++) {
                         dayHours = [...dayHours, timeTable[i].days[j].hours[k].hour];
                         for (let l = 0; l <= timeTable[i].days[j].hours[k].constraints.length - 1; l++) {
-                            if (teacher === timeTable[i].days[j].hours[k].constraints[l].teacher) {
-                                hoursForTeacher = [...hoursForTeacher, timeTable[i].days[j].hours[k].hour];
+                            for(let m = 0; m <= timeTable[i].days[j].hours[k].constraints[l].groupingTeachers.length - 1; m++){
+                                if (teacher === timeTable[i].days[j].hours[k].constraints[l].groupingTeachers[m]) {
+                                    hoursForTeacher = [...hoursForTeacher, timeTable[i].days[j].hours[k].hour];
+                                }
                             }
                         }
                     }
@@ -541,9 +555,11 @@ class DataOnTimetable extends Component {
             for (let j = 0; j <= timeTable[i].days.length - 1; j++) {
                 for (let k = 0; k <= timeTable[i].days[j].hours.length - 1; k++) {
                     for (let l = 0; l <= timeTable[i].days[j].hours[k].constraints.length - 1; l++) {
-                        if (teacher === timeTable[i].days[j].hours[k].constraints[l].teacher) {
-                            subjectsForTeacher = [...subjectsForTeacher, timeTable[i].days[j].hours[k].constraints[l].subject];
-                        }
+                        for(let m = 0; m <= timeTable[i].days[j].hours[k].constraints[l].groupingTeachers.length - 1; m++){
+                            if (teacher === timeTable[i].days[j].hours[k].constraints[l].groupingTeachers[m]) {
+                                subjectsForTeacher = [...subjectsForTeacher, timeTable[i].days[j].hours[k].constraints[l].subject];
+                            }
+                        } 
                     }
                 }
             }
@@ -573,7 +589,9 @@ class DataOnTimetable extends Component {
                 if (timeTable[i].days[j].day === day) {
                     for (let k = 0; k <= timeTable[i].days[j].hours.length - 1; k++) {
                         for (let l = 0; l <= timeTable[i].days[j].hours[k].constraints.length - 1; l++) {
-                            teachersForDay = [...teachersForDay, timeTable[i].days[j].hours[k].constraints[l].teacher];
+                            for(let m = 0; m <= timeTable[i].days[j].hours[k].constraints[l].groupingTeachers.length - 1; m++){
+                                teachersForDay = [...teachersForDay, timeTable[i].days[j].hours[k].constraints[l].groupingTeachers[m]];
+                            }
                         }
                     }
                 }

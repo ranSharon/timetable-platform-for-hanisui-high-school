@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const keys = require('../config/dev');
 const validateRegisterInput = require('../validation/register');
 const validateLoginInput = require('../validation/login');
-const User = require("../models/users");
+const User = require("../models/user");
 const passport = require("passport");
 
 router.get('/users', function (req, res) {
@@ -75,7 +75,7 @@ router.post("/users/login", (req, res) => {
         // Check if user exists
         if (!user) {
             // return res.status(404).json({ namenotfound: "Name not found" });
-            res.status(404).json({ namenotfound: "Name not found" });
+            return res.status(404).json({ namenotfound: "Name not found" });
         }
         // Check password
         bcrypt.compare(password, user.password).then(isMatch => {

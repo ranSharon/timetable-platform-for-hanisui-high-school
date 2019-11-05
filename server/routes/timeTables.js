@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const TimeTable = require('../models/timeTables');
+const TimeTable = require('../models/timeTable');
 const mongoose = require('mongoose');
 const passport = require("passport");
 
@@ -18,9 +18,10 @@ router.post('/timeTables', passport.authenticate('jwt', { session: false }), fun
 router.delete('/timeTables', passport.authenticate('jwt', { session: false }), function (req, res) {
     mongoose.connection.dropCollection('timetables', (err, result) => {
         if (err) {
-            return res.json(err);
+            res.json(err);
+        } else {
+            res.json(result);
         }
-        return res.json(result);
     });
 });
 
@@ -28,6 +29,7 @@ router.get('/timeTables', function (req, res) {
     TimeTable.find(function (err, timeTable) {
         if (err) {
             console.log(err);
+            res.send(err);
         } else {
             res.json(timeTable);
         }

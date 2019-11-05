@@ -382,6 +382,7 @@ class Teachers extends Component {
         let dayOff = this.state.dayOff;
         let grades = [...this.state.grades];
         let subjectsForTeacher = [...this.state.subjectsForTeacher];
+        const currentTeachHours = this.state.currentTeachHours;
         let message = 'ישנה בעיה עם לפחות אחד מן השדות:$';
         let originalMessage = message;
         if (name === '') {
@@ -403,6 +404,9 @@ class Teachers extends Component {
         }
         if (subjectsForTeacher.length === 0) {
             message += 'לא נבחרו מקצועות שהמורה מלמד$';
+        }
+        if(maxTeachHours < currentTeachHours){
+            message += `שעות ההוראה המקסימליות גדולות משעות ההוראה הנוכחיות, שהן כרגע ${currentTeachHours}$`;
         }
 
         if (message === originalMessage) {

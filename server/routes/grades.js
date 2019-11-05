@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const Grade = require('../models/grades');
+const Grade = require('../models/grade');
 const passport = require("passport");
 
 router.get('/grades', function (req, res) {
     Grade.find(function (err, grades) {
         if (err) {
             console.log(err);
+            res.send(err);
         } else {
             res.json(grades);
         }
@@ -27,7 +28,11 @@ router.post('/grades', passport.authenticate('jwt', { session: false }), functio
 router.get('/grades/:id', function (req, res) {
     let id = req.params.id;
     Grade.findById(id, function (err, grade) {
-        res.json(grade);
+        if (err) {
+            res.send(err);
+        } else {
+            res.json(grade);
+        }
     });
 });
 
@@ -52,9 +57,10 @@ router.delete('/grades/:id', passport.authenticate('jwt', { session: false }), f
     let id = req.params.id;
     Grade.findByIdAndRemove(id, (err, grade) => {
         if (err) {
-            return res.json({ 'message': 'Some Error' });
+            res.json({ 'message': 'Some Error' });
+        } else {
+            res.json(grade);
         }
-        return res.json(grade);
     })
 });
 

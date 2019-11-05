@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const Subject = require('../models/subjects');
+const Subject = require('../models/subject');
 const passport = require("passport");
 
 router.get('/subjects', function (req, res) {
     Subject.find(function (err, todos) {
         if (err) {
             console.log(err);
+            res.send(err);
         } else {
             res.json(todos);
         }
@@ -27,7 +28,12 @@ router.post('/subjects', passport.authenticate('jwt', { session: false }), funct
 router.get('/subjects/:id', function (req, res) {
     let id = req.params.id;
     Subject.findById(id, function (err, subject) {
-        res.json(subject);
+        if (err) {
+            res.send(err);
+        } else {
+            res.json(subject);
+        }
+
     });
 });
 
@@ -58,9 +64,10 @@ router.delete('/subjects/:id', passport.authenticate('jwt', { session: false }),
     let id = req.params.id;
     Subject.findByIdAndRemove(id, (err, subject) => {
         if (err) {
-            return res.json({ 'message': 'Some Error' });
+            res.json({ 'message': 'Some Error' });
+        } else {
+            res.json(subject);
         }
-        return res.json(subject);
     })
 });
 
