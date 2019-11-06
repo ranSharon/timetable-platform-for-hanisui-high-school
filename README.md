@@ -12,7 +12,7 @@ B.Sc. in software engineering at Azrieli College of Engineering Jerusalem.
 
 ## Live demo
 
-See live demo at: https://hanisui-timetable.herokuapp.com/
+See live demo at: https://hanisui-timetable-dev.herokuapp.com/
 
 ## Example usage + short description
 
