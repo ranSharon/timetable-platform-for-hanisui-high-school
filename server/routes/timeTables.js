@@ -4,7 +4,8 @@ const TimeTable = require('../models/timeTable');
 const mongoose = require('mongoose');
 const passport = require("passport");
 
-router.post('/timeTables', passport.authenticate('jwt', { session: false }), function (req, res) {
+// router.post('/timeTables', passport.authenticate('jwt', { session: false }), function (req, res) {
+router.post('/timeTables', function (req, res) {
     let timeTable = new TimeTable(req.body);
     timeTable.save()
         .then(timeTable => {
@@ -15,7 +16,8 @@ router.post('/timeTables', passport.authenticate('jwt', { session: false }), fun
         });
 });
 
-router.delete('/timeTables', passport.authenticate('jwt', { session: false }), function (req, res) {
+// router.delete('/timeTables', passport.authenticate('jwt', { session: false }), function (req, res) {
+router.delete('/timeTables', function (req, res) {
     mongoose.connection.dropCollection('timetables', (err, result) => {
         if (err) {
             res.json(err);

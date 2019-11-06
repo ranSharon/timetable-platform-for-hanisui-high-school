@@ -14,7 +14,8 @@ router.get('/subjects', function (req, res) {
     });
 });
 
-router.post('/subjects', passport.authenticate('jwt', { session: false }), function (req, res) {
+// router.post('/subjects', passport.authenticate('jwt', { session: false }), function (req, res) {
+router.post('/subjects', function (req, res) {
     let subject = new Subject(req.body);
     subject.save()
         .then(subject => {
@@ -37,7 +38,8 @@ router.get('/subjects/:id', function (req, res) {
     });
 });
 
-router.put('/subjects/:id', passport.authenticate('jwt', { session: false }), function (req, res) {
+// router.put('/subjects/:id', passport.authenticate('jwt', { session: false }), function (req, res) {
+router.put('/subjects/:id', function (req, res) {
     Subject.findById(req.params.id, function (err, subject) {
         if (!subject)
             res.status(404).send("data is not found");
@@ -60,7 +62,8 @@ router.put('/subjects/:id', passport.authenticate('jwt', { session: false }), fu
     });
 });
 
-router.delete('/subjects/:id', passport.authenticate('jwt', { session: false }), function (req, res) {
+// router.delete('/subjects/:id', passport.authenticate('jwt', { session: false }), function (req, res) {
+router.delete('/subjects/:id', function (req, res) {
     let id = req.params.id;
     Subject.findByIdAndRemove(id, (err, subject) => {
         if (err) {

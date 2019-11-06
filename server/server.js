@@ -1,7 +1,3 @@
-// ran
-// JxzyMt12gkITSNcf
-// mongodb+srv://ran:<password>@cluster0-hdnsl.mongodb.net/test?retryWrites=true
-
 const path = require('path');
 const express = require('express');
 const app = express();
@@ -22,8 +18,7 @@ const constraintsRouter = require('./routes/constraints');
 const timeTablesRouter = require('./routes/timeTables');
 
 // database
-mongoose.connect('mongodb+srv://ran:JxzyMt12gkITSNcf@cluster0-hdnsl.mongodb.net/test?retryWrites=true', { useFindAndModify: false, useNewUrlParser: true, useUnifiedTopology: true });
-// mongoose.connect(keys.mongoURI, {useFindAndModify: false, useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect(keys.mongoURI, {useFindAndModify: false, useNewUrlParser: true, useUnifiedTopology: true});
 const connection = mongoose.connection;
 
 connection.once('open', function () {

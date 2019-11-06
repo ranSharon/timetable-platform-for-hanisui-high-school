@@ -14,7 +14,8 @@ router.get('/constraints', function (req, res) {
     });
 });
 
-router.post('/constraints', passport.authenticate('jwt', { session: false }), function (req, res) {
+// router.post('/constraints', passport.authenticate('jwt', { session: false }), function (req, res) {
+router.post('/constraints', function (req, res) {
     let constraint = new Constraint(req.body);
     constraint.save()
         .then(constraint => {
@@ -25,7 +26,8 @@ router.post('/constraints', passport.authenticate('jwt', { session: false }), fu
         });
 });
 
-router.delete('/constraints/:id', passport.authenticate('jwt', { session: false }), function (req, res) {
+// router.delete('/constraints/:id', passport.authenticate('jwt', { session: false }), function (req, res) {
+router.delete('/constraints/:id', function (req, res) {
     let id = req.params.id;
     Constraint.findByIdAndRemove(id, (err, constraint) => {
         if (err) {
@@ -36,7 +38,8 @@ router.delete('/constraints/:id', passport.authenticate('jwt', { session: false 
     })
 });
 
-router.delete('/constraints', passport.authenticate('jwt', { session: false }), function (req, res) {
+// router.delete('/constraints', passport.authenticate('jwt', { session: false }), function (req, res) {
+router.delete('/constraints', function (req, res) {
     connection.dropCollection('constraints', (err, result) => {
         if (err) {
             res.json(err);

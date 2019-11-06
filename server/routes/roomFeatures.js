@@ -14,7 +14,8 @@ router.get('/roomFeatures', function (req, res) {
     });
 });
 
-router.post('/roomFeatures', passport.authenticate('jwt', { session: false }), function (req, res) {
+// router.post('/roomFeatures', passport.authenticate('jwt', { session: false }), function (req, res) {
+router.post('/roomFeatures', function (req, res) {
     let roomFeature = new RoomFeature(req.body);
     roomFeature.save()
         .then(roomFeature => {
@@ -25,7 +26,8 @@ router.post('/roomFeatures', passport.authenticate('jwt', { session: false }), f
         });
 });
 
-router.delete('/roomFeatures/:name', passport.authenticate('jwt', { session: false }), function (req, res) {
+// router.delete('/roomFeatures/:name', passport.authenticate('jwt', { session: false }), function (req, res) {
+router.delete('/roomFeatures/:name', function (req, res) {
     let name = req.params.name;
     RoomFeature.findOneAndDelete({ roomFeature: name }, (err, roomFeature) => {
         if (err) {

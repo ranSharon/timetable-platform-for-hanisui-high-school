@@ -14,7 +14,8 @@ router.get('/grades', function (req, res) {
     });
 });
 
-router.post('/grades', passport.authenticate('jwt', { session: false }), function (req, res) {
+// router.post('/grades', passport.authenticate('jwt', { session: false }), function (req, res) {
+router.post('/grades', function (req, res) {
     let grade = new Grade(req.body);
     grade.save()
         .then(grade => {
@@ -36,7 +37,8 @@ router.get('/grades/:id', function (req, res) {
     });
 });
 
-router.put('/grades/:id', passport.authenticate('jwt', { session: false }), function (req, res) {
+// router.put('/grades/:id', passport.authenticate('jwt', { session: false }), function (req, res) {
+router.put('/grades/:id', function (req, res) {
     Grade.findById(req.params.id, function (err, grade) {
         if (!grade)
             res.status(404).send("data is not found");
@@ -53,7 +55,8 @@ router.put('/grades/:id', passport.authenticate('jwt', { session: false }), func
     });
 });
 
-router.delete('/grades/:id', passport.authenticate('jwt', { session: false }), function (req, res) {
+// router.delete('/grades/:id', passport.authenticate('jwt', { session: false }), function (req, res) {
+router.delete('/grades/:id', function (req, res) {
     let id = req.params.id;
     Grade.findByIdAndRemove(id, (err, grade) => {
         if (err) {

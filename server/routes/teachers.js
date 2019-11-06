@@ -14,7 +14,8 @@ router.get('/teachers', function (req, res) {
     });
 });
 
-router.post('/teachers', passport.authenticate('jwt', { session: false }), function (req, res) {
+// router.post('/teachers', passport.authenticate('jwt', { session: false }), function (req, res) {
+router.post('/teachers', function (req, res) {
     let teacher = new Teacher(req.body);
     teacher.save()
         .then(teacher => {
@@ -36,7 +37,8 @@ router.get('/teachers/:id', function (req, res) {
     });
 });
 
-router.put('/teachers/:id', passport.authenticate('jwt', { session: false }), function (req, res) {
+// router.put('/teachers/:id', passport.authenticate('jwt', { session: false }), function (req, res) {
+router.put('/teachers/:id', function (req, res) {
     Teacher.findById(req.params.id, function (err, teacher) {
         if (!teacher)
             res.status(404).send("data is not found");
@@ -59,7 +61,8 @@ router.put('/teachers/:id', passport.authenticate('jwt', { session: false }), fu
     });
 });
 
-router.put('/teachers/', passport.authenticate('jwt', { session: false }), function (req, res) {
+// router.put('/teachers/', passport.authenticate('jwt', { session: false }), function (req, res) {
+router.put('/teachers/', function (req, res) {
     let hours = req.body.hours;
     let name = req.body.name;
     Teacher.findOne({ name: name }, function (err, teacher) {
@@ -77,7 +80,8 @@ router.put('/teachers/', passport.authenticate('jwt', { session: false }), funct
     });
 });
 
-router.delete('/teachers/:id', passport.authenticate('jwt', { session: false }), function (req, res) {
+// router.delete('/teachers/:id', passport.authenticate('jwt', { session: false }), function (req, res) {
+router.delete('/teachers/:id', function (req, res) {
     let id = req.params.id;
     Teacher.findByIdAndRemove(id, (err, teacher) => {
         if (err) {

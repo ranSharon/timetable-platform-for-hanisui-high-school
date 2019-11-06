@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const keys = require('../config/dev');
+const keys = require('../config/keys');
 const validateRegisterInput = require('../validation/register');
 const validateLoginInput = require('../validation/login');
 const User = require("../models/user");
@@ -18,7 +18,8 @@ router.get('/users', function (req, res) {
     });
 })
 
-router.delete('/users/:id', passport.authenticate('jwt', { session: false }), function (req, res) {
+// router.delete('/users/:id', passport.authenticate('jwt', { session: false }), function (req, res) {
+router.delete('/users/:id', function (req, res) {
     const id = req.params.id;
     User.findByIdAndRemove(id, (err, user) => {
         if (err) {
