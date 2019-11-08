@@ -19,7 +19,7 @@ class BuildTimetable extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            currentClass: '',
+            currentClass: 'אנא בחר כיתה',
             classConstraints: [],
             constraints: [],
 
@@ -2090,7 +2090,7 @@ class BuildTimetable extends Component {
                         </ul>
                     </div>
                 </nav>
-                <h4 className="text-right mr-3">{this.state.currentClass}</h4>
+                <h3 className="text-center mr-3">{this.state.currentClass}</h3>
                 {this.createTimeTableView()}
                 <div className="row">
                     <div className="text-right my-2 col-6">

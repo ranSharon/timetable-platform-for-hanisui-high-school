@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
 import TimetableStructure from './dataContainers/timetableStructure';
 import Grades from './dataContainers/grades';
 import StudySubjects from './dataContainers/studySubjects';

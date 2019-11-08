@@ -18,8 +18,7 @@ router.get('/users', function (req, res) {
     });
 })
 
-// router.delete('/users/:id', passport.authenticate('jwt', { session: false }), function (req, res) {
-router.delete('/users/:id', function (req, res) {
+router.delete('/users/:id', passport.authenticate('jwt', { session: false }), function (req, res) {
     const id = req.params.id;
     User.findByIdAndRemove(id, (err, user) => {
         if (err) {

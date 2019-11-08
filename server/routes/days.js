@@ -14,8 +14,7 @@ router.get('/days', function (req, res) {
     });
 });
 
-// router.post('/days', passport.authenticate('jwt', { session: false }), function (req, res) {
-router.post('/days', function (req, res) {
+router.post('/days', passport.authenticate('jwt', { session: false }), function (req, res) {
     let day = new Day(req.body);
     day.save()
         .then(day => {
@@ -37,8 +36,7 @@ router.get('/days/:id', function (req, res) {
     });
 });
 
-// router.put('/days/:id', passport.authenticate('jwt', { session: false }), function (req, res) {
-router.put('/days/:id', function (req, res) {
+router.put('/days/:id', passport.authenticate('jwt', { session: false }), function (req, res) {
     Day.findById(req.params.id, function (err, day) {
         if (!day)
             res.status(404).send("data is not found");
@@ -56,8 +54,7 @@ router.put('/days/:id', function (req, res) {
     });
 });
 
-// router.delete('/days/:id', passport.authenticate('jwt', { session: false }), function (req, res) {
-router.delete('/days/:id', function (req, res) {
+router.delete('/days/:id', passport.authenticate('jwt', { session: false }), function (req, res) {
     let id = req.params.id;
     Day.findByIdAndRemove(id, (err, day) => {
         if (err) {

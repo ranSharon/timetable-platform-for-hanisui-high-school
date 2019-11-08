@@ -14,8 +14,7 @@ router.get('/classRooms', function (req, res) {
     });
 });
 
-// router.post('/classRooms', passport.authenticate('jwt', { session: false }), function (req, res) {
-router.post('/classRooms', function (req, res) {
+router.post('/classRooms', passport.authenticate('jwt', { session: false }), function (req, res) {
     let classRoom = new ClassRoom(req.body);
     classRoom.save()
         .then(classRoom => {
@@ -38,8 +37,7 @@ router.get('/classRooms/:id', function (req, res) {
     });
 });
 
-// router.put('/classRooms/:id', passport.authenticate('jwt', { session: false }), function (req, res) {
-router.put('/classRooms/:id', function (req, res) {
+router.put('/classRooms/:id', passport.authenticate('jwt', { session: false }), function (req, res) {
     ClassRoom.findById(req.params.id, function (err, classRoom) {
         if (!classRoom)
             res.status(404).send("data is not found");
@@ -56,8 +54,7 @@ router.put('/classRooms/:id', function (req, res) {
     });
 });
 
-// router.delete('/classRooms/:id', passport.authenticate('jwt', { session: false }), function (req, res) {
-router.delete('/classRooms/:id', function (req, res) {
+router.delete('/classRooms/:id', passport.authenticate('jwt', { session: false }), function (req, res) {
     let id = req.params.id;
     ClassRoom.findByIdAndRemove(id, (err, classRoom) => {
         if (err) {
