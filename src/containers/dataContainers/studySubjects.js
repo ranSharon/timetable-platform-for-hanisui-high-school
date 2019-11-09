@@ -174,8 +174,8 @@ class StudySubjects extends Component {
     }
 
     onMixCheck() {
-        if(this.state.mix){
-            this.setState({numOfMix: '', grouping: false})
+        if (this.state.mix) {
+            this.setState({ numOfMix: '', grouping: false })
         }
         this.setState({ mix: !this.state.mix });
     }
@@ -197,8 +197,8 @@ class StudySubjects extends Component {
     }
 
     onGroupingCheck() {
-        if(this.state.grouping){
-            this.setState({numOfMix: ''})
+        if (this.state.grouping) {
+            this.setState({ numOfMix: '' })
         }
         this.setState({ grouping: !this.state.grouping });
     }
@@ -627,80 +627,70 @@ class StudySubjects extends Component {
                         onChange={(e) => (this.onSubjectNameChange(e))}>
                     </input>
                 </div>
-                <div className="w-50" style={{ float: "right" }}>
-                    <h5 style={{ textAlign: "right" }}>{'כיתות הלומדות את המקצוע '}</h5>
-                    <div style={{ textAlign: "right" }}>
-                        <input type="checkbox" lable="ז" value="ז" checked={this.state.checked['ז']} onChange={(e) => this.onClassCheck(e)} />
-                        <div style={{ display: "inline" }}> {'ז'}</div>
+                <div className="row">
+                    <div className="col-6" style={{ float: "right" }}>
+                        <h5 style={{ textAlign: "right" }}>{'כיתות הלומדות את המקצוע '}</h5>
+                        <div style={{ textAlign: "right" }}>
+                            <input type="checkbox" lable="ז" value="ז" checked={this.state.checked['ז']} onChange={(e) => this.onClassCheck(e)} />
+                            <div style={{ display: "inline" }}> {'ז'}</div>
+                        </div>
+                        <div style={{ textAlign: "right" }}>
+                            <input type="checkbox" lable="ח" value="ח" checked={this.state.checked['ח']} onChange={(e) => this.onClassCheck(e)} />
+                            <div style={{ display: "inline" }}> {'ח'}</div>
+                        </div>
+                        <div style={{ textAlign: "right" }}>
+                            <input type="checkbox" lable="ט" value="ט" checked={this.state.checked['ט']} onChange={(e) => this.onClassCheck(e)} />
+                            <div style={{ display: "inline" }}> {'ט'}</div>
+                        </div>
+                        <div style={{ textAlign: "right" }}>
+                            <input type="checkbox" lable="י" value="י" checked={this.state.checked['י']} onChange={(e) => this.onClassCheck(e)} />
+                            <div style={{ display: "inline" }}> {'י'}</div>
+                        </div>
+                        <div style={{ textAlign: "right" }}>
+                            <input type="checkbox" lable="יא" value="יא" checked={this.state.checked['יא']} onChange={(e) => this.onClassCheck(e)} />
+                            <div style={{ display: "inline" }}> {'יא'}</div>
+                        </div>
+                        <div style={{ textAlign: "right" }}>
+                            <input type="checkbox" lable="יב" value="יב" checked={this.state.checked['יב']} onChange={(e) => this.onClassCheck(e)} />
+                            <div style={{ display: "inline" }}> {'יב'}</div>
+                        </div>
                     </div>
-                    <div style={{ textAlign: "right" }}>
-                        <input type="checkbox" lable="ח" value="ח" checked={this.state.checked['ח']} onChange={(e) => this.onClassCheck(e)} />
-                        <div style={{ display: "inline" }}> {'ח'}</div>
-                    </div>
-                    <div style={{ textAlign: "right" }}>
-                        <input type="checkbox" lable="ט" value="ט" checked={this.state.checked['ט']} onChange={(e) => this.onClassCheck(e)} />
-                        <div style={{ display: "inline" }}> {'ט'}</div>
-                    </div>
-                    <div style={{ textAlign: "right" }}>
-                        <input type="checkbox" lable="י" value="י" checked={this.state.checked['י']} onChange={(e) => this.onClassCheck(e)} />
-                        <div style={{ display: "inline" }}> {'י'}</div>
-                    </div>
-                    <div style={{ textAlign: "right" }}>
-                        <input type="checkbox" lable="יא" value="יא" checked={this.state.checked['יא']} onChange={(e) => this.onClassCheck(e)} />
-                        <div style={{ display: "inline" }}> {'יא'}</div>
-                    </div>
-                    <div style={{ textAlign: "right" }}>
-                        <input type="checkbox" lable="יב" value="יב" checked={this.state.checked['יב']} onChange={(e) => this.onClassCheck(e)} />
-                        <div style={{ display: "inline" }}> {'יב'}</div>
+                    <div className="col-6" style={{ float: "right" }}>
+                        <h5 style={{ textAlign: "right" }}>{'פרטים נוספים על המקצוע'}</h5>
+                        <div style={{ textAlign: "right" }}>
+                            <input type="checkbox" checked={this.state.bagrut} onChange={() => this.onBagrutCheck()} />
+                            <div style={{ display: "inline" }}> {'נלמד לבגרות'}</div>
+                        </div>
+                        {this.bagrutIsCheked()}
+                        <div className="pt-3" style={{ textAlign: "right" }}>
+                            <input type="checkbox" checked={this.state.mix} onChange={() => this.onMixCheck()} />
+                            <div style={{ display: "inline" }}> {'מקצוע שמערבב את כל כיתות השכבה'}</div>
+                        </div>
+                        {this.mixIsCheked()}
+                        <h6 className="pt-2 mb-0" style={{ "textAlign": "right" }}>המקצוע דורש:</h6>
+                        {/* {this.state.roomFeatures.map((roomFeature, index) => { */}
+                        {this.state.featuresFetched ?
+                            (<div>
+                                {this.state.featuresChecked.map((roomFeature, index) => {
+                                    return (
+                                        <RoomFeatureCheckBox
+                                            key={index}
+                                            roomFeature={roomFeature.roomFeature}
+                                            roomFeatureCheck={this.handleFeatureCheck}
+                                            // checked={this.getCheckStatus(roomFeature)}>
+                                            checked={roomFeature.checked}>
+                                        </RoomFeatureCheckBox>
+                                    )
+                                })}
+                            </div>) :
+                            (<div className="clearfix mt-5">
+                                <div className="spinner-border float-right" role="status">
+                                    <span className="sr-only">Loading...</span>
+                                </div>
+                            </div>)
+                        }
                     </div>
                 </div>
-                <div className="w-50" style={{ float: "right" }}>
-                    <h5 style={{ textAlign: "right" }}>{'פרטים נוספים על המקצוע'}</h5>
-                    <div style={{ textAlign: "right" }}>
-                        <input type="checkbox" checked={this.state.bagrut} onChange={() => this.onBagrutCheck()} />
-                        <div style={{ display: "inline" }}> {'נלמד לבגרות'}</div>
-                    </div>
-                    {this.bagrutIsCheked()}
-                    <div className="pt-3" style={{ textAlign: "right" }}>
-                        <input type="checkbox" checked={this.state.mix} onChange={() => this.onMixCheck()} />
-                        <div style={{ display: "inline" }}> {'מקצוע שמערבב את כל כיתות השכבה'}</div>
-                    </div>
-                    {this.mixIsCheked()}
-                    <h6 className="pt-2 mb-0" style={{ "textAlign": "right" }}>המקצוע דורש:</h6>
-                    {/* {this.state.roomFeatures.map((roomFeature, index) => { */}
-                    {this.state.featuresFetched ?
-                        (<div>
-                            {this.state.featuresChecked.map((roomFeature, index) => {
-                                return (
-                                    <RoomFeatureCheckBox
-                                        key={index}
-                                        roomFeature={roomFeature.roomFeature}
-                                        roomFeatureCheck={this.handleFeatureCheck}
-                                        // checked={this.getCheckStatus(roomFeature)}>
-                                        checked={roomFeature.checked}>
-                                    </RoomFeatureCheckBox>
-                                )
-                            })}
-                        </div>) :
-                        (<div className="clearfix mt-5">
-                            <div className="spinner-border float-right" role="status">
-                                <span className="sr-only">Loading...</span>
-                            </div>
-                        </div>)
-                    }
-                    {/* {this.state.featuresChecked.map((roomFeature, index) => {
-                        return (
-                            <RoomFeatureCheckBox
-                                key={index}
-                                roomFeature={roomFeature.roomFeature}
-                                roomFeatureCheck={this.handleFeatureCheck}
-                                // checked={this.getCheckStatus(roomFeature)}>
-                                checked={roomFeature.checked}>
-                            </RoomFeatureCheckBox>
-                        )
-                    })} */}
-                </div>
-                <div></div>
                 {/* <button type="button" className="btn btn-secondary" onClick={() => this.setSubjects()}>{this.state.buttonType}</button> */}
                 {this.saveButton()}
                 {this.alertMessage()}

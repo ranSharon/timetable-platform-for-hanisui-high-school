@@ -39,11 +39,10 @@ class App extends Component {
     return (
       <Provider store={store}>
         <Router>
-        <NavBar />
-          {/* {this.props.auth.isAuthenticated ?
+          {this.props.auth.isAuthenticated ?
             <NavBar />
             :
-            <Login />} */}
+            <Login />}
         </Router>
       </Provider>
     );
