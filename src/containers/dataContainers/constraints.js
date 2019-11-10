@@ -864,7 +864,6 @@ class Constraints extends Component {
     constraintExist() {
         let message = '';
         let constraints = [...this.state.constraints];
-        let teacher = this.state.teacher; // string init ''
         let subject = this.state.subject; // string init ''
         let grade = this.state.grade; // string init ''
         let classNumber = [...this.state.classNumber]; // arary string init ['']

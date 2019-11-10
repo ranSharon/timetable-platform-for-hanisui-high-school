@@ -4,8 +4,8 @@ import HourBox from './buildTimetableContainers/hourBox';
 import ClassRoomBox from './buildTimetableContainers/classRoomBox';
 import ConstraintBox from './buildTimetableContainers/constraintBox';
 import DragConstraintBox from './buildTimetableContainers/dragConstraintBox';
-import { confirmAlert } from 'react-confirm-alert'; // Import
-import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css';
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 
@@ -67,7 +67,6 @@ class BuildTimetable extends Component {
         }
 
         this.handleConstraintClick = this.handleConstraintClick.bind(this);
-        this.handleHourClick = this.handleHourClick.bind(this);
         this.handleClassRoomClick = this.handleClassRoomClick.bind(this);
         this.handleConstraintDrag = this.handleConstraintDrag.bind(this);
         this.addConstraintToHour = this.addConstraintToHour.bind(this);
@@ -76,49 +75,7 @@ class BuildTimetable extends Component {
     }
 
     componentDidMount() {
-        // axios.get('http://localhost:4000/data/getConstraints')
-        //     .then(response => {
-        //         if (this.mounted) {
-        //             this.setState({ constraints: [...response.data.sort(this.compareTeacher)] }, function () {
-        //                 axios.get('http://localhost:4000/data/getDays')
-        //                     .then(response => {
-        //                         if (this.mounted) {
-        //                             this.setState({ days: [...response.data] }, function () {
-        //                                 axios.get('http://localhost:4000/data/getGrades')
-        //                                     .then(response => {
-        //                                         if (this.mounted) {
-        //                                             this.setState({ grades: [...response.data.sort(this.compareGrade)] }, function () {
-        //                                                 this.initTimeTable();
-        //                                             });
-        //                                         }
-        //                                         console.log('grades:')
-        //                                         console.log(this.state.grades);
-        //                                     })
-        //                                     .catch(function (error) {
-        //                                         console.log(error);
-        //                                     });
-        //                             });
-        //                         }
-        //                         console.log('days:')
-        //                         console.log(this.state.days);
-        //                     })
-        //                     .catch(function (error) {
-        //                         console.log(error);
-        //                     });
-        //             });
-        //         }
-        //         console.log('constraints:')
-        //         console.log(this.state.constraints);
-        //     })
-        //     .catch(function (error) {
-        //         console.log(error);
-        //     });
-
         this.mounted = true;
-        // if (process.env.NODE_ENV !== 'production') {
-        //     this.host = 'http://localhost:4000'
-        // }
-        // axios.get('http://localhost:4000/data/getConstraints')
         axios.get('/api/constraints')
             .then(response => {
                 if (this.mounted) {
@@ -126,20 +83,15 @@ class BuildTimetable extends Component {
                         this.initTimeTable();
                     });
                 }
-                // console.log('constraints:')
-                // console.log(this.state.constraints);
             })
             .catch(function (error) {
                 console.log(error);
             });
 
-        // axios.get('http://localhost:4000/data/getGrades')
         axios.get('/api/grades')
             .then(response => {
                 if (this.mounted) {
                     this.setState({ grades: [...response.data.sort(this.compareGrade)], gradesFetched: true }, function () {
-                        console.log('grades:')
-                        console.log(this.state.grades);
                         this.initTimeTable();
                     });
                 }
@@ -148,7 +100,6 @@ class BuildTimetable extends Component {
                 console.log(error);
             });
 
-        // axios.get('http://localhost:4000/data/getDays')
         axios.get('/api/days')
             .then(response => {
                 if (this.mounted) {
@@ -156,33 +107,25 @@ class BuildTimetable extends Component {
                         this.initTimeTable();
                     });
                 }
-                // console.log('days:')
-                // console.log(this.state.days);
             })
             .catch(function (error) {
                 console.log(error);
             });
 
-        // axios.get('http://localhost:4000/data/getClassRooms')
         axios.get('/api/classRooms')
             .then(response => {
                 if (this.mounted) {
                     this.setState({ classRooms: [...response.data.sort(this.compareClassroom)], classRoomsView: [...response.data] });
                 }
-                // console.log('classRooms:')
-                // console.log(this.state.classRooms);
             })
             .catch(function (error) {
                 console.log(error);
             });
-        // axios.get('http://localhost:4000/data/getTeachers')
         axios.get('/api/teachers')
             .then(response => {
                 if (this.mounted) {
                     this.setState({ teachers: [...response.data] });
                 }
-                // console.log('teachers:')
-                // console.log(this.state.teachers);
             })
             .catch(function (error) {
                 console.log(error);
@@ -194,43 +137,30 @@ class BuildTimetable extends Component {
         clearTimeout(this.timeoutID);
     }
 
-    componentDidUpdate() {
-        // console.log(this.state.inTable);
-        console.log(this.state.currentConstraint);
-    }
-
     initTimeTable() {
         if (!this.state.daysFetched || !this.state.gradesFetched || !this.state.constraintsFetched) {
             return;
         }
-        // axios.get('http://localhost:4000/data/getTimeTable')
         axios.get('/api/timeTables')
             .then(response => {
                 if (this.mounted) {
-                    // console.log(response.data);
                     let timeTableEmpty = true;
                     if (response.data.length > 0) {
                         outerLoop:
                         for (let i = 0; i <= response.data.length - 1; i++) {
                             for (let j = 0; j <= response.data[i].days.length - 1; j++) {
                                 for (let k = 0; k <= response.data[i].days[j].hours.length - 1; k++) {
-                                    // console.log(response.data[i].days[j].hours[k]);
-                                    // for (let l = 0; l <= response.data[i].days[j].hours[k].length - 1; l++) {
                                     if (response.data[i].days[j].hours[k].constraints.length > 0) {
                                         timeTableEmpty = false;
                                         break outerLoop;
                                     }
-                                    // }
                                 }
                             }
                         }
                     }
-                    // console.log(timeTableEmpty);
                     if (!timeTableEmpty && response.data.length > 0) {
                         this.setState({ timeTable: [...response.data] }, function () {
                             this.updateTimeTable();
-                            console.log('timeTable');
-                            console.log(this.state.timeTable);
                             this.setGrades();
                         });
                     } else {
@@ -254,8 +184,6 @@ class BuildTimetable extends Component {
                             }
                         }
                         this.setState({ timeTable: timeTable }, function () {
-                            console.log('timeTable');
-                            console.log(this.state.timeTable);
                             this.setGrades();
                         });
                     }
@@ -276,30 +204,25 @@ class BuildTimetable extends Component {
             for (let i = 0; i <= timeTable.length - 1; i++) {
                 for (let j = 0; j <= timeTable[i].days.length - 1; j++) {
                     for (let k = 0; k <= timeTable[i].days[j].hours.length - 1; k++) {
-                        // console.log(response.data[i].days[j].hours[k]);
-                        // for (let l = 0; l <= response.data[i].days[j].hours[k].length - 1; l++) {
                         if (timeTable[i].days[j].hours[k].constraints.length > 0) {
                             timeTableEmpty = false;
                             break outerLoop;
                         }
-                        // }
                     }
                 }
             }
         }
 
-        console.log(timeTableEmpty);
         let grades = [];
         let stateGreades = [];
 
         if (!timeTableEmpty) {
-            // [TODO] check if num of clasess change (if not => return)
+            // [TODO] check if num of classes change (if not => return)
 
             timeTable.forEach(table => {
                 grades.push(table.classNumber);
             });
             grades = [...grades.sort()];
-            console.log(grades);
 
             // creating
             let gradeObj = {};
@@ -317,28 +240,22 @@ class BuildTimetable extends Component {
                 gradeObj['numOfClasses'] = '';
 
                 if (grade !== currGrade) {
-                    console.log(gradeObj);
                     stateGreades.push(gradeObj);
                     grade = currGrade;
                     gradeObj = {};
                 }
             }
-            console.log(stateGreades);
 
-            // update grades array state for correct sitution
+            // update grades array state for correct situation
             grade = grades[0];
             currGrade = '';
             let numOfClassesInGrade = 0;
             for (let i = 0; i <= grades.length - 1; i++) {
-                // console.log(grade);
-                // console.log(currGrade);
-                // console.log(numOfClassesInGrade);
                 if (grades[i].length === 2) {
                     currGrade = grades[i][0];
                 } else if (grades[i].length === 3) {
                     currGrade = grades[i][0] + grades[i][1];
                 }
-                // console.log(grade !== currGrade && grade !== '');
                 if (grade !== currGrade || i === grades.length - 1) {
                     if (i === grades.length - 1) {
                         numOfClassesInGrade++;
@@ -354,16 +271,11 @@ class BuildTimetable extends Component {
                     numOfClassesInGrade++;
                 }
             }
-            this.setState({ grades: [...stateGreades], isLoading: false }, () => {
-                console.log(this.state.grades);
-            });
+            this.setState({ grades: [...stateGreades], isLoading: false });
         }
         else {
-            this.setState({ isLoading: false }, () => {
-                console.log(this.state.grades);
-            });
+            this.setState({ isLoading: false });
         }
-
     }
 
     updateTimeTable() {
@@ -443,7 +355,6 @@ class BuildTimetable extends Component {
     setConstaraintsToAdd(classNumber) {
         let constraints = [...this.state.constraints];
         let constaraintsToAdd = [];
-        // let constaraintsInTable = [];
         for (let i = 0; i <= constraints.length - 1; i++) {
             for (let j = 0; j <= constraints[i].classNumber.length; j++) {
                 if (classNumber === constraints[i].classNumber[j]) {
@@ -518,13 +429,10 @@ class BuildTimetable extends Component {
             for (let i = 0; i <= timeTable.length - 1; i++) {
                 for (let j = 0; j <= timeTable[i].days.length - 1; j++) {
                     for (let k = 0; k <= timeTable[i].days[j].hours.length - 1; k++) {
-                        // console.log(response.data[i].days[j].hours[k]);
-                        // for (let l = 0; l <= response.data[i].days[j].hours[k].length - 1; l++) {
                         if (timeTable[i].days[j].hours[k].constraints.length > 0) {
                             timeTableEmpty = false;
                             break outerLoop;
                         }
-                        // }
                     }
                 }
             }
@@ -540,23 +448,6 @@ class BuildTimetable extends Component {
 
             });
             grades = [...grades.sort()];
-
-            // countinu setting nav bar
-            // for (let i = 0; i <= grades.length - 1; i++) {
-            //     navBar = [...navBar,
-            //     <li key={key} className="navbar-item w-aotu">
-            //         <div
-            //             className="nav-link"
-            //             value={grades[i]}
-            //             onClick={() => { this.handleClassClick(grades[i]) }}
-            //             // onClick={() =>  this.handleClassClick(grades[i]) }
-            //             style={{ "cursor": "pointer" }}>
-            //             {grades[i]}
-            //         </div>
-            //     </li>
-            //     ];
-            //     key++;
-            // }
             grades.forEach((grade) => {
                 navBar = [...navBar,
                 <li key={key} className="navbar-item w-aotu">
@@ -564,7 +455,6 @@ class BuildTimetable extends Component {
                         className="nav-link"
                         value={grade}
                         onClick={() => { this.handleClassClick(grade) }}
-                        // onClick={() =>  this.handleClassClick(grades[i]) }
                         style={{ "cursor": "pointer" }}>
                         {grade}
                     </div>
@@ -591,27 +481,6 @@ class BuildTimetable extends Component {
                 }
             }
         }
-        // grades = [...grades.sort()];
-        // console.log(grades);
-        // let navBar = [];
-        // let key = 0;
-        // for (let i = 0; i <= grades.length - 1; i++) {
-        //     for (let j = 1; j <= parseInt(grades[i].numOfClasses); j++) {
-        //         navBar = [...navBar,
-        //         <li key={key} className="navbar-item w-aotu">
-        //             <div
-        //                 className="nav-link"
-        //                 value={grades[i].grade + j}
-        //                 onClick={() => { this.handleClassClick(grades[i].grade + j) }}
-        //                 style={{ "cursor": "pointer" }}>
-        //                 {grades[i].grade + j}
-        //             </div>
-        //         </li>
-        //         ];
-        //         key++;
-        //     }
-        // }
-        // console.log(this.state.timeTable);
         return navBar;
     }
 
@@ -684,22 +553,11 @@ class BuildTimetable extends Component {
         let prvConstraints = ''; // if lesson is more then an hour i want to check it and not showing all lesson hours boxes 
         let show = true; // // if a box while br shown
         let validToAdd = true; // if box is green or red
-        let currentConstraintEmpty = true; // if no constriant is chosee in this component then box lavan
+        let currentConstraintEmpty = true; // if no constraint is chosen in this component then box white
         let data = {};
-        let border = 'border border-dark';
+        // let border = 'border border-dark';
 
-        // let first = true // when edeting we use this flag  
-        // let dummy = false;
         for (let i = 0; i <= dayView.hours.length - 1; i++) {
-            if (i === 0 && col === 0) {
-                // console.log('start:')
-            }
-            // if (i === 0) {
-            //     for (let j = 8; j < dayView.hours[i]; j++) {
-            //         emptySpace += <div key={j} style={{ "height": "50px", "width": "162px", "backgroundColor": "black" }}></div>;
-            //         console.log(emptySpace);
-            //     }
-            // }
             if (dayView.hours[i].constraints.length > 0) {
                 validToAdd = false;
                 if (prvConstraints === JSON.stringify(dayView.hours[i].constraints[0])) {
@@ -708,28 +566,38 @@ class BuildTimetable extends Component {
             } else if (!this.objectEmpty(this.state.currentConstraint) && !this.objectEmpty(this.state.currentClassRoom)) {
                 if (this.state.currentConstraint.subjectMix) {
                     validToAdd = (this.checkOtherConstraintsInTable(day, dayView.hours[i].hour, dayView.hours[dayView.hours.length - 1].hour, this.state.currentConstraint) &&
-                        this.chekTeacherOtherDays(day, dayView.hours[i].hour, dayView.hours[dayView.hours.length - 1].hour, this.state.currentConstraint) &&
+                        this.checkTeacherOtherDays(day, dayView.hours[i].hour, dayView.hours[dayView.hours.length - 1].hour, this.state.currentConstraint) &&
                         this.checkClassRoomsOtherDays(day, dayView.hours[i].hour, dayView.hours[dayView.hours.length - 1].hour, this.state.currentClassRoom, this.state.currentConstraint) &&
-                        this.checkOtherConstraintsInGrage(day, dayView.hours[i].hour, dayView.hours[dayView.hours.length - 1].hour, this.state.currentConstraint));
+                        this.checkOtherConstraintsInGrade(day, dayView.hours[i].hour, dayView.hours[dayView.hours.length - 1].hour, this.state.currentConstraint));
                 } else {
                     validToAdd = (this.checkOtherConstraintsInTable(day, dayView.hours[i].hour, dayView.hours[dayView.hours.length - 1].hour, this.state.currentConstraint) &&
-                        this.chekTeacherOtherDays(day, dayView.hours[i].hour, dayView.hours[dayView.hours.length - 1].hour, this.state.currentConstraint) &&
+                        this.checkTeacherOtherDays(day, dayView.hours[i].hour, dayView.hours[dayView.hours.length - 1].hour, this.state.currentConstraint) &&
                         this.checkClassRoomsOtherDays(day, dayView.hours[i].hour, dayView.hours[dayView.hours.length - 1].hour, this.state.currentClassRoom, this.state.currentConstraint));
                 }
                 currentConstraintEmpty = false;
             } else if (!this.objectEmpty(this.state.currentConstraint)) {
                 if (this.state.currentConstraint.subjectMix) {
-                    validToAdd = (this.checkOtherConstraintsInGrage(day, dayView.hours[i].hour, dayView.hours[dayView.hours.length - 1].hour, this.state.currentConstraint) &&
+                    validToAdd = (this.checkOtherConstraintsInGrade(day, dayView.hours[i].hour, dayView.hours[dayView.hours.length - 1].hour, this.state.currentConstraint) &&
                         this.checkOtherConstraintsInTable(day, dayView.hours[i].hour, dayView.hours[dayView.hours.length - 1].hour, this.state.currentConstraint) &&
-                        this.chekTeacherOtherDays(day, dayView.hours[i].hour, dayView.hours[dayView.hours.length - 1].hour, this.state.currentConstraint));
+                        this.checkTeacherOtherDays(day, dayView.hours[i].hour, dayView.hours[dayView.hours.length - 1].hour, this.state.currentConstraint));
                 } else {
                     validToAdd = (this.checkOtherConstraintsInTable(day, dayView.hours[i].hour, dayView.hours[dayView.hours.length - 1].hour, this.state.currentConstraint) &&
-                        this.chekTeacherOtherDays(day, dayView.hours[i].hour, dayView.hours[dayView.hours.length - 1].hour, this.state.currentConstraint));
+                        this.checkTeacherOtherDays(day, dayView.hours[i].hour, dayView.hours[dayView.hours.length - 1].hour, this.state.currentConstraint));
                 }
                 currentConstraintEmpty = false;
             } else if (!this.objectEmpty(this.state.currentClassRoom)) {
                 validToAdd = this.checkClassRoomsOtherDays(day, dayView.hours[i].hour, dayView.hours[dayView.hours.length - 1].hour, this.state.currentClassRoom, this.state.currentConstraint);
                 currentConstraintEmpty = false;
+            }
+            if (dayView.hours[i].constraints.length === 1) {
+                if (this.state.currentConstraint.subjectMix
+                    && !this.state.currentConstraint.subjectGrouping
+                    && dayView.hours[i].constraints[0].hours === this.state.currentConstraint.hours
+                    && prvConstraints !== JSON.stringify(dayView.hours[i].constraints[0])) {
+                    validToAdd = (this.checkTeacherOtherDays(day, dayView.hours[i].hour, dayView.hours[dayView.hours.length - 1].hour, this.state.currentConstraint) &&
+                        this.checkClassRoomsOtherDays(day, dayView.hours[i].hour, dayView.hours[dayView.hours.length - 1].hour, this.state.currentClassRoom, this.state.currentConstraint));
+                    currentConstraintEmpty = this.objectEmpty(this.state.currentConstraint);
+                }
             }
 
             data = { ...dayView.hours[i] };
@@ -738,11 +606,14 @@ class BuildTimetable extends Component {
                 data.constraints = [...data.constraints, this.state.currentConstraint];
             }
 
-            if (JSON.stringify(data.constraints[0]) === JSON.stringify(this.state.currentConstraint)) {
-                // console.log(data.constraints[0]);
-                // console.log(this.state.currentConstraint);
-                border = 'border border-primary';
-            }
+            // for (let i = 0; i <= data.constraints.length - 1; i++) {
+            //     if (JSON.stringify(data.constraints[i]) === JSON.stringify(this.state.currentConstraint)) {
+            //         border = 'border border-primary';
+            //     }
+            // }
+            // if (JSON.stringify(data.constraints[0]) === JSON.stringify(this.state.currentConstraint)) {
+            //     border = 'border border-primary';
+            // }
 
             hoursBoxes = [...hoursBoxes,
             <HourBox
@@ -750,26 +621,27 @@ class BuildTimetable extends Component {
                 show={show} // if a box while or shown
                 validToAdd={validToAdd} // if box is green or red
                 day={day} // 
-                data={data} // data about box from timetable, inclulde hour time and lessons array
-                // data={dayView.hours[i]} // data about box from timetable, inclulde hour time and lessons array
-                endHour={dayView.hours[dayView.hours.length - 1].hour} // the end time of currnt hour box day
-                // endHour={dayView.hours[dayView.hours.length - 1].hour} // the end time of currnt hour box
-                currentConstraintEmpty={currentConstraintEmpty} // if no constriant is chosee in this component then box white
+                data={data} // data about box from timetable, include hour time and lessons array
+                // data={dayView.hours[i]} // data about box from timetable, include hour time and lessons array
+                endHour={dayView.hours[dayView.hours.length - 1].hour} // the end time of current hour box day
+                // endHour={dayView.hours[dayView.hours.length - 1].hour} // the end time of current hour box
+                currentConstraintEmpty={currentConstraintEmpty} // if no constraint is chosen in this component then box white
+                currentConstraint={this.state.currentConstraint} // constraint that was clicked
                 row={i} // num of row of box in table
                 col={col} // num of col of box in table
                 click={this.handleDragConstraintClick}
-                border={border}
+                // border={border}
 
-                drop={this.addConstraintToHour} // event for droping lesson in this box
+                drop={this.addConstraintToHour} // event for dropping lesson in this box
                 hover={this.handleHourClick} // change color or box when hover and also valid to add
 
-                drag={this.handleConstraintDrag} // event for draging a constraint that are in hour box 
-                endDrag={this.handleConstraintEndDrag} // event for end draging a constraint that are in hour box 
+                drag={this.handleConstraintDrag} // event for dragging a constraint that are in hour box 
+                endDrag={this.handleConstraintEndDrag} // event for end dragging a constraint that are in hour box 
             >
             </HourBox>
             ];
             show = true;
-            border = 'border border-dark';
+            // border = 'border border-dark';
             if (dayView.hours[i].constraints.length !== 0) {
                 prvConstraints = JSON.stringify(dayView.hours[i].constraints[0]);
             }
@@ -811,11 +683,10 @@ class BuildTimetable extends Component {
         return true;
     }
 
-    checkOtherConstraintsInGrage(day, hour, endofDay, constraint) {
+    checkOtherConstraintsInGrade(day, hour, endOfDay, constraint) {
         let canBeAdded = true;
         let lessonHours = parseInt(constraint.hours);
         let grade = '';
-        console.log(this.state.grades)
         let currentClass = this.state.currentClass;
         if (currentClass.length === 2) {
             grade = currentClass[0];
@@ -831,28 +702,6 @@ class BuildTimetable extends Component {
             }
         }
         let timeTable = [...this.state.timeTable];
-
-        // for (let i = 1; i <= numOfClasses; i++) {
-        //     for (let j = 0; j <= timeTable.length - 1; j++) {
-        //         if (timeTable[j].classNumber === (grade + i)) {
-        //             for (let k = 0; k <= timeTable[j].days.length - 1; k++) {
-        //                 if (timeTable[j].days[k].day === day) {
-        //                     for (let l = 0; l <= timeTable[j].days[k].hours.length - 1; l++) {
-        //                         if (timeTable[j].days[k].hours[l].hour === hour) {
-        //                             if (timeTable[j].days[k].hours[l].constraints.length > 0) {
-        //                                 return false;
-        //                             } else if (timeTable[j].days[k].hours[l].hour + (lessonHours - 1) <= endofDay) {
-        //                                 if (timeTable[j].days[k].hours[l + lessonHours - 1].constraints.length > 0) {
-        //                                     return false;
-        //                                 }
-        //                             }
-        //                         }
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
         for (let i = 1; i <= numOfClasses; i++) {
             for (let j = 0; j <= timeTable.length - 1; j++) {
                 if (timeTable[j].classNumber === (grade + i)) {
@@ -860,7 +709,7 @@ class BuildTimetable extends Component {
                         if (timeTable[j].days[k].day === day) {
                             for (let l = 0; l <= timeTable[j].days[k].hours.length - 1; l++) {
                                 if (timeTable[j].days[k].hours[l].hour === hour) {
-                                    if (timeTable[j].days[k].hours[l].hour + (lessonHours - 1) <= endofDay) {
+                                    if (timeTable[j].days[k].hours[l].hour + (lessonHours - 1) <= endOfDay) {
                                         for (let m = 1; m <= lessonHours; m++) {
                                             if (timeTable[j].days[k].hours[l].constraints.length > 0) {
                                                 return false;
@@ -876,14 +725,13 @@ class BuildTimetable extends Component {
                 }
             }
         }
-
         return canBeAdded;
     }
 
-    checkOtherConstraintsInTable(day, hour, endofDay, constraint) {
+    checkOtherConstraintsInTable(day, hour, endOfDay, constraint) {
         let canBeAdded = true;
         let lessonHours = parseInt(constraint.hours);
-        if (lessonHours + (hour - 1) > endofDay) {
+        if (lessonHours + (hour - 1) > endOfDay) {
             return false
         }
 
@@ -893,7 +741,7 @@ class BuildTimetable extends Component {
             if (timeTableView.days[j].day === day) {
                 for (let k = 0; k <= timeTableView.days[j].hours.length - 1; k++) {
                     if (timeTableView.days[j].hours[k].hour === hour) {
-                        if (timeTableView.days[j].hours[k].hour + (lessonHours - 1) <= endofDay) {
+                        if (timeTableView.days[j].hours[k].hour + (lessonHours - 1) <= endOfDay) {
                             for (let m = 1; m <= lessonHours; m++) {
                                 if (timeTableView.days[j].hours[k + m - 1].constraints.length > 0) {
                                     return false;
@@ -908,40 +756,12 @@ class BuildTimetable extends Component {
     }
 
 
-    chekTeacherOtherDays(day, hour, endofDay, constraint) {
+    checkTeacherOtherDays(day, hour, endOfDay, constraint) {
         let canBeAdded = true;
         let message = '';
         let timeTable = [...this.state.timeTable];
         let teachers = [...constraint.groupingTeachers];
         let lessonHours = parseInt(constraint.hours);
-
-        // for (let t = 0; t <= teachers.length - 1; t++) {
-        //     for (let i = 0; i <= timeTable.length - 1; i++) {
-        //         if (timeTable[i].classNumber !== this.state.currentClass) {
-        //             for (let j = 0; j <= timeTable[i].days.length - 1; j++) {
-        //                 if (timeTable[i].days[j].day === day) {
-        //                     for (let k = 0; k <= timeTable[i].days[j].hours.length - 1; k++) {
-        //                         if (timeTable[i].days[j].hours[k].hour === hour) {
-        //                             for (let l = 0; l <= timeTable[i].days[j].hours[k].constraints.length - 1; l++) {
-        //                                 if (timeTable[i].days[j].hours[k].constraints[l].teacher === teachers[t]) {
-        //                                     message = 'המורה ' + teachers[t] + ' כבר מלמד ביום: ' + day + ', בשעה ' + (hour - 1) + ':00-' + + hour + ':00, בכיתה ' + timeTable[i].classNumber;
-        //                                     teacherClashMessage = [...teacherClashMessage, message];
-        //                                     return false;
-        //                                 }
-        //                             }
-        //                         }
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
-
-        // for (let m = 1; m <= lessonHours; m++) {
-        //     if (timeTableView.days[j].hours[k + m - 1].constraints.length > 0) {
-        //         return false;
-        //     }
-        // }
 
         for (let t = 0; t <= teachers.length - 1; t++) {
             for (let i = 0; i <= timeTable.length - 1; i++) {
@@ -950,20 +770,24 @@ class BuildTimetable extends Component {
                         if (timeTable[i].days[j].day === day) {
                             for (let k = 0; k <= timeTable[i].days[j].hours.length - 1; k++) {
                                 if (timeTable[i].days[j].hours[k].hour === hour) {
-                                    if (timeTable[i].days[j].hours[k].hour + (lessonHours - 1) <= endofDay) {
+                                    if (timeTable[i].days[j].hours[k].hour + (lessonHours - 1) <= endOfDay) {
                                         for (let m = 1; m <= lessonHours; m++) {
                                             if (timeTable[i].days[j].hours[k].constraints.length > 0) {
-                                                for (let o = 0; o <= timeTable[i].days[j].hours[k].constraints[0].groupingTeachers.length - 1; o++) {
-                                                    if (timeTable[i].days[j].hours[k].constraints[0].groupingTeachers[o] === teachers[t]) {
-                                                        message = 'המורה ' + teachers[t] + ' כבר מלמד ביום ' + day + ', בשעה ' + (hour - 1) + ':00-' + + hour + ':00, בכיתה ' + timeTable[i].classNumber;
-                                                        teacherClashMessage = [...teacherClashMessage, message];
-                                                        return false;
+                                                for (let p = 0; p <= timeTable[i].days[j].hours[k].constraints.length - 1; p++) {
+                                                    for (let o = 0; o <= timeTable[i].days[j].hours[k].constraints[p].groupingTeachers.length - 1; o++) {
+                                                        if (timeTable[i].days[j].hours[k].constraints[p].groupingTeachers[o] === teachers[t]) {
+                                                            message = 'המורה ' + teachers[t] + ' כבר מלמד ביום ' + day + ', בשעה ' + (hour - 1) + ':00-' + + hour + ':00, בכיתה ' + timeTable[i].classNumber;
+                                                            teacherClashMessage = [...teacherClashMessage, message];
+                                                            return false;
+                                                        }
                                                     }
                                                 }
                                             } else if (timeTable[i].days[j].hours[k + m - 1].constraints.length > 0) {
-                                                for (let o = 0; o <= timeTable[i].days[j].hours[k + m - 1].constraints[0].groupingTeachers.length - 1; o++) {
-                                                    if (timeTable[i].days[j].hours[k + m - 1].constraints[0].groupingTeachers[o] === teachers[t]) {
-                                                        return false;
+                                                for (let p = 0; p <= timeTable[i].days[j].hours[k].constraints.length - 1; p++) {
+                                                    for (let o = 0; o <= timeTable[i].days[j].hours[k + m - 1].constraints[p].groupingTeachers.length - 1; o++) {
+                                                        if (timeTable[i].days[j].hours[k + m - 1].constraints[p].groupingTeachers[o] === teachers[t]) {
+                                                            return false;
+                                                        }
                                                     }
                                                 }
                                             }
@@ -980,7 +804,7 @@ class BuildTimetable extends Component {
         return canBeAdded;
     }
 
-    checkClassRoomsOtherDays(day, hour, endofDay, classRoom, constraint) {
+    checkClassRoomsOtherDays(day, hour, endOfDay, classRoom, constraint) {
         let canBeAdded = true;
 
         let message = '';
@@ -1014,18 +838,22 @@ class BuildTimetable extends Component {
                         if (timeTable[i].days[j].day === day) {
                             for (let k = 0; k <= timeTable[i].days[j].hours.length - 1; k++) {
                                 if (timeTable[i].days[j].hours[k].hour === hour) {
-                                    if (timeTable[i].days[j].hours[k].hour + (lessonHours - 1) <= endofDay) {
+                                    if (timeTable[i].days[j].hours[k].hour + (lessonHours - 1) <= endOfDay) {
                                         for (let m = 1; m <= lessonHours; m++) {
                                             if (timeTable[i].days[j].hours[k].constraints.length > 0) {
-                                                if (timeTable[i].days[j].hours[k].constraints[0].classRoom === classRoom.classRoomName) {
-                                                    message = 'חדר הלימוד ' + classRoom.classRoomName + ' תפוס כבר ביום ' + day + ', ע"י כיתה ' + timeTable[i].classNumber + ', בשעה ' + (hour - 1) + ':00-' + hour + ':00';
-                                                    classroomClashMessage = [...classroomClashMessage, message];
-                                                    return false;
+                                                for (let p = 0; p <= timeTable[i].days[j].hours[k].constraints.length - 1; p++) {
+                                                    if (timeTable[i].days[j].hours[k].constraints[p].classRoom === classRoom.classRoomName) {
+                                                        message = 'חדר הלימוד ' + classRoom.classRoomName + ' תפוס כבר ביום ' + day + ', ע"י כיתה ' + timeTable[i].classNumber + ', בשעה ' + (hour - 1) + ':00-' + hour + ':00';
+                                                        classroomClashMessage = [...classroomClashMessage, message];
+                                                        return false;
+                                                    }
                                                 }
                                             }
                                             else if (timeTable[i].days[j].hours[k + m - 1].constraints.length > 0) {
-                                                if (timeTable[i].days[j].hours[k + m - 1].constraints[0].classRoom === classRoom.classRoomName) {
-                                                    return false;
+                                                for (let p = 0; p <= timeTable[i].days[j].hours[k].constraints.length - 1; p++) {
+                                                    if (timeTable[i].days[j].hours[k + m - 1].constraints[p].classRoom === classRoom.classRoomName) {
+                                                        return false;
+                                                    }
                                                 }
                                             }
 
@@ -1040,10 +868,6 @@ class BuildTimetable extends Component {
         }
 
         return canBeAdded;
-    }
-
-    handleHourClick(hourData, day) {
-
     }
 
     createTimeTableView() {
@@ -1083,25 +907,6 @@ class BuildTimetable extends Component {
     }
 
     createTimeCol() {
-        // let maxEndTime = 0;
-        // let minStartTime = 100;
-        // let days = [...this.state.days];
-        // for (let i = 0; i <= days.length - 1; i++) {
-        //     if (maxEndTime < parseInt(days[i].endTime)) {
-        //         maxEndTime = parseInt(days[i].endTime);
-        //     }
-        //     if (minStartTime > parseInt(days[i].startTime)) {
-        //         minStartTime = parseInt(days[i].startTime);
-        //     }
-        // }
-        // let TimeCol = [];
-        // for (let i = minStartTime; i < maxEndTime; i++) {
-        //     let time = i + ':00-' + (i + 1) + ':00';
-        //     TimeCol = [...TimeCol,
-        //     <div key={i} className="row border-top border-dark text-center" style={{ "height": "50px" }}>{time}</div>
-        //     ];
-        // }
-
         let TimeCol = [];
         for (let i = 7; i < 20; i++) {
             let time = i + ':00-' + (i + 1) + ':00';
@@ -1125,7 +930,6 @@ class BuildTimetable extends Component {
             </ClassRoomBox>
             ]
         }
-
         return classRoomsBoxes;
     }
 
@@ -1177,12 +981,12 @@ class BuildTimetable extends Component {
     }
 
     handleConstraintClick(constraintData) {
+        // console.log('click');
         teacherClashMessage = [];
         if (this.state.inTable) {
             this.setState({
                 inTable: false,
                 currentClassRoom: {}
-                // showTeacherClashMessage: false
             })
         }
         if (JSON.stringify(constraintData) === JSON.stringify(this.state.currentConstraint)) {
@@ -1249,28 +1053,6 @@ class BuildTimetable extends Component {
     }
 
     handleConstraintDrag(inTable, constraint, classRoom, row, col) {
-        // let tableView = { ...this.state.tableViewForClass }
-
-        // for (let i = 0; i <= tableView.days.length - 1; i++) {
-        //     for (let j = 0; j <= tableView.days[i].hours.length - 1; j++) {
-        //         for (let k = 0; k <= tableView.days[i].hours[j].constraints.length - 1; k++) {
-        //             if (tableView.days[i].hours[j].constraints[k]._id === this.state.currentConstraint._id) {
-        //                 this.setState({
-        //                     inTable: false,
-        //                     currentConstraint: {},
-        //                     currentClassRoom: {},
-        //                     showDeleteButton: false,
-        //                     showTeacherClashMessage: false,
-        //                     showClassroomClashMessage: false,
-        //                     showTeacherClashButtonType: 'הצג התנגשויות עבור מורה',
-        //                     showClassroomClashButtonType: 'הצג התנגשויות עבור חדר לימוד'
-        //                 });
-        //                 return;
-        //             }
-        //         }
-        //     }
-        // }
-
         let classRooms = [...this.state.classRooms];
         let currentClassRoom = {};
         for (let i = 0; i <= classRooms.length - 1; i++) {
@@ -1318,7 +1100,6 @@ class BuildTimetable extends Component {
     }
 
     handleConstraintEndDrag(didDrop) {
-        // console.log('handleConstraintEndDrag');
         if (!this.state.inTable) {
             return;
         }
@@ -1331,9 +1112,6 @@ class BuildTimetable extends Component {
 
     returnConstraintToOriginalHourBox() {
         let tableViewForClass = { ...this.state.tableViewForClass };
-        // console.log(this.state.row); // hour
-        // console.log(this.state.col); // day
-        // console.log(tableViewForClass); // day
         let day = ''
         let hourData = {};
         switch (this.state.col) {
@@ -1390,39 +1168,6 @@ class BuildTimetable extends Component {
             backgroundColorThursday: 'white',
             backgroundColorFriday: 'white'
         }, function () {
-            // let teachers = this.state.teachers;
-            // let teacher = this.state.currentConstraint.teacher;
-            // let teacherDayOff = '';
-
-            // for (let i = 0; i <= teachers.length - 1; i++) {
-            //     if (teachers[i].name === teacher) {
-            //         teacherDayOff = teachers[i].dayOff;
-            //         break;
-            //     }
-            // }
-            // switch (teacherDayOff) {
-            //     case 'ראשון':
-            //         this.setState({ backgroundColorSunday: '#fff3cd' })
-            //         break;
-            //     case 'שני':
-            //         this.setState({ backgroundColorMonday: '#fff3cd' })
-            //         break;
-            //     case 'שלישי':
-            //         this.setState({ backgroundColorTuesday: '#fff3cd' })
-            //         break;
-            //     case 'רביעי':
-            //         this.setState({ backgroundColorWednesday: '#fff3cd' })
-            //         break;
-            //     case 'חמישי':
-            //         this.setState({ backgroundColorThursday: '#fff3cd' })
-            //         break;
-            //     case 'שישי':
-            //         this.setState({ backgroundColorFriday: '#fff3cd' })
-            //         break;
-            //     default:
-            //         break;
-            // }
-
             let teachers = this.state.teachers;
             let currentTeachers = [...this.state.currentConstraint.groupingTeachers];
             let teacherDayOff = '';
@@ -1488,10 +1233,9 @@ class BuildTimetable extends Component {
 
     // calls when lesson begin drop to hour box
     addConstraintToHour(hourData, day, row, col) {
-        console.log(hourData);
         let currentHourBox = { ...hourData };
 
-        // case of droping lesson on the same hour box it were begin drag from
+        // case of dropping lesson on the same hour box it were begin drag from
         for (let i = 0; i <= currentHourBox.constraints.length - 1; i++) {
             if (currentHourBox.constraints[i]._id === this.state.currentConstraint._id) {
                 currentHourBox.constraints = [...currentHourBox.constraints.slice(0, i).concat(currentHourBox.constraints.slice(i + 1, currentHourBox.constraints.length))];
@@ -1515,7 +1259,6 @@ class BuildTimetable extends Component {
                 return;
             }
 
-            // console.log(this.state.currentClassRoom.classRoomName);
             let currentHourBox = { ...this.state.currentHourBox };
             let classRoom = this.state.currentClassRoom.classRoomName;
             currentConstraint.classRoom = classRoom;
@@ -1534,17 +1277,13 @@ class BuildTimetable extends Component {
                 showClassroomClashButtonType: 'הצג התנגשויות עבור חדר לימוד'
             },
                 function () {
-                    // console.log(this.state.currentConstraint.subjectMix);
                     if (this.state.currentConstraint.subjectMix) {
                         let grade = '';
-                        // let nunOfClasses = 0;
                         let currentClass = this.state.currentClass;
                         if (currentClass.length === 2) {
                             grade = currentClass[0];
-                            // nunOfClasses = parseInt(currentClass[1]);
                         } else if (currentClass.length === 3) {
                             grade = currentClass[0] + currentClass[1];
-                            // nunOfClasses = parseInt(currentClass[2]);
                         }
                         let numOfClasses = 0;
                         let grades = [...this.state.grades];
@@ -1556,10 +1295,7 @@ class BuildTimetable extends Component {
                         }
                         let timeTableViews = [];
                         for (let i = 1; i <= numOfClasses; i++) {
-                            // timeTableView = { ...this.addHourToTableView((grade + i), this.state.currentConstraint) };
-                            // let timeTableView = { ...this.addHourToTableView((grade + i), this.state.currentConstraint) };
                             timeTableViews = [...timeTableViews, this.addHourToTableView((grade + i), this.state.currentConstraint)];
-                            // console.log(timeTableView);
                         }
                         let timeTable = [...this.state.timeTable];
                         for (let i = 0; i <= timeTableViews.length - 1; i++) {
@@ -1569,7 +1305,6 @@ class BuildTimetable extends Component {
                                 }
                             }
                         }
-                        // console.log(timeTable);
                         this.setState({ timeTable: [...timeTable] });
                     } else {
                         let timeTableView = { ...this.addHourToTableView(this.state.currentClass, this.state.currentConstraint) };
@@ -1639,14 +1374,6 @@ class BuildTimetable extends Component {
         );
     }
 
-    cratePotentialLesson() {
-        if (this.state.buttonType === 'צור שיעור לשיבוץ') {
-            return null;
-        } else {
-            return <div>lesson that can be drag</div>
-        }
-    }
-
     crateConstraintBoxAndClassRoomBox() {
         if (this.state.inTable) {
             return null;
@@ -1672,7 +1399,6 @@ class BuildTimetable extends Component {
             return (
                 <div>
                     <h6>יש כעת אפשרות לגרור את השיעור לטובת שיבוץ בטבלה</h6>
-                    {/* <div style={{ "marginRight": "16.6666666667%", "marginLeft": "16.6666666667%" }}> */}
                     <div className="mx-auto" style={{ "width": "61.11111111%" }}>
                         <DragConstraintBox
                             data={this.state.currentConstraint}
@@ -1683,6 +1409,7 @@ class BuildTimetable extends Component {
                             classRoom={this.state.currentClassRoom.classRoomName}
                             inTable={false}
                             border={'border border-primary'}
+                            towConstraintsInBox={false}
                         >
                         </DragConstraintBox>
                     </div>
@@ -1698,61 +1425,29 @@ class BuildTimetable extends Component {
         let timeTable = [...this.state.timeTable];
         let classTimeTable = {};
         this.setState({ waitingToSave: true, saveSucceed: false }, () => {
-            // axios.post('http://localhost:4000/data/dropTimeTable')
             axios.delete('/api/timeTables')
-            // axios.delete('/api/timeTablese')
                 .then(response => {
                     if (this.mounted) {
                         if (timeTable.length === 0) {
                             this.setState({ waitingToSave: false, saveSucceed: true }, () => {
-                                // console.log('hi');
                                 clearTimeout(this.timeoutID);
                                 this.timeoutID = setTimeout(() => { this.setState({ saveSucceed: false }) }, 1500);
                                 return;
-                                // console.log(classTimeTable);
                             });
                         }
                     }
                     let tablesSaved = 0;
-                    // for (let i = 0; i <= timeTable.length - 1; i++) {
-                    //     classTimeTable = { ...timeTable[i] };
-                    //     // axios.post('http://localhost:4000/data/addTimeTable', classTimeTable)
-                    //     axios.post(this.host + '/data/addTimeTable', classTimeTable)
-                    //         .then(res => {
-                    //             if (this.mounted) {
-                    //                 tablesSaved++;
-                    //                 console.log(tablesSaved);
-                    //                 if (this.mounted) {
-                    //                     if (tablesSaved === timeTable.length) {
-                    //                         this.setState({ waitingToSave: false, saveSucceed: true }, () => {
-                    //                             // console.log('hi');
-                    //                             clearTimeout(this.timeoutID);
-                    //                             this.timeoutID = setTimeout(() => { this.setState({ saveSucceed: false }) }, 1500);
-                    //                             // console.log(classTimeTable);
-                    //                         });
-                    //                     }
-                    //                 }
-                    //             }
-                    //         })
-                    //         .catch(function (error) {
-                    //             console.log(error);
-                    //         });
-                    // }
                     timeTable.forEach((table) => {
                         classTimeTable = { ...table };
-                        // axios.post('http://localhost:4000/data/addTimeTable', classTimeTable)
                         axios.post('/api/timeTables', classTimeTable)
                             .then(res => {
                                 if (this.mounted) {
                                     tablesSaved++;
-                                    console.log(tablesSaved);
                                     if (this.mounted) {
                                         if (tablesSaved === timeTable.length) {
                                             this.setState({ waitingToSave: false, saveSucceed: true }, () => {
-                                                // console.log('hi');
                                                 clearTimeout(this.timeoutID);
                                                 this.timeoutID = setTimeout(() => { this.setState({ saveSucceed: false }) }, 1500);
-                                                // console.log(classTimeTable);
                                             });
                                         }
                                     }
@@ -1767,23 +1462,6 @@ class BuildTimetable extends Component {
                     console.log(error);
                 })
         })
-        // axios.post('http://localhost:4000/data/dropTimeTable')
-        //     .then(response => {
-        //         for (let i = 0; i <= timeTable.length - 1; i++) {
-        //             classTimeTable = { ...timeTable[i] };
-        //             // console.log(classTimeTable);
-        //             axios.post('http://localhost:4000/data/addTimeTable', classTimeTable)
-        //                 .then(res => {
-
-        //                 })
-        //                 .catch(function (error) {
-        //                     console.log(error);
-        //                 });
-        //         }
-        //     })
-        //     .catch(function (error) {
-        //         console.log(error);
-        //     })
     }
 
     deleteConstraintFromTable() {
@@ -1818,7 +1496,6 @@ class BuildTimetable extends Component {
         }
 
         let greads = [...this.state.currentConstraint.classNumber];
-        // let greads = [...constraintToRemove.classNumber];
 
         for (let i = 0; i <= greads.length - 1; i++) {
             for (let j = 0; j <= timeTable.length - 1; j++) {
@@ -2071,6 +1748,19 @@ class BuildTimetable extends Component {
 
     }
 
+    removeTableButtons() {
+        let disabled = false;
+        if (this.state.currentClass === 'אנא בחר כיתה') {
+            disabled = true;
+        }
+        return (
+            <div>
+                <button type="button" className="btn btn-secondary ml-2" disabled={disabled} onClick={() => this.handleRemoveCurrentClick()}>אפס טבלה נוכחית</button>
+                <button type="button" className="btn btn-secondary ml-2" disabled={disabled} onClick={() => this.handleRemoveAllClick()}>אפס כל הטבלאות</button>
+            </div>
+        )
+    }
+
     render() {
         if (this.state.isLoading) {
             return (
@@ -2099,8 +1789,7 @@ class BuildTimetable extends Component {
                         {this.saveSuccessMessage()}
                     </div>
                     <div className="text-left my-2 col-6">
-                        <button type="button" className="btn btn-secondary ml-2" onClick={() => this.handleRemoveCurrentClick()}>אפס טבלה נוכחית</button>
-                        <button type="button" className="btn btn-secondary ml-2" onClick={() => this.handleRemoveAllClick()}>אפס כל הטבלאות</button>
+                        {this.removeTableButtons()}
                     </div>
                 </div>
                 <div className="row" >
@@ -2110,7 +1799,6 @@ class BuildTimetable extends Component {
                 <div className="row mt-2 mb-5">
                     <div className="col-5">
                         <div
-                            // className="d-inline-block w-100 text-center p-0 card"
                             className=" w-100 text-center p-0 card"
                             style={{ "position": "relative", "height": "400px", "overflow": "auto", "display": "block" }}>
                             <h6 className="text-center">שיעורים עבור כיתה זו</h6>

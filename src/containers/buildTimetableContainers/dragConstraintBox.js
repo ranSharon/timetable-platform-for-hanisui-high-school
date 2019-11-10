@@ -92,31 +92,43 @@ class DragConstraintBox extends Component {
 
     handleClick() {
         this.props.click(this.props.inTable, this.props.data, this.props.classRoom)
-        if (this.state.border === 'border border-dark') {
-            this.setState({ border: 'border border-primary' });
-        } else if (this.state.border === 'border border-primary') {
-            this.setState({ border: 'border border-dark' });
+    }
+
+    objectEmpty(obj) {
+        for (let key in obj) {
+            if (obj.hasOwnProperty(key))
+                return false;
         }
+        return true;
     }
 
     render() {
-        // if (!this.props.temp) {
-        // let height = 50;
         let numOfLesson = parseInt(this.props.data.hours);
-        // height = height * numOfLesson;
-        // height = height + 'px';
         const opacity = this.props.isDragging ? 0 : 1;
         let height = this.props.isDragging ? 50 : 50 * numOfLesson;
+        let width = '100%';
+        if (this.props.towConstraintsInBox) {
+            width = '50%';
+        } else if (
+            !this.objectEmpty(this.props.currentConstraint)
+            && this.props.inTable
+            && JSON.stringify(this.props.data) !== JSON.stringify(this.props.currentConstraint)
+        ) {
+            if (this.props.currentConstraint.subjectMix
+                && !this.props.currentConstraint.subjectGrouping
+                && this.props.data.subjectMix
+                && !this.props.data.subjectGrouping
+                && this.props.currentConstraint.hours === this.props.data.hours) {
+                width = '50%'
+            }
+        }
+
         height = height + 'px';
-        // console.log(this.props.isDragging);
-        // let fontSize = "100%";
-        // if (height === "50px") {
-        //     fontSize = "80%"
-        // }
         let boxStyle = {
             "float": "left",
             "cursor": "pointer",
-            "width": "100%",
+            // "width": "100%",
+            "width": width,
             "height": height,
             "opacity": opacity,
             "fontSize": '11px',
@@ -131,7 +143,6 @@ class DragConstraintBox extends Component {
             <div
                 className={"m-auto card text-center " + this.props.border + ' ' + shadow}
                 style={boxStyle}
-                // onClick={() => this.props.click(this.props.inTable, this.props.data, this.props.classRoom)}
                 onClick={() => this.handleClick()}
             >
                 {this.props.data.subject + ', '}
