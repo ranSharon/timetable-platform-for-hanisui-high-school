@@ -69,7 +69,6 @@ class HourBox extends Component {
         this.state = {
             constraints: [],
         }
-
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -77,10 +76,6 @@ class HourBox extends Component {
             this.setState({ constraints: [...prevProps.data.constraints] });
         }
     }
-
-    // hourBoxCliced() {
-    //     this.props.click(this.props.data, this.props.day)
-    // }
 
     handleConstraintClick() {
         console.log('click');
@@ -90,32 +85,14 @@ class HourBox extends Component {
         console.log('drag');
     }
 
-    removeForHourBox() {
-
-    }
-
-    // <DragConstraintBox
-    //                     data={this.props.data.constraints[0]}
-    //                     // currentConstraint={this.props.data.constraints[0]}
-    //                     click={this.props.click}
-    //                     border={this.props.border}
-    //                     drag={this.props.drag}
-    //                     endDrag={this.props.endDrag}
-    //                     classRoom={this.props.data.constraints[0].classRoom}
-    //                     inTable={true}
-    //                     row={this.props.row}
-    //                     col={this.props.col}
-    //                     currentConstraint={this.props.currentConstraint}
-    //                 >
-    //                 </DragConstraintBox>
-
     showHourData() {
         if (this.props.data.constraints.length > 0 && this.props.show) {
             const towConstraintsInBox = (this.props.data.constraints.length === 2);
             return (
                 <div className="w-100 h-100">
                     {this.props.data.constraints.map((constraint, index) => {
-                        let border = 'border border-dark';
+                        let border = 'border border-dark';   
+                        let canDrag = !(towConstraintsInBox && index === 0);                     
                         if (JSON.stringify(constraint) === JSON.stringify(this.props.currentConstraint)) {
                             border = 'border border-primary';
                         }
@@ -133,6 +110,7 @@ class HourBox extends Component {
                                 col={this.props.col}
                                 currentConstraint={this.props.currentConstraint}
                                 towConstraintsInBox={towConstraintsInBox}
+                                canDrag={canDrag}
                             >
                             </DragConstraintBox>
                         );

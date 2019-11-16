@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import { DragSource } from 'react-dnd';
 
 const constraintSource = {
+    // canDrag(props, monitor) {
+    //     return props.canDrag;
+    // },
     endDrag(props, monitor, component) {
-        // return props.endDrag();
         if (!monitor.didDrop()) {
             console.log('!didDrop')
             console.log('cant be added');
@@ -13,7 +15,6 @@ const constraintSource = {
     },
     beginDrag(props, monitor, component) {
         if (props.inTable) { // darg function not called when DragConstraintBox not in table
-            // props.isDrag(true);
             props.drag(props.inTable, props.data, props.classRoom, props.row, props.col);
         }
 
@@ -29,7 +30,7 @@ function collect(connect, monitor) {
         connectDragSource: connect.dragSource(),
         // You can ask the monitor about the current drag state:
         isDragging: monitor.isDragging(),
-        didDrop: monitor.didDrop()
+        didDrop: monitor.didDrop(),
     }
 }
 
@@ -107,6 +108,8 @@ class DragConstraintBox extends Component {
         const opacity = this.props.isDragging ? 0 : 1;
         let height = this.props.isDragging ? 50 : 50 * numOfLesson;
         let width = '100%';
+        let fontSize = numOfLesson > 1 ? '12px' : '10px';
+
         if (this.props.towConstraintsInBox) {
             width = '50%';
         } else if (
@@ -127,11 +130,10 @@ class DragConstraintBox extends Component {
         let boxStyle = {
             "float": "left",
             "cursor": "pointer",
-            // "width": "100%",
             "width": width,
             "height": height,
             "opacity": opacity,
-            "fontSize": '11px',
+            "fontSize": fontSize,
         };
 
         let shadow = '';
@@ -141,15 +143,20 @@ class DragConstraintBox extends Component {
 
         return this.props.connectDragSource(
             <div
-                className={"m-auto card text-center " + this.props.border + ' ' + shadow}
+                className={"card " + this.props.border + ' ' + shadow}
                 style={boxStyle}
                 onClick={() => this.handleClick()}
+            // data-toggle="tooltip" 
+            // title="Disabled tooltip"
             >
-                {this.props.data.subject + ', '}
-                {this.showTeachers() + ', '}
-                {this.showClasses() + ', '}
-                {this.showGrouping()}
-                {this.props.classRoom}
+                <p className="m-auto card-text">
+                    <span className="font-weight-bold">{this.props.data.subject + ', '}</span>
+                    <span className="font-italic">{this.showTeachers()}</span>
+                    <br/>
+                    {this.showClasses() + ', '}
+                    {this.showGrouping()}
+                    {this.props.classRoom}
+                </p>
             </div>
         );
     }

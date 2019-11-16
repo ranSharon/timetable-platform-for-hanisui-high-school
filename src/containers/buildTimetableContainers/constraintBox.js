@@ -26,7 +26,6 @@ class ConstraintBox extends Component {
 
     componentDidUpdate(prevProps, prevState) {
         if (JSON.stringify(this.props.currentConstraint) === JSON.stringify(this.props.data) && this.state.border === '' && !this.props.inPotentialCard) {
-            // border = 'border border-primary';
             this.setState({ border: 'border border-primary' });
         }
         if (JSON.stringify(this.props.currentConstraint) !== JSON.stringify(this.props.data) && this.state.border === 'border border-primary' && !this.props.inPotentialCard) {
@@ -46,7 +45,7 @@ class ConstraintBox extends Component {
     showGrouping() {
         let text = ``;
         if (this.props.data.subjectGrouping) {
-            text = `הקבצות ,`
+            text = `הקבצות`
         }
         return text;
     }
@@ -66,16 +65,14 @@ class ConstraintBox extends Component {
         height = height * numOfLesson;
         height = height + 'px';
         const opacity = this.props.isDragging ? 0 : 1;
-        // let fontSize = "100%";
-        // if (height === "50px") {
-        //     fontSize = "40px"
-        // }
+        const fontSize = numOfLesson > 1 ? '12px' : '10px';
+        
         let boxStyle = {
             "cursor": "pointer",
             "width": "162px",
             "height": height,
             "opacity": opacity,
-            "fontSize": '11px'
+            "fontSize": fontSize
         };
 
         return (
@@ -83,15 +80,16 @@ class ConstraintBox extends Component {
                 className={"d-inline-block card text-center m-1" + this.state.border}
                 style={boxStyle}
                 onClick={() => this.ConstraintBoxClicked()}>
-                {this.props.data.subject + ', '}
-                {this.showTeachers() + ', '}
-                {this.showClasses() + ', '}
-                {this.showGrouping()}
+                <p className="mt-1 card-text">
+                    <span className="font-weight-bold">{this.props.data.subject + ', '}</span>
+                    <span className="font-italic">{this.showTeachers()}</span>
+                    <br />
+                    {this.showClasses() + ', '}
+                    {this.showGrouping()}
+                </p>
             </div>
-
         );
     }
 }
 
 export default ConstraintBox;
-// export default DragSource('constraint', constraintSource, collect)(ConstraintBox);

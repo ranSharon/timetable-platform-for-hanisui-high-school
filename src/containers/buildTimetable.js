@@ -560,8 +560,13 @@ class BuildTimetable extends Component {
         for (let i = 0; i <= dayView.hours.length - 1; i++) {
             if (dayView.hours[i].constraints.length > 0) {
                 validToAdd = false;
-                if (prvConstraints === JSON.stringify(dayView.hours[i].constraints[0])) {
-                    show = false;
+                // if (prvConstraints === JSON.stringify(dayView.hours[i].constraints[0])) {
+                //     show = false;
+                // }
+                for (let j = 0; j <= dayView.hours[i].constraints.length - 1; j++) {
+                    if (prvConstraints === JSON.stringify(dayView.hours[i].constraints[j])) {
+                        show = false;
+                    }
                 }
             } else if (!this.objectEmpty(this.state.currentConstraint) && !this.objectEmpty(this.state.currentClassRoom)) {
                 if (this.state.currentConstraint.subjectMix) {
@@ -606,15 +611,6 @@ class BuildTimetable extends Component {
                 data.constraints = [...data.constraints, this.state.currentConstraint];
             }
 
-            // for (let i = 0; i <= data.constraints.length - 1; i++) {
-            //     if (JSON.stringify(data.constraints[i]) === JSON.stringify(this.state.currentConstraint)) {
-            //         border = 'border border-primary';
-            //     }
-            // }
-            // if (JSON.stringify(data.constraints[0]) === JSON.stringify(this.state.currentConstraint)) {
-            //     border = 'border border-primary';
-            // }
-
             hoursBoxes = [...hoursBoxes,
             <HourBox
                 key={i} // must have for react
@@ -641,7 +637,6 @@ class BuildTimetable extends Component {
             </HourBox>
             ];
             show = true;
-            // border = 'border border-dark';
             if (dayView.hours[i].constraints.length !== 0) {
                 prvConstraints = JSON.stringify(dayView.hours[i].constraints[0]);
             }
@@ -783,7 +778,7 @@ class BuildTimetable extends Component {
                                                     }
                                                 }
                                             } else if (timeTable[i].days[j].hours[k + m - 1].constraints.length > 0) {
-                                                for (let p = 0; p <= timeTable[i].days[j].hours[k].constraints.length - 1; p++) {
+                                                for (let p = 0; p <= timeTable[i].days[j].hours[k + m - 1].constraints.length - 1; p++) {
                                                     for (let o = 0; o <= timeTable[i].days[j].hours[k + m - 1].constraints[p].groupingTeachers.length - 1; o++) {
                                                         if (timeTable[i].days[j].hours[k + m - 1].constraints[p].groupingTeachers[o] === teachers[t]) {
                                                             return false;
@@ -850,7 +845,7 @@ class BuildTimetable extends Component {
                                                 }
                                             }
                                             else if (timeTable[i].days[j].hours[k + m - 1].constraints.length > 0) {
-                                                for (let p = 0; p <= timeTable[i].days[j].hours[k].constraints.length - 1; p++) {
+                                                for (let p = 0; p <= timeTable[i].days[j].hours[k + m - 1].constraints.length - 1; p++) {
                                                     if (timeTable[i].days[j].hours[k + m - 1].constraints[p].classRoom === classRoom.classRoomName) {
                                                         return false;
                                                     }
@@ -981,7 +976,6 @@ class BuildTimetable extends Component {
     }
 
     handleConstraintClick(constraintData) {
-        // console.log('click');
         teacherClashMessage = [];
         if (this.state.inTable) {
             this.setState({
@@ -1023,6 +1017,7 @@ class BuildTimetable extends Component {
                 currentClassRoom = { ...classRooms[i] };
             }
         }
+
         if (JSON.stringify(constraint) === JSON.stringify(this.state.currentConstraint)) {
             this.setState({
                 inTable: false,
@@ -1032,7 +1027,7 @@ class BuildTimetable extends Component {
                 showTeacherClashMessage: false,
                 showClassroomClashMessage: false,
                 showTeacherClashButtonType: 'הצג התנגשויות עבור מורה',
-                showClassroomClashButtonType: 'הצג התנגשויות עבור חדר לימוד',
+                showClassroomClashButtonType: 'הצג התנגשויות עבור חדר לימוד'
             }, function () {
                 this.setDayOff()
             });
@@ -1045,7 +1040,7 @@ class BuildTimetable extends Component {
                 showTeacherClashMessage: false,
                 showClassroomClashMessage: false,
                 showTeacherClashButtonType: 'הצג התנגשויות עבור מורה',
-                showClassroomClashButtonType: 'הצג התנגשויות עבור חדר לימוד',
+                showClassroomClashButtonType: 'הצג התנגשויות עבור חדר לימוד'
             }, function () {
                 this.setDayOff()
             });
@@ -1069,17 +1064,12 @@ class BuildTimetable extends Component {
                         for (let l = 0; l <= timeTable[i].days[j].hours[k].constraints.length - 1; l++) {
                             if (timeTable[i].days[j].hours[k].constraints[l]._id === constraint._id) {
                                 timeTable[i].days[j].hours[k].constraints = [...timeTable[i].days[j].hours[k].constraints.slice(0, l).concat(timeTable[i].days[j].hours[k].constraints.slice(l + 1, timeTable[i].days[j].hours[k].constraints.length))];
-
-
                             }
                         }
-
                     }
-
                 }
             }
         }
-
         let tableViewForClass = {};
         for (let i = 0; i <= timeTable.length - 1; i++) {
             if (timeTable[i].classNumber === this.state.currentClass) {
@@ -1095,7 +1085,7 @@ class BuildTimetable extends Component {
             timeTable: [...timeTable],
             tableViewForClass: { ...tableViewForClass }
         }, function () {
-            this.setDayOff()
+            this.setDayOff();
         });
     }
 
@@ -1410,6 +1400,7 @@ class BuildTimetable extends Component {
                             inTable={false}
                             border={'border border-primary'}
                             towConstraintsInBox={false}
+                            canDrag={true}
                         >
                         </DragConstraintBox>
                     </div>
@@ -1761,6 +1752,20 @@ class BuildTimetable extends Component {
         )
     }
 
+    boxesColorsExplaination() {
+        return (
+            <div className="border mt-auto">
+                <h6 className="float-righ mb-0 mr-2">מקרא צבעי משבצות:</h6>
+                <div >
+                    <span className="d-block border mx-1 mb-1 text-center" style={{ backgroundColor: "rgb(212, 237, 218)", fontSize: "13px" }}>משבצת שניתן לשבץ בה את השיעור</span>
+                    <span className="d-block border mx-1 mb-1 text-center" style={{ backgroundColor: "rgb(171, 218, 182)", fontSize: "13px" }}>בעת גרירה ניתן להניח שיעור במשבצת</span>
+                    <span className="d-block border mx-1 mb-1 text-center" style={{ backgroundColor: "rgb(248, 215, 218)", fontSize: "13px" }}>לא ניתן לשבץ שיעור במשבצת</span>
+                    <span className="d-block border mx-1 mb-1 text-center" style={{ backgroundColor: "#fff3cd", fontSize: "13px" }}>יום חופש רצוי</span>
+                </div>
+            </div>
+        )
+    };
+
     render() {
         if (this.state.isLoading) {
             return (
@@ -1810,6 +1815,7 @@ class BuildTimetable extends Component {
                             <h6 className="text-center mb-4">נתונים על שיעור פוטנציאלי לשיבוץ</h6>
                             {this.createPotential()}
                             {this.clashButtons()}
+                            {this.boxesColorsExplaination()}
                         </div>
                     </div>
                     <div className="col-4">
