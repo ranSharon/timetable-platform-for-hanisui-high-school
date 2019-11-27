@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { connect } from "react-redux";
-import PropTypes from "prop-types";
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import Data from './data';
 import BuildTimetable from './buildTimetable';
 import DataOnTimetable from './dataOnTimetable';
@@ -19,7 +19,7 @@ class NavBar extends Component {
       guide: 'text-secondary nav-link',
       register: 'text-secondary nav-link',
       path: 'data'
-    }
+    };
   }
 
   componentDidMount() {
@@ -38,7 +38,7 @@ class NavBar extends Component {
     }
   }
 
-  handleTabClick = (tab) => {
+  handleTabClick = tab => {
     switch (tab) {
       case 'data':
         this.setState({
@@ -101,43 +101,75 @@ class NavBar extends Component {
         });
         break;
     }
-  }
+  };
 
   render() {
-    console.log(this.props.auth.currentUser.name);
+    // console.log(this.props.auth.currentUser.name);
     return (
       <Router>
         <div className="container-fluid">
           <ul className="nav nav-tabs">
-            <li className="nav-item" onClick={() => this.handleTabClick('data')}>
-              <Link to="/data" className={this.state.data}>הגדרת נתונים ושיעורים</Link>
+            <li
+              className="nav-item"
+              onClick={() => this.handleTabClick('data')}
+            >
+              <Link to="/data" className={this.state.data}>
+                הגדרת נתונים ושיעורים
+              </Link>
             </li>
-            <li className="nav-item" onClick={() => this.handleTabClick('buildTimetable')}>
-              <Link to="/buildTimetable" className={this.state.buildTimetable} onClick={() => { console.log(this) }}>בניית מערכת שעות</Link>
+            <li
+              className="nav-item"
+              onClick={() => this.handleTabClick('buildTimetable')}
+            >
+              <Link
+                to="/buildTimetable"
+                className={this.state.buildTimetable}
+                onClick={() => {
+                  console.log(this);
+                }}
+              >
+                בניית מערכת שעות
+              </Link>
             </li>
-            <li className="nav-item" onClick={() => this.handleTabClick('dataOnTimetable')}>
-              <Link to="/dataOnTimetable" className={this.state.dataOnTimetable}>הצגת נתונים על המערכת</Link>
+            <li
+              className="nav-item"
+              onClick={() => this.handleTabClick('dataOnTimetable')}
+            >
+              <Link
+                to="/dataOnTimetable"
+                className={this.state.dataOnTimetable}
+              >
+                הצגת נתונים על המערכת
+              </Link>
             </li>
-            <li className="nav-item" onClick={() => this.handleTabClick('guide')}>
-              <Link to="/guide" className={this.state.guide}>מדריך משתמש</Link>
+            <li
+              className="nav-item"
+              onClick={() => this.handleTabClick('guide')}
+            >
+              <Link to="/guide" className={this.state.guide}>
+                מדריך משתמש
+              </Link>
             </li>
-            {this.props.auth.currentUser.name === 'administrator' ?
-              <li className="nav-item" onClick={() => this.handleTabClick('register')}>
-                <Link to="/register" className={this.state.register}>ניהול ורישום משתמשים</Link>
-              </li> : null
-            }
+            {this.props.auth.currentUser.name === 'administrator' ? (
+              <li
+                className="nav-item"
+                onClick={() => this.handleTabClick('register')}
+              >
+                <Link to="/register" className={this.state.register}>
+                  ניהול ורישום משתמשים
+                </Link>
+              </li>
+            ) : null}
           </ul>
           <Route path="/data" component={Data} />
           <Route path="/buildTimetable" component={BuildTimetable} />
           <Route path="/dataOnTimetable" component={DataOnTimetable} />
           <Route path="/guide" component={Guide} />
-          {this.props.auth.currentUser.name === 'administrator' ?
-              <Route path="/register" component={RegisterPage} /> 
-              : null
-            }
+          {this.props.auth.currentUser.name === 'administrator' ? (
+            <Route path="/register" component={RegisterPage} />
+          ) : null}
         </div>
       </Router>
-
     );
   }
 }
