@@ -31,7 +31,7 @@
     "react-scripts": "2.1.8",
     "redux": "^4.0.4",
     "redux-thunk": "^2.3.0",
-    "validator": "^11.1.0"
+    "validator": "^13.7.0"
   },
   "scripts": {
     "start": "NODE_ENV=production node server/server.js",
